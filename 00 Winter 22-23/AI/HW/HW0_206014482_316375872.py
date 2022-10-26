@@ -1,3 +1,8 @@
+"""
+Author: Yael Hari
+Date: 2022-10-26
+"""
+
 from typing import List
 import numpy as np
 
@@ -8,7 +13,7 @@ import numpy as np
 def twoSum(nums: List[int], target: int) -> List[int]:
     # assumption: exactly 1 solution;
 
-     # sort list: O(nlogn)
+    # sort list: O(nlogn)
     mergeSort(nums, 0, len(nums) - 1)
 
     # find: O(n)
@@ -82,7 +87,6 @@ def mergeSort(arr, l, r):
         mergeSort(arr, l, m)
         mergeSort(arr, m + 1, r)
         merge(arr, l, m, r)
-
 
 
 # -------------- Q2 --------------
@@ -184,8 +188,8 @@ def swap_nodes(before_node, curr_node, next_node):
 
 
 if __name__ == '__main__':
-    # print(twoSum([1, 3, 5, 6, 7, 11], 9))
+    print(twoSum([1, 3, 5, 6, 7, 11], 9))
     # print(optimalProfit([7, 1, 5, 3, 6, 4]))
-    head = read_file('test.txt')
-    sort_in_place(head)
+    # head = read_file('test.txt')
+    # sort_in_place(head)
 
