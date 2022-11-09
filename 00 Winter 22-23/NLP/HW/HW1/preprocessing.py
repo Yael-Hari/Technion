@@ -13,7 +13,7 @@ class FeatureStatistics:
         self.n_total_features = 0  # Total number of features accumulated
 
         # Init all features dictionaries
-        feature_dict_list = ["f100"]  # the feature classes used in the code
+        feature_dict_list = [f'f10{i}' for i in range(8)]  # the feature classes used in the code
         self.feature_rep_dict = {fd: OrderedDict() for fd in feature_dict_list}
         '''
         A dictionary containing the counts of each data regarding a feature class. For example in f100, would contain
@@ -24,6 +24,12 @@ class FeatureStatistics:
         self.tags_counts = defaultdict(int)  # a dictionary with the number of times each tag appeared in the text
         self.words_count = defaultdict(int)  # a dictionary with the number of times each word appeared in the text
         self.histories = []  # a list of all the histories seen at the test
+
+    def increment_val_in_feature_dict(self, val: tuple, feature: str):
+        if val not in self.feature_rep_dict[feature]:
+            self.feature_rep_dict[feature][val] = 1
+        else:
+            self.feature_rep_dict[feature][val] += 1
 
     def get_word_tag_pair_count(self, file_path) -> None:
         """
@@ -36,27 +42,50 @@ class FeatureStatistics:
                 if line[-1:] == "\n":
                     line = line[:-1]
                 split_words = line.split(' ')
-                for word_idx in range(len(split_words)):
-                    cur_word, cur_tag = split_words[word_idx].split('_')
-                    self.tags.add(cur_tag)
-                    self.tags_counts[cur_tag] += 1
-                    self.words_count[cur_word] += 1
-
-                    if (cur_word, cur_tag) not in self.feature_rep_dict["f100"]:
-                        self.feature_rep_dict["f100"][(cur_word, cur_tag)] = 1
-                    else:
-                        self.feature_rep_dict["f100"][(cur_word, cur_tag)] += 1
 
                 sentence = [("*", "*"), ("*", "*")]
                 for pair in split_words:
                     sentence.append(tuple(pair.split("_")))
                 sentence.append(("~", "~"))
 
-                for i in range(2, len(sentence) - 1):
-                    history = (
-                        sentence[i][0], sentence[i][1], sentence[i - 1][0], sentence[i - 1][1], sentence[i - 2][0],
-                        sentence[i - 2][1], sentence[i + 1][0])
+                num_of_words = len(sentence)
+                for word_idx in range(2, num_of_words-1):
+                    cur_word, cur_tag = sentence[word_idx]
+                    p_word, p_tag = sentence[word_idx-1]
+                    pp_word, pp_tag = sentence[word_idx-2]
+                    n_word, _ = sentence[word_idx+1]
+                    self.tags.add(cur_tag)
+                    self.tags_counts[cur_tag] += 1
+                    self.words_count[cur_word] += 1
 
+                    # count for every features family:
+
+                    # f100 - cont appearances of <word, tags> tuples
+                    word_tag = (cur_word.lower(), cur_tag)
+                    self.increment_val_in_feature_dict(word_tag, "f100")
+                    # f101 - suffix <=4 and tag pairs
+                    suffix_tag = (cur_word[-4:].lower(), cur_tag)
+                    self.increment_val_in_feature_dict(suffix_tag, "f101")
+                    # f102 - prefix <=4 and tag pairs
+                    prefix_tag = (cur_word[:4].lower(), cur_tag)
+                    self.increment_val_in_feature_dict(prefix_tag, "f102")
+                    # f103 - trigram tags
+                    trigram_tags = (pp_tag, p_tag, cur_tag)
+                    self.increment_val_in_feature_dict(trigram_tags, "f103")
+                    # f104
+                    bigram_tags = (p_tag, cur_tag)
+                    self.increment_val_in_feature_dict(bigram_tags, 'f104')
+                    # f105 - count appearances of <tag>
+                    self.increment_val_in_feature_dict(cur_tag, 'f105')
+                    # f106 - previous word and tag pairs
+                    prev_word_tag = (p_word.lower(), cur_tag)
+                    self.increment_val_in_feature_dict(prev_word_tag, "f106")
+                    # f107 - next word and tag pairs
+                    next_word_tag = (n_word.lower(), cur_tag)
+                    self.increment_val_in_feature_dict(next_word_tag, "f107")
+
+                    # create history
+                    history = (cur_word, cur_tag, p_word, p_tag, pp_word, pp_tag, n_word)
                     self.histories.append(history)
 
 
@@ -73,7 +102,7 @@ class Feature2id:
 
         # Init all features dictionaries
         self.feature_to_idx = {
-            "f100": OrderedDict(),
+            f"f10{i}": OrderedDict() for i in range(8)
         }
         self.represent_input_with_features = OrderedDict()
         self.histories_matrix = OrderedDict()
@@ -134,13 +163,62 @@ def represent_input_with_features(history: Tuple, dict_of_dicts: Dict[str, Dict[
         @param dict_of_dicts: a dictionary of each feature and the index it was given
         @return a list with all features that are relevant to the given history
     """
-    c_word = history[0]
-    c_tag = history[1]
+    c_word, c_tag, p_word, p_tag, pp_word, pp_tag, n_word = history
     features = []
 
-    # f100
+    # f100 - word / tag pairs
     if (c_word, c_tag) in dict_of_dicts["f100"]:
         features.append(dict_of_dicts["f100"][(c_word, c_tag)])
+
+    # f101 - suffix <=4 and tag pairs
+    suffix_tag = (c_word[-4:], c_tag)
+    if suffix_tag in dict_of_dicts["f101"]:
+        features.append(dict_of_dicts["f101"][suffix_tag])
+
+    # f102 - prefix <=4 and tag pairs
+    prefix_tag = (c_word[:4], c_tag)
+    if prefix_tag in dict_of_dicts["f102"]:
+        features.append(dict_of_dicts["f102"][prefix_tag])
+
+    # f103 - trigram tags
+    trigram_tags = (pp_tag, p_tag, c_tag)
+    if trigram_tags in dict_of_dicts["f103"]:
+        features.append(dict_of_dicts["f103"][trigram_tags])
+
+    # f104 - bigram tags
+    bigram_tags = (p_tag, c_tag)
+    if bigram_tags in dict_of_dicts["f104"]:
+        features.append(dict_of_dicts["f104"][bigram_tags])
+
+    # f105 - unigram tag
+    if c_tag in dict_of_dicts["f105"]:
+        features.append(dict_of_dicts["f105"][c_tag])
+
+    # f106 - previous word and tag pairs
+    prev_word_tag = (p_word, c_tag)
+    if prev_word_tag in dict_of_dicts["f106"]:
+        features.append(dict_of_dicts["f106"][prev_word_tag])
+
+    # f107 - next word and tag pairs
+    next_word_tag = (n_word, c_tag)
+    if next_word_tag in dict_of_dicts["f107"]:
+        features.append(dict_of_dicts["f107"][next_word_tag])
+
+    # f200 - is starting with capital letter
+    # if c_word[0] in dict_of_dicts["f200"]:
+    #     features.append(dict_of_dicts["f200"][next_word_tag])
+
+    #  f201 - is capital letter and first word in sentence
+
+    # f201 - is have more than 1 capital letter
+
+    # f202 - is have exactly 1 capital letter - no matter where
+
+    # g203 - is a number ---- tag CD?
+
+    # g204 - has a number and a letter
+
+    # 
 
     return features
 
