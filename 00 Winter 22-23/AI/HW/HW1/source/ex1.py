@@ -1,5 +1,6 @@
 # import math
 # import random
+import json
 
 import search
 
@@ -233,3 +234,13 @@ def manhattan_dist(a, b):
 
 def create_taxi_problem(game):
     return TaxiProblem(game)
+
+def dict_to_json(d: dict) -> str:
+    d_json = str(d).replace("'", '"')
+    return d_json
+
+def json_to_dict(j: str) -> dict:
+    j = j.replace("'", '"')
+    j_dict = json.loads(j)
+    return j_dict
+
