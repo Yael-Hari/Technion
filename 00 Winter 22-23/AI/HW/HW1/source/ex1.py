@@ -29,7 +29,8 @@ class TaxiProblem(search.Problem):
         self.initial["n_unpicked"] = len(initial["passengers"])
         self.initial["n_picked_undelivered"] = 0
         self.initial["n_delivered"] = 0
-        # self.initial[]
+        self.initial["map_size_height"] = len(self.initial["map"])
+        self.initial["map_size_width"] = len(self.initial["map"][0])
 
         """
         State example
@@ -51,8 +52,10 @@ class TaxiProblem(search.Problem):
         "n_taxis": 1,
         "n_passengers": 2,
         "n_unpicked": 2,
-        "n_picked_undelivered": 0
-        "n_delivered": 0
+        "n_picked_undelivered": 0,
+        "n_delivered": 0,
+        "map_size_height": 4,
+        "map_size_width": 4,
         }
         """
 
