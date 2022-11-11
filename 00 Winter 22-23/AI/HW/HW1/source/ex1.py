@@ -34,6 +34,8 @@ class TaxiProblem(search.Problem):
         self.initial["map_size_height"] = len(self.initial["map"])
         self.initial["map_size_width"] = len(self.initial["map"][0])
 
+        self.initial = dict_to_json(self.initial)
+
         """
         State example
         {"map": [['P', 'P', 'P', 'P'],
@@ -110,6 +112,7 @@ class TaxiProblem(search.Problem):
         # TODO: complete
         pass
 
+
     def check_legal_pick_up(self, state):
         # Pick up passengers if they are on the same tile as the taxi.
         # check that location of taxi is the same as location of the passenger
@@ -120,16 +123,20 @@ class TaxiProblem(search.Problem):
         # TODO: complete
         pass
 
+
     def check_legal_drop_off(self, state):
+        state = json_to_dict(state)
         # The passenger can only be dropped off on his destination tile and will refuse to leave the vehicle otherwise.
         # check that location of taxi is the same as destination of the passenger
         # TODO: complete
         pass
+        
 
     def actions(self, state):
         """Returns all the actions that can be executed in the given
         state. The result should be a tuple (or other iterable) of actions
         as defined in the problem description file"""
+        state = json_to_dict(state)
         # TODO
         # Atomic Actions: ["move", "pick_up", "drop_off", "refuel", "wait"]
         # explivit syntax:
@@ -161,61 +168,75 @@ class TaxiProblem(search.Problem):
         """Return the state that results from executing the given
         action in the given state. The action must be one of
         self.actions(state)."""
+        state = json_to_dict(state)
         action_type = action[0]
         taxi_name = action[1]
         result_state = state.copy()
-        actions_possible = ["move", "pick_up", "drop_off", "refuel", "wait"]
+        actions_possible = ['move', 'pick_up', 'drop_off', 'refuel', 'wait']
         assert action[0] in actions_possible, f"{action[0]} is not a possible action!"
-        if action_type == "move":  # (“move”, “taxi_name”, (x, y))
 
-            # TODO:
+        if action_type == "move":           # (“move”, “taxi_name”, (x, y))
             # taxi updates:
             #   fuel -= 1
+            result_state['taxis'][taxi_name]['fuel'] -= 1
             #   location
-            result_state["taxis"][taxi_name]
+            future_location = action[2]
+            result_state['taxis'][taxi_name]['location'] = future_location
 
-        elif action_type == "pick_up":  # (“pick up”, “taxi_name”, “passenger_name”
+        elif action_type == "pick_up":      # (“pick up”, “taxi_name”, “passenger_name”)
             passenger_name = action[2]
-
-            # TODO:
+            
+            # TODO: 
             # Taxi updates:
             #   taxi capacity -= 1
-            #   add passenger name from passengers_list of taxi
+            result_state['taxis'][taxi_name]['capacity'] -= 1
+            #   add passenger name to passengers_list of taxi
+            result_state['taxis'][taxi_name]['passengers_list'].append(passenger_name)
             # Problem updates:
             #   n_picked_undelivered += 1
+            result_state['n_picked_undelivered'] += 1
             #   n_unpicked -= 1
+            result_state['n_unpicked'] += 1
             # Passenger updates:
             #   update "in_taxi" of passenger to name of taxi
+            result_state['passengers'][passenger_name]['in_taxi'] = taxi_name
 
-            pass
-        elif action_type == "drop_off":  # (“drop off”, “taxi_name”, “passenger_name”)
+        elif action_type == "drop_off":     # (“drop off”, “taxi_name”, “passenger_name”)
             passenger_name = action[2]
-
-            # TODO:
+            
+            # TODO: 
             # Taxi updates:
             #   taxi capacity += 1
+            result_state['taxis'][taxi_name]['capacity'] -= 1
             #   remove passenger name from passengers_list of taxi
+            result_state['taxis'][taxi_name]['passengers_list'].remove(passenger_name)
             # Problem updates:
             #   n_picked_undelivered -= 1
+            result_state['n_picked_undelivered'] -= 1
             #   n_delivered += 1
+            result_state['n_delivered'] += 1
             # Passenger updates:
             #   passenger location = taxi location
+            result_state['passengers'][passenger_name]['location'] = taxi_name
             #   update "in_taxi" of passenger to False
+            result_state['passengers'][passenger_name]['in_taxi'] = False
 
             pass
-        elif action_type == "refuel":  # ("refuel", "taxi_name")
+        elif action_type == "refuel":       # ("refuel", "taxi_name")
 
             # TODO:
             # taxi updates:
             #   fuel = max_fuel
 
             pass
-        elif action_type == "wait":  # ("wait", "taxi_name")
+        elif action_type == "wait":         # ("wait", "taxi_name")
             pass
+
 
     def goal_test(self, state):
         """Given a state, checks if this is the goal state.
         Returns True if it is, False otherwise."""
+        state = json_to_dict(state)
         at_goal = True
         for passenger, params_dict in self.initial["passengers"].items():
             location = params_dict["location"]
@@ -225,6 +246,7 @@ class TaxiProblem(search.Problem):
         return at_goal
 
     def h(self, node):
+        state = json_to_dict(node.state)
         # TODO
         """This is the heuristic. It gets a node (not a state,
         state can be accessed via node.state)
@@ -237,15 +259,18 @@ class TaxiProblem(search.Problem):
         (number of  passengers * 2 + the number of picked but yet undelivered passengers)
         /(number of taxis in the problem).
         """
+        state = json_to_dict(node.state)
         h_1 = (
-            node.state["n_passengers"] * 2 + node.state["n_picked_undelivered"]
-        ) / node.state["n_taxis"]
+            state["n_passengers"] * 2 + state["n_picked_undelivered"]
+        ) / state["n_taxis"]
         return h_1
 
     def h_2(self, node):
         """
         This is a slightly more sophisticated Manhattan heuristic
         """
+        state = json_to_dict(node.state)
+
         # D[i] = Manhattan distance between the initial location of an unpicked passenger i and her destination
         D = []
         # T[i] = Manhattan distance between the taxi where a picked but undelivered passenger is, and her destination
@@ -259,8 +284,14 @@ class TaxiProblem(search.Problem):
             else:  # then the passenger is picked
                 taxi = node.state["taxis"][dict_params["in_taxi"]]
                 T.append(manhattan_dist(taxi["location"], dict_params["destination"]))
+        for passenger, dict_params in state['passengers'].items():
+            if False == dict_params['in_taxi']:   # then passenger is unpicked
+                D.append(manhattan_dist(dict_params['location'], dict_params['destination']))
+            else:   # then the passenger is picked
+                taxi = state['taxis'][dict_params['in_taxi']]
+                T.append(manhattan_dist(taxi['location'], dict_params['destination']))
 
-        value = (sum(D) + sum(T)) / self.initial["n_taxis"]
+        value = (sum(D) + sum(T)) / state["n_taxis"]
         return value
 
 
@@ -287,3 +318,4 @@ def json_to_dict(j: str) -> dict:
     j = j.replace("'", '"')
     j_dict = json.loads(j)
     return j_dict
+
