@@ -77,11 +77,13 @@ class TaxiProblem(search.Problem):
         # 2. check that the taxi is on a passable tile
         # 4. check that there is fuel > 0
         # TODO: complete
+        pass
     
     def check_legal_refuel(self, state):
         # Refueling can be performed only at gas stations
         # check that the location on map is "G"
         # TODO: complete
+        pass
 
 
     def check_legal_pick_up(self, state):
@@ -92,12 +94,14 @@ class TaxiProblem(search.Problem):
         # The number of passengers in the taxi at any given turn cannot exceed this taxi’s capacity.
         # check num_of_passengers_in_taxi < taxi_capcity
         # TODO: complete
+        pass
 
 
     def check_legal_drop_off(self, state):
         # The passenger can only be dropped off on his destination tile and will refuse to leave the vehicle otherwise.
         # check that location of taxi is the same as destination of the passenger
         # TODO: complete
+        pass
         
 
     def actions(self, state):
@@ -120,7 +124,7 @@ class TaxiProblem(search.Problem):
 
         # for each taxi get possible atomic actions
         # TODO: complete
-        locations = generate_locations(self, state)
+        possible_locations_by_taxi = generate_locations(self, state)
          
         # get all permutations of atomic actions
         # for each permutation check that the taxis don't clash
