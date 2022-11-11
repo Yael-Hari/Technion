@@ -29,6 +29,7 @@ class TaxiProblem(search.Problem):
         self.initial["n_unpicked"] = len(initial["passengers"])
         self.initial["n_picked_undelivered"] = 0
         self.initial["n_delivered"] = 0
+        # self.initial[]
 
         """
         State example
@@ -55,30 +56,18 @@ class TaxiProblem(search.Problem):
         }
         """
 
-    def check_legal_move_on_map(self, state):
-        
-        legal_moves = []
+    def check_legal_move_on_map(self, state, x, y):
         # 0. check that the move is one step in direction: left/ right/ up/ down
         # 1. check that the taxi don't get out of the map
         # 2. check that the taxi is on a passable tile
-        # 3. check that there isn't other taxi on this tile
         # 4. check that there is fuel > 0
         # TODO: complete
-        
-        
-        # TODO: decide where to update: 
-        # fuel -= 1
-        # location pn map
-
-        return legal_moves
     
     def check_legal_refuel(self, state):
         # Refueling can be performed only at gas stations
         # check that the location on map is "G"
         # TODO: complete
-        
 
-        # TODO: decide where to update: fuel = max_fuel
 
     def check_legal_pick_up(self, state):
         # Pick up passengers if they are on the same tile as the taxi. 
@@ -88,33 +77,13 @@ class TaxiProblem(search.Problem):
         # The number of passengers in the taxi at any given turn cannot exceed this taxi’s capacity.
         # check num_of_passengers_in_taxi < taxi_capcity
         # TODO: complete
-        
-        # TODO: decide where to update: 
-        # Taxi updates:
-        #   taxi capacity -= 1
-        #   add passenger name from passengers_list of taxi
-        # Problem updates:
-        #   n_picked_undelivered += 1
-        #   n_unpicked -= 1
-        # Passenger updates:
-        #   update "in_taxi" of passenger to name of taxi
+
 
     def check_legal_drop_off(self, state):
         # The passenger can only be dropped off on his destination tile and will refuse to leave the vehicle otherwise.
         # check that location of taxi is the same as destination of the passenger
         # TODO: complete
         
-        # Drop off passengers on the same tile as the taxi
-        # TODO: decide where to update: 
-        # Taxi updates:
-        #   taxi capacity += 1
-        #   remove passenger name from passengers_list of taxi
-        # Problem updates:
-        #   n_picked_undelivered -= 1
-        #   n_delivered += 1
-        # Passenger updates:
-        #   passenger location = taxi location
-        #   update "in_taxi" of passenger to False
 
     def actions(self, state):
         """Returns all the actions that can be executed in the given
@@ -139,7 +108,7 @@ class TaxiProblem(search.Problem):
          
         # get all permutations of atomic actions
         # for each permutation check that the taxis don't clash
-        #   not going to the same location (therfor cannot pickup the same passenger)
+        #   not going to the same location (therefor cannot pickup the same passenger)
         # TODO: complete
 
     def result(self, state, action):
@@ -147,19 +116,57 @@ class TaxiProblem(search.Problem):
         """Return the state that results from executing the given
         action in the given state. The action must be one of
         self.actions(state)."""
+        action_type = action[0]
+        taxi_name = action[1]
         result_state = state.copy()
         actions_possible = ['move', 'pick_up', 'drop_off', 'refuel', 'wait']
         assert action[0] in actions_possible, f"{action[0]} is not a possible action!"
-        if "move" == action[0]:
-            # (“move”, “taxi_name”, (x, y))
-            result_state['taxis'][action[1]]
-        elif "pick_up" == action[0]:
+        if action_type == "move":           # (“move”, “taxi_name”, (x, y))
+            
+            # TODO:
+            # taxi updates: 
+            #   fuel -= 1
+            #   location
+            result_state['taxis'][taxi_name]
+
+        elif action_type == "pick_up":      # (“pick up”, “taxi_name”, “passenger_name”
+            passenger_name = action[2]
+            
+            # TODO: 
+            # Taxi updates:
+            #   taxi capacity -= 1
+            #   add passenger name from passengers_list of taxi
+            # Problem updates:
+            #   n_picked_undelivered += 1
+            #   n_unpicked -= 1
+            # Passenger updates:
+            #   update "in_taxi" of passenger to name of taxi
+
+        
             pass
-        elif "drop_off" == action[0]:
+        elif action_type == "drop_off":     # (“drop off”, “taxi_name”, “passenger_name”)
+            passenger_name = action[2]
+            
+            # TODO: 
+            # Taxi updates:
+            #   taxi capacity += 1
+            #   remove passenger name from passengers_list of taxi
+            # Problem updates:
+            #   n_picked_undelivered -= 1
+            #   n_delivered += 1
+            # Passenger updates:
+            #   passenger location = taxi location
+            #   update "in_taxi" of passenger to False
+
             pass
-        elif "refuel" == action[0]:
+        elif action_type == "refuel":       # ("refuel", "taxi_name")
+
+            # TODO:
+            # taxi updates:
+            #   fuel = max_fuel
+
             pass
-        elif "wait" == action[0]:
+        elif action_type == "wait":         # ("wait", "taxi_name")
             pass
 
 
@@ -211,8 +218,8 @@ class TaxiProblem(search.Problem):
         value = (sum(D) + sum(T)) / self.initial["n_taxis"]
         return value
 
-        # """Feel free to add your own functions
-        # (-2, -2, None) means there was a timeout"""
+# """Feel free to add your own functions
+# (-2, -2, None) means there was a timeout"""
 
 
 def manhattan_dist(a, b):
