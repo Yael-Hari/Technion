@@ -1,8 +1,8 @@
-from scipy import sparse
 from collections import OrderedDict, defaultdict
-import numpy as np
-from typing import List, Dict, Tuple
+from typing import Dict, List, Tuple
 
+import numpy as np
+from scipy import sparse
 
 WORD = 0
 TAG = 1
@@ -83,6 +83,9 @@ class FeatureStatistics:
                     # f107 - next word and tag pairs
                     next_word_tag = (n_word.lower(), cur_tag)
                     self.increment_val_in_feature_dict(next_word_tag, "f107")
+
+                    # f200 ...
+                    # TODO: complete!
 
                     # create history
                     history = (cur_word, cur_tag, p_word, p_tag, pp_word, pp_tag, n_word)
@@ -204,21 +207,45 @@ def represent_input_with_features(history: Tuple, dict_of_dicts: Dict[str, Dict[
     if next_word_tag in dict_of_dicts["f107"]:
         features.append(dict_of_dicts["f107"][next_word_tag])
 
-    # f200 - is starting with capital letter
-    # if c_word[0] in dict_of_dicts["f200"]:
-    #     features.append(dict_of_dicts["f200"][next_word_tag])
+    # f200 - (bool: is starting with capital letter, tag)
+    first_letter_is_capital = c_word[0].isupper()
+    f200_tuple = (first_letter_is_capital, c_tag)
+    if f200_tuple in dict_of_dicts["f200"]:
+        features.append(dict_of_dicts["f200"][f200_tuple])
 
-    #  f201 - is capital letter and first word in sentence
+    # f201 - (bool: has capital letter and it is first word in sentence, tag)
+    # TODO: check if there is efficient way to check instead of the following:
+    letters = c_word.split()
+    capital_letter_cnt = 0
+    for letter in letters:
+        if letter.isupper():
+            capital_letter_cnt += 1
 
-    # f201 - is have more than 1 capital letter
+    is_first_word = (p_word == "*")
+    has_capital_letter = (capital_letter_cnt != 0)
+    has_capital_letter_and_first_word = has_capital_letter and is_first_word
+    f201_tuple = (has_capital_letter_and_first_word, c_tag)
+    if f201_tuple in dict_of_dicts["f201"]:
+        features.append(dict_of_dicts["f201"][f201_tuple])
 
-    # f202 - is have exactly 1 capital letter - no matter where
+    # f202 - (bool: has more than 1 capital letter, tag)
+    has_more_than_one_capital = (capital_letter_cnt > 1)
+    f202_tuple = (has_more_than_one_capital, c_tag)
+    if f202_tuple in dict_of_dicts["f202"]:
+        features.append(dict_of_dicts["f202"][f202_tuple])
 
-    # g203 - is a number ---- tag CD?
+    # f203 - (bool: has exactly 1 capital letter no matter where, tag)
+    has_exactly_one_capital = (capital_letter_cnt == 1)
+    f203_tuple = (has_exactly_one_capital, c_tag)
+    if f202_tuple in dict_of_dicts["f203"]:
+        features.append(dict_of_dicts["f203"][f203_tuple])
 
-    # g204 - has a number and a letter
+    # f204 - (bool: is a number, tag)
+    # TODO: complete
+    # f205 - (bool: has a digit and a letter, tag)
 
-    # 
+    # f206 ...
+    # TODO: invent more...
 
     return features
 
