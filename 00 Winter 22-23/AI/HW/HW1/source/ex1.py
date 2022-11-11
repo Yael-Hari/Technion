@@ -62,47 +62,69 @@ class TaxiProblem(search.Problem):
         """
 
     def generate_locations(self, state):
+        # get new locations by:
+        # current location + one step in legal orientation (EAST, NORTH, WEST, SOUTH)
         possible_locations_by_taxi = {}
         for taxi_name, taxi_dict in state["taxis"].items():
             curr_location = taxi_dict["location"]
-            possible_locations = [vector_add(curr_location, orien) for orien in orientations]
+            possible_locations = [
+                vector_add(curr_location, orien) for orien in orientations
+            ]
             possible_locations_by_taxi[taxi_name] = possible_locations
-        
-        return possible_locations_by_taxi
-        
 
-    def check_legal_move_on_map(self, state, x, y):
-        # 0. check that the move is one step in direction: left/ right/ up/ down
-        # 1. check that the taxi don't get out of the map
-        # 2. check that the taxi is on a passable tile
-        # 4. check that there is fuel > 0
-        # TODO: complete
-        pass
-    
+        return possible_locations_by_taxi
+
+    def get_legal_moves_on_map(self, state, possible_locations_by_taxi):
+        # TODO: debug and validate all conditions
+        legal_locations_by_taxi = {}
+        for taxi_name, taxi_dict in state["taxis"].items():
+            # 1. check fuel > 0
+            if taxi_dict["fuel"] == 0:
+                return None
+
+            map_size_height = state["map_size_height"]
+            map_size_width = state["map_size_width"]
+            map_matrix = state["map"]
+
+            possible_locations = possible_locations_by_taxi[taxi_name]
+            legal_locations = []
+            for new_location in possible_locations:
+                x, y = new_location
+                # 2. check that the taxi doesn't get out of the map
+                # 3. check that the taxi is on a passable tile
+                if (
+                    (x >= 0)
+                    and (x < map_size_width)
+                    and (y >= 0)
+                    and (y < map_size_height)
+                    and map_matrix[x][y] == "P"
+                ):
+                    legal_locations.append(new_location)
+            legal_locations_by_taxi[taxi_name] = legal_locations
+
+        return legal_locations_by_taxi
+
     def check_legal_refuel(self, state):
         # Refueling can be performed only at gas stations
         # check that the location on map is "G"
         # TODO: complete
         pass
 
-
     def check_legal_pick_up(self, state):
-        # Pick up passengers if they are on the same tile as the taxi. 
+        # Pick up passengers if they are on the same tile as the taxi.
         # check that location of taxi is the same as location of the passenger
         # TODO: complete
-        
+
         # The number of passengers in the taxi at any given turn cannot exceed this taxi’s capacity.
         # check num_of_passengers_in_taxi < taxi_capcity
         # TODO: complete
         pass
-
 
     def check_legal_drop_off(self, state):
         # The passenger can only be dropped off on his destination tile and will refuse to leave the vehicle otherwise.
         # check that location of taxi is the same as destination of the passenger
         # TODO: complete
         pass
-        
 
     def actions(self, state):
         """Returns all the actions that can be executed in the given
@@ -124,8 +146,11 @@ class TaxiProblem(search.Problem):
 
         # for each taxi get possible atomic actions
         # TODO: complete
-        possible_locations_by_taxi = generate_locations(self, state)
-         
+        possible_locations_by_taxi = self.generate_locations(state)
+        legal_locations_by_taxi = self.get_legal_moves_on_map(
+            state, possible_locations_by_taxi
+        )
+
         # get all permutations of atomic actions
         # for each permutation check that the taxis don't clash
         #   not going to the same location (therefor cannot pickup the same passenger)
@@ -139,20 +164,20 @@ class TaxiProblem(search.Problem):
         action_type = action[0]
         taxi_name = action[1]
         result_state = state.copy()
-        actions_possible = ['move', 'pick_up', 'drop_off', 'refuel', 'wait']
+        actions_possible = ["move", "pick_up", "drop_off", "refuel", "wait"]
         assert action[0] in actions_possible, f"{action[0]} is not a possible action!"
-        if action_type == "move":           # (“move”, “taxi_name”, (x, y))
-            
+        if action_type == "move":  # (“move”, “taxi_name”, (x, y))
+
             # TODO:
-            # taxi updates: 
+            # taxi updates:
             #   fuel -= 1
             #   location
-            result_state['taxis'][taxi_name]
+            result_state["taxis"][taxi_name]
 
-        elif action_type == "pick_up":      # (“pick up”, “taxi_name”, “passenger_name”
+        elif action_type == "pick_up":  # (“pick up”, “taxi_name”, “passenger_name”
             passenger_name = action[2]
-            
-            # TODO: 
+
+            # TODO:
             # Taxi updates:
             #   taxi capacity -= 1
             #   add passenger name from passengers_list of taxi
@@ -162,12 +187,11 @@ class TaxiProblem(search.Problem):
             # Passenger updates:
             #   update "in_taxi" of passenger to name of taxi
 
-        
             pass
-        elif action_type == "drop_off":     # (“drop off”, “taxi_name”, “passenger_name”)
+        elif action_type == "drop_off":  # (“drop off”, “taxi_name”, “passenger_name”)
             passenger_name = action[2]
-            
-            # TODO: 
+
+            # TODO:
             # Taxi updates:
             #   taxi capacity += 1
             #   remove passenger name from passengers_list of taxi
@@ -179,16 +203,15 @@ class TaxiProblem(search.Problem):
             #   update "in_taxi" of passenger to False
 
             pass
-        elif action_type == "refuel":       # ("refuel", "taxi_name")
+        elif action_type == "refuel":  # ("refuel", "taxi_name")
 
             # TODO:
             # taxi updates:
             #   fuel = max_fuel
 
             pass
-        elif action_type == "wait":         # ("wait", "taxi_name")
+        elif action_type == "wait":  # ("wait", "taxi_name")
             pass
-
 
     def goal_test(self, state):
         """Given a state, checks if this is the goal state.
@@ -228,15 +251,18 @@ class TaxiProblem(search.Problem):
         # T[i] = Manhattan distance between the taxi where a picked but undelivered passenger is, and her destination
         T = []
 
-        for passenger, dict_params in node.state['passengers'].items():
-            if False == dict_params['in_taxi']:   # then passenger is unpicked
-                D.append(manhattan_dist(dict_params['location'], dict_params['destination']))
-            else:   # then the passenger is picked
-                taxi = node.state['taxis'][dict_params['in_taxi']]
-                T.append(manhattan_dist(taxi['location'], dict_params['destination']))
+        for passenger, dict_params in node.state["passengers"].items():
+            if False == dict_params["in_taxi"]:  # then passenger is unpicked
+                D.append(
+                    manhattan_dist(dict_params["location"], dict_params["destination"])
+                )
+            else:  # then the passenger is picked
+                taxi = node.state["taxis"][dict_params["in_taxi"]]
+                T.append(manhattan_dist(taxi["location"], dict_params["destination"]))
 
         value = (sum(D) + sum(T)) / self.initial["n_taxis"]
         return value
+
 
 # """Feel free to add your own functions
 # (-2, -2, None) means there was a timeout"""
@@ -251,12 +277,13 @@ def manhattan_dist(a, b):
 def create_taxi_problem(game):
     return TaxiProblem(game)
 
+
 def dict_to_json(d: dict) -> str:
     d_json = str(d).replace("'", '"')
     return d_json
+
 
 def json_to_dict(j: str) -> dict:
     j = j.replace("'", '"')
     j_dict = json.loads(j)
     return j_dict
-
