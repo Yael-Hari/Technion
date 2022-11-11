@@ -3,6 +3,7 @@
 import json
 
 import search
+from utils import orientations, vector_add
 
 ids = ["316375872", "206014482"]
 
@@ -60,6 +61,16 @@ class TaxiProblem(search.Problem):
         }
         """
 
+    def generate_locations(self, state):
+        possible_locations_by_taxi = {}
+        for taxi_name, taxi_dict in state["taxis"].items():
+            curr_location = taxi_dict["location"]
+            possible_locations = [vector_add(curr_location, orien) for orien in orientations]
+            possible_locations_by_taxi[taxi_name] = possible_locations
+        
+        return possible_locations_by_taxi
+        
+
     def check_legal_move_on_map(self, state, x, y):
         # 0. check that the move is one step in direction: left/ right/ up/ down
         # 1. check that the taxi don't get out of the map
@@ -109,6 +120,7 @@ class TaxiProblem(search.Problem):
 
         # for each taxi get possible atomic actions
         # TODO: complete
+        locations = generate_locations(self, state)
          
         # get all permutations of atomic actions
         # for each permutation check that the taxis don't clash
