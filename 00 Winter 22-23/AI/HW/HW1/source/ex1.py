@@ -1,7 +1,7 @@
-import search
-import random
 import math
+import random
 
+import search
 
 ids = ["316375872", "206014482"]
 
@@ -16,6 +16,12 @@ class TaxiProblem(search.Problem):
         search.Problem.__init__(self, initial)
         for taxi_name in self.initial['taxis'].keys():
             self.initial['taxis'][taxi_name]['passengers_list'] = []
+        for pass_name in self.initial['passengers'].keys():
+            self.initial['passengers'][pass_name]['in_taxi'] = False
+        self.initial["n_taxis"] = len(initial["taxis"])
+        self.initial["n_passengers"] = len(initial["passengers"])
+        self.initial["n_unpicked"] = len(initial["passengers"])
+        self.initial["n_picked_undelivered"] = 0
 
         """
         State example
@@ -26,12 +32,18 @@ class TaxiProblem(search.Problem):
         "taxis": {'taxi 1': {"location": (3, 3),
                              "fuel": 15,
                              "capacity": 2},
-                            "passengers_list": []},
+                             "passengers_list": []},
         "passengers": {'Yossi': {"location": (0, 0),
                                  "destination": (2, 3)},
                        'Moshe': {"location": (3, 1),
-                                 "destination": (0, 0)}
-                       }}
+                                 "destination": (0, 0),
+                                 "in_taxi": False}
+                       },
+        "n_taxis": 1,
+        "n_passengers": 2,
+        "n_unpicked": 2,
+        "n_picked_undelivered": 0
+        }
         """
 
     def actions(self, state):
@@ -73,10 +85,8 @@ class TaxiProblem(search.Problem):
         (number of  passengers * 2 + the number of picked but yet undelivered passengers)
         /(number of taxis in the problem).
         """
-        n_taxis = len(node.state["taxis"])
-        n_passengers = len(node.state["passengers"])
-        n_unpicked =
-        n_picked_undelivered = 0
+        h_1 = (node.state["n_passengers"] * 2 + node.state["n_picked_undelivered"]) / node.state["n_taxis"]
+        return h_1
 
 
     def h_2(self, node):
