@@ -1,7 +1,8 @@
-import ex1
-import search
 import time
 from dataclasses import dataclass, field
+
+import ex1
+import search
 
 
 def timeout_exec(func, args=(), kwargs={}, timeout_duration=10, default=None):
@@ -10,6 +11,7 @@ def timeout_exec(func, args=(), kwargs={}, timeout_duration=10, default=None):
     timeout_duration is exceeded.
     """
     import threading
+
     class InterruptableThread(threading.Thread):
         def __init__(self):
             threading.Thread.__init__(self)
@@ -31,7 +33,7 @@ def timeout_exec(func, args=(), kwargs={}, timeout_duration=10, default=None):
 
 
 def check_problem(p, search_method, timeout):
-    """ Constructs a problem using ex1.create_wumpus_problem,
+    """Constructs a problem using ex1.create_wumpus_problem,
     and solves it using the given search_method with the given timeout.
     Returns a tuple of (solution length, solution time, solution)"""
 
@@ -72,39 +74,35 @@ def main():
     print(ex1.ids)
     """Here goes the input you want to check"""
     problems = [
-
         {
-            "map": [['P', 'P', 'P', 'P'],
-                    ['P', 'P', 'P', 'P'],
-                    ['P', 'I', 'G', 'P'],
-                    ['P', 'P', 'P', 'P'], ],
-            "taxis": {'taxi 1': {"location": (3, 3),
-                                 "fuel": 15,
-                                 "capacity": 2}},
-            "passengers": {'Yossi': {"location": (0, 0),
-                                     "destination": (2, 3)},
-                           'Moshe': {"location": (3, 1),
-                                     "destination": (0, 0)}
-                           }
+            "map": [
+                ["P", "P", "P", "P"],
+                ["P", "P", "P", "P"],
+                ["P", "I", "G", "P"],
+                ["P", "P", "P", "P"],
+            ],
+            "taxis": {"taxi 1": {"location": (3, 3), "fuel": 15, "capacity": 2}},
+            "passengers": {
+                "Yossi": {"location": (0, 0), "destination": (2, 3)},
+                "Moshe": {"location": (3, 1), "destination": (0, 0)},
+            },
         },
         {
-            "map": [['P', 'P', 'I', 'P'],
-                    ['P', 'P', 'P', 'P'],
-                    ['P', 'I', 'G', 'P'],
-                    ['P', 'P', 'P', 'P'], ],
-            "taxis": {'taxi 1': {"location": (3, 3),
-                                 "fuel": 15,
-                                 "capacity": 2}},
-            "passengers": {'Dana': {"location": (0, 0),
-                                    "destination": (2, 3)},
-                           'Yael': {"location": (3, 1),
-                                    "destination": (0, 0)}
-                           }
-
+            "map": [
+                ["P", "P", "I", "P"],
+                ["P", "P", "P", "P"],
+                ["P", "I", "G", "P"],
+                ["P", "P", "P", "P"],
+            ],
+            "taxis": {"taxi 1": {"location": (3, 3), "fuel": 15, "capacity": 2}},
+            "passengers": {
+                "Dana": {"location": (0, 0), "destination": (2, 3)},
+                "Yael": {"location": (3, 1), "destination": (0, 0)},
+            },
         },
     ]
     solve_problems(problems)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

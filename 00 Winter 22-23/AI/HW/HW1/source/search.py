@@ -4,19 +4,30 @@ The way to use this code is to subclass Problem to create a class of problems,
 then create problem instances and solve them with calls to the various search
 functions."""
 
-from utils import (
-    is_in, argmin, argmax, argmax_random_tie, probability, weighted_sampler,
-    memoize, print_table, open_data, Stack, FIFOQueue, PriorityQueue, name,
-    distance
-)
-
-from collections import defaultdict
+import bisect
 import math
 import random
 import sys
-import bisect
+from collections import defaultdict
 
-infinity = float('inf')
+from utils import (
+    FIFOQueue,
+    PriorityQueue,
+    Stack,
+    argmax,
+    argmax_random_tie,
+    argmin,
+    distance,
+    is_in,
+    memoize,
+    name,
+    open_data,
+    print_table,
+    probability,
+    weighted_sampler,
+)
+
+infinity = float("inf")
 
 # ______________________________________________________________________________
 
@@ -70,6 +81,8 @@ class Problem(object):
         """For optimization problems, each state has a value.  Hill-climbing
         and related algorithms try to maximize this value."""
         raise NotImplementedError
+
+
 # ______________________________________________________________________________
 
 
@@ -102,15 +115,19 @@ class Node:
 
     def expand(self, problem):
         """List the nodes reachable in one step from this node."""
-        return [self.child_node(problem, action)
-                for action in problem.actions(self.state)]
+        return [
+            self.child_node(problem, action) for action in problem.actions(self.state)
+        ]
 
     def child_node(self, problem, action):
         """[Figure 3.10]"""
         next = problem.result(self.state, action)
-        return Node(next, self, action,
-                    problem.path_cost(self.path_cost, self.state,
-                                      action, next))
+        return Node(
+            next,
+            self,
+            action,
+            problem.path_cost(self.path_cost, self.state, action, next),
+        )
 
     def solution(self):
         """Return the sequence of actions to go from the root to this node."""
@@ -134,6 +151,7 @@ class Node:
 
     def __hash__(self):
         return hash(self.state)
+
 
 # ______________________________________________________________________________
 
@@ -164,9 +182,11 @@ def graph_search(problem, frontier):
         if problem.goal_test(node.state):
             return node
         explored.add(node.state)
-        frontier.extend(child for child in node.expand(problem)
-                        if child.state not in explored and
-                        child not in frontier)
+        frontier.extend(
+            child
+            for child in node.expand(problem)
+            if child.state not in explored and child not in frontier
+        )
     return None
 
 
@@ -212,7 +232,7 @@ def best_first_graph_search(problem, f):
     There is a subtlety: the line "f = memoize(f, 'f')" means that the f
     values will be cached on the nodes as they are computed. So after doing
     a best first search you can examine the f values of the path returned."""
-    f = memoize(f, 'f')
+    f = memoize(f, "f")
     node = Node(problem.initial)
     if problem.goal_test(node.state):
         return node
@@ -242,20 +262,21 @@ def uniform_cost_search(problem):
 
 def depth_limited_search(problem, limit=50):
     """[Figure 3.17]"""
+
     def recursive_dls(node, problem, limit):
         if problem.goal_test(node.state):
             return node
         elif limit == 0:
-            return 'cutoff'
+            return "cutoff"
         else:
             cutoff_occurred = False
             for child in node.expand(problem):
                 result = recursive_dls(child, problem, limit - 1)
-                if result == 'cutoff':
+                if result == "cutoff":
                     cutoff_occurred = True
                 elif result is not None:
                     return result
-            return 'cutoff' if cutoff_occurred else None
+            return "cutoff" if cutoff_occurred else None
 
     # Body of depth_limited_search:
     return recursive_dls(Node(problem.initial), problem, limit)
@@ -265,11 +286,11 @@ def iterative_deepening_search(problem):
     """[Figure 3.18]"""
     for depth in range(sys.maxsize):
         result = depth_limited_search(problem, depth)
-        if result != 'cutoff':
+        if result != "cutoff":
             return result
 
-# ______________________________________________________________________________
 
+# ______________________________________________________________________________
 
 
 greedy_best_first_graph_search = best_first_graph_search
@@ -280,5 +301,5 @@ def astar_search(problem, h=None):
     """A* search is best-first graph search with f(n) = g(n)+h(n).
     You need to specify the h function when you call astar_search, or
     else in your Problem subclass."""
-    h = memoize(h or problem.h, 'h')
+    h = memoize(h or problem.h, "h")
     return best_first_graph_search(problem, lambda n: n.path_cost + h(n))
