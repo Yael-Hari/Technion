@@ -147,6 +147,21 @@ class TaxiProblem(search.Problem):
         """Return the state that results from executing the given
         action in the given state. The action must be one of
         self.actions(state)."""
+        result_state = state.copy()
+        actions_possible = ['move', 'pick_up', 'drop_off', 'refuel', 'wait']
+        assert action[0] in actions_possible, f"{action[0]} is not a possible action!"
+        if "move" == action[0]:
+            # (“move”, “taxi_name”, (x, y))
+            result_state['taxis'][action[1]]
+        elif "pick_up" == action[0]:
+            pass
+        elif "drop_off" == action[0]:
+            pass
+        elif "refuel" == action[0]:
+            pass
+        elif "wait" == action[0]:
+            pass
+
 
     def goal_test(self, state):
         """Given a state, checks if this is the goal state.
@@ -178,13 +193,26 @@ class TaxiProblem(search.Problem):
         return h_1
 
     def h_2(self, node):
-        # TODO
         """
         This is a slightly more sophisticated Manhattan heuristic
         """
+        # D[i] = Manhattan distance between the initial location of an unpicked passenger i and her destination
+        D = []
+        # T[i] = Manhattan distance between the taxi where a picked but undelivered passenger is, and her destination
+        T = []
 
-        """Feel free to add your own functions
-        (-2, -2, None) means there was a timeout"""
+        for passenger, dict_params in node.state['passengers'].items():
+            if False == dict_params['in_taxi']:   # then passenger is unpicked
+                D.append(manhattan_dist(dict_params['location'], dict_params['destination']))
+            else:   # then the passenger is picked
+                taxi = node.state['taxis'][dict_params['in_taxi']]
+                T.append(manhattan_dist(taxi['location'], dict_params['destination']))
+
+        value = (sum(D) + sum(T)) / self.initial["n_taxis"]
+        return value
+
+        # """Feel free to add your own functions
+        # (-2, -2, None) means there was a timeout"""
 
 
 def manhattan_dist(a, b):
