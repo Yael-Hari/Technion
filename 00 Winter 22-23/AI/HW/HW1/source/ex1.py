@@ -1,7 +1,7 @@
 # import math
 # import random
 import json
-
+from typing import Tuple, List
 import search
 from utils import orientations, vector_add
 
@@ -112,7 +112,6 @@ class TaxiProblem(search.Problem):
         # TODO: complete
         pass
 
-
     def check_legal_pick_up(self, state):
         # Pick up passengers if they are on the same tile as the taxi.
         # check that location of taxi is the same as location of the passenger
@@ -123,14 +122,12 @@ class TaxiProblem(search.Problem):
         # TODO: complete
         pass
 
-
     def check_legal_drop_off(self, state):
         state = json_to_dict(state)
         # The passenger can only be dropped off on his destination tile and will refuse to leave the vehicle otherwise.
         # check that location of taxi is the same as destination of the passenger
         # TODO: complete
         pass
-        
 
     def actions(self, state):
         """Returns all the actions that can be executed in the given
@@ -163,30 +160,47 @@ class TaxiProblem(search.Problem):
         #   not going to the same location (therefor cannot pickup the same passenger)
         # TODO: complete
 
-    def result(self, state, action):
-        # TODO
+    def result(self, state: str, action: Tuple[Tuple]) -> str:
         """Return the state that results from executing the given
         action in the given state. The action must be one of
         self.actions(state)."""
-        state = json_to_dict(state)
-        action_type = action[0]
-        taxi_name = action[1]
-        result_state = state.copy()
-        actions_possible = ['move', 'pick_up', 'drop_off', 'refuel', 'wait']
-        assert action[0] in actions_possible, f"{action[0]} is not a possible action!"
+        result_state = json_to_dict(state)
 
-        if action_type == "move":           # (“move”, “taxi_name”, (x, y))
+        for action_tuple in action:
+            result_state = self._execute_action_tuple(result_state, action_tuple)
+
+        # back into a hashable
+        result_state = dict_to_json(result_state)
+        return result_state
+
+    def _execute_action_tuple(self, state: dict, action_tuple: Tuple) -> dict:
+        """
+        input: state dict, and an action tuple like: (“move”, “taxi_name”, (x, y))
+        output: the state dict after preforming the action
+        """
+        actions_possible = MOVE, PICK_UP, DROP_OFF, REFUEL, WAIT = ('move', 'pick up', 'drop off', 'refuel', 'wait')
+
+        action_type = action_tuple[0]
+        taxi_name = action_tuple[1]
+
+        result_state = state.copy()
+
+        # check input is legal
+        assert action_type in actions_possible, f"{action_type} is not a possible action!"
+
+        if action_type == MOVE:  # (“move”, “taxi_name”, (x, y))
+            assert len(action_tuple) == 3, f"len of action_tuple should be 3: {action_tuple}"
             # taxi updates:
             #   fuel -= 1
             result_state['taxis'][taxi_name]['fuel'] -= 1
             #   location
-            future_location = action[2]
+            future_location = action_tuple[2]
             result_state['taxis'][taxi_name]['location'] = future_location
 
-        elif action_type == "pick_up":      # (“pick up”, “taxi_name”, “passenger_name”)
-            passenger_name = action[2]
-            
-            # TODO: 
+        elif action_type == PICK_UP:  # (“pick up”, “taxi_name”, “passenger_name”)
+            assert len(action_tuple) == 3, f"len of action_tuple should be 3: {action_tuple}"
+            passenger_name = action_tuple[2]
+
             # Taxi updates:
             #   taxi capacity -= 1
             result_state['taxis'][taxi_name]['capacity'] -= 1
@@ -201,10 +215,9 @@ class TaxiProblem(search.Problem):
             #   update "in_taxi" of passenger to name of taxi
             result_state['passengers'][passenger_name]['in_taxi'] = taxi_name
 
-        elif action_type == "drop_off":     # (“drop off”, “taxi_name”, “passenger_name”)
-            passenger_name = action[2]
-            
-            # TODO: 
+        elif action_type == DROP_OFF:  # (“drop off”, “taxi_name”, “passenger_name”)
+            assert len(action_tuple) == 3, f"len of action_tuple should be 3: {action_tuple}"
+            passenger_name = action_tuple[2]
             # Taxi updates:
             #   taxi capacity += 1
             result_state['taxis'][taxi_name]['capacity'] -= 1
@@ -221,17 +234,17 @@ class TaxiProblem(search.Problem):
             #   update "in_taxi" of passenger to False
             result_state['passengers'][passenger_name]['in_taxi'] = False
 
-            pass
-        elif action_type == "refuel":       # ("refuel", "taxi_name")
-
-            # TODO:
+        elif action_type == REFUEL:  # ("refuel", "taxi_name")
+            assert len(action_tuple) == 2, f"len of action_tuple should be 2: {action_tuple}"
             # taxi updates:
             #   fuel = max_fuel
+            result_state['taxis'][taxi_name]['fuel'] = result_state['taxis'][taxi_name]['max_fuel']
 
-            pass
-        elif action_type == "wait":         # ("wait", "taxi_name")
+        elif action_type == WAIT:  # ("wait", "taxi_name")
+            assert len(action_tuple) == 2, f"len of action_tuple should be 2: {action_tuple}"
             pass
 
+        return result_state
 
     def goal_test(self, state):
         """Given a state, checks if this is the goal state.
@@ -293,10 +306,6 @@ class TaxiProblem(search.Problem):
 
         value = (sum(D) + sum(T)) / state["n_taxis"]
         return value
-
-
-# """Feel free to add your own functions
-# (-2, -2, None) means there was a timeout"""
 
 
 def manhattan_dist(a, b):
