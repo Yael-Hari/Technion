@@ -314,7 +314,7 @@ class TaxiProblem(search.Problem):
         T = []
 
         for passenger, dict_params in node.state["passengers"].items():
-            if False == dict_params["in_taxi"]:  # then passenger is unpicked
+            if not dict_params["in_taxi"]:  # then passenger is unpicked
                 D.append(
                     manhattan_dist(dict_params["location"], dict_params["destination"])
                 )
@@ -322,7 +322,7 @@ class TaxiProblem(search.Problem):
                 taxi = node.state["taxis"][dict_params["in_taxi"]]
                 T.append(manhattan_dist(taxi["location"], dict_params["destination"]))
         for passenger, dict_params in state["passengers"].items():
-            if False == dict_params["in_taxi"]:  # then passenger is unpicked
+            if not dict_params["in_taxi"]:  # then passenger is unpicked
                 D.append(
                     manhattan_dist(dict_params["location"], dict_params["destination"])
                 )
