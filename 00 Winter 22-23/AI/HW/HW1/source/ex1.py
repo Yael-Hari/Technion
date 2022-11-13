@@ -1,7 +1,8 @@
 # import math
 # import random
 import json
-from typing import Tuple, List
+from typing import Tuple
+
 import search
 from utils import orientations, vector_add
 
@@ -124,7 +125,8 @@ class TaxiProblem(search.Problem):
 
     def check_legal_drop_off(self, state):
         state = json_to_dict(state)
-        # The passenger can only be dropped off on his destination tile and will refuse to leave the vehicle otherwise.
+        # The passenger can only be dropped off on his destination tile
+        # and will refuse to leave the vehicle otherwise.
         # check that location of taxi is the same as destination of the passenger
         # TODO: complete
         pass
@@ -178,7 +180,13 @@ class TaxiProblem(search.Problem):
         input: state dict, and an action tuple like: (“move”, “taxi_name”, (x, y))
         output: the state dict after preforming the action
         """
-        actions_possible = MOVE, PICK_UP, DROP_OFF, REFUEL, WAIT = ('move', 'pick up', 'drop off', 'refuel', 'wait')
+        actions_possible = MOVE, PICK_UP, DROP_OFF, REFUEL, WAIT = (
+            "move",
+            "pick up",
+            "drop off",
+            "refuel",
+            "wait",
+        )
 
         action_type = action_tuple[0]
         taxi_name = action_tuple[1]
@@ -186,62 +194,76 @@ class TaxiProblem(search.Problem):
         result_state = state.copy()
 
         # check input is legal
-        assert action_type in actions_possible, f"{action_type} is not a possible action!"
+        assert (
+            action_type in actions_possible
+        ), f"{action_type} is not a possible action!"
 
         if action_type == MOVE:  # (“move”, “taxi_name”, (x, y))
-            assert len(action_tuple) == 3, f"len of action_tuple should be 3: {action_tuple}"
+            assert (
+                len(action_tuple) == 3
+            ), f"len of action_tuple should be 3: {action_tuple}"
             # taxi updates:
             #   fuel -= 1
-            result_state['taxis'][taxi_name]['fuel'] -= 1
+            result_state["taxis"][taxi_name]["fuel"] -= 1
             #   location
             future_location = action_tuple[2]
-            result_state['taxis'][taxi_name]['location'] = future_location
+            result_state["taxis"][taxi_name]["location"] = future_location
 
         elif action_type == PICK_UP:  # (“pick up”, “taxi_name”, “passenger_name”)
-            assert len(action_tuple) == 3, f"len of action_tuple should be 3: {action_tuple}"
+            assert (
+                len(action_tuple) == 3
+            ), f"len of action_tuple should be 3: {action_tuple}"
             passenger_name = action_tuple[2]
 
             # Taxi updates:
             #   taxi capacity -= 1
-            result_state['taxis'][taxi_name]['capacity'] -= 1
+            result_state["taxis"][taxi_name]["capacity"] -= 1
             #   add passenger name to passengers_list of taxi
-            result_state['taxis'][taxi_name]['passengers_list'].append(passenger_name)
+            result_state["taxis"][taxi_name]["passengers_list"].append(passenger_name)
             # Problem updates:
             #   n_picked_undelivered += 1
-            result_state['n_picked_undelivered'] += 1
+            result_state["n_picked_undelivered"] += 1
             #   n_unpicked -= 1
-            result_state['n_unpicked'] += 1
+            result_state["n_unpicked"] += 1
             # Passenger updates:
             #   update "in_taxi" of passenger to name of taxi
-            result_state['passengers'][passenger_name]['in_taxi'] = taxi_name
+            result_state["passengers"][passenger_name]["in_taxi"] = taxi_name
 
         elif action_type == DROP_OFF:  # (“drop off”, “taxi_name”, “passenger_name”)
-            assert len(action_tuple) == 3, f"len of action_tuple should be 3: {action_tuple}"
+            assert (
+                len(action_tuple) == 3
+            ), f"len of action_tuple should be 3: {action_tuple}"
             passenger_name = action_tuple[2]
             # Taxi updates:
             #   taxi capacity += 1
-            result_state['taxis'][taxi_name]['capacity'] -= 1
+            result_state["taxis"][taxi_name]["capacity"] -= 1
             #   remove passenger name from passengers_list of taxi
-            result_state['taxis'][taxi_name]['passengers_list'].remove(passenger_name)
+            result_state["taxis"][taxi_name]["passengers_list"].remove(passenger_name)
             # Problem updates:
             #   n_picked_undelivered -= 1
-            result_state['n_picked_undelivered'] -= 1
+            result_state["n_picked_undelivered"] -= 1
             #   n_delivered += 1
-            result_state['n_delivered'] += 1
+            result_state["n_delivered"] += 1
             # Passenger updates:
             #   passenger location = taxi location
-            result_state['passengers'][passenger_name]['location'] = taxi_name
+            result_state["passengers"][passenger_name]["location"] = taxi_name
             #   update "in_taxi" of passenger to False
-            result_state['passengers'][passenger_name]['in_taxi'] = False
+            result_state["passengers"][passenger_name]["in_taxi"] = False
 
         elif action_type == REFUEL:  # ("refuel", "taxi_name")
-            assert len(action_tuple) == 2, f"len of action_tuple should be 2: {action_tuple}"
+            assert (
+                len(action_tuple) == 2
+            ), f"len of action_tuple should be 2: {action_tuple}"
             # taxi updates:
             #   fuel = max_fuel
-            result_state['taxis'][taxi_name]['fuel'] = result_state['taxis'][taxi_name]['max_fuel']
+            result_state["taxis"][taxi_name]["fuel"] = result_state["taxis"][taxi_name][
+                "max_fuel"
+            ]
 
         elif action_type == WAIT:  # ("wait", "taxi_name")
-            assert len(action_tuple) == 2, f"len of action_tuple should be 2: {action_tuple}"
+            assert (
+                len(action_tuple) == 2
+            ), f"len of action_tuple should be 2: {action_tuple}"
             pass
 
         return result_state
@@ -273,9 +295,9 @@ class TaxiProblem(search.Problem):
         /(number of taxis in the problem).
         """
         state = json_to_dict(node.state)
-        h_1 = (
-            state["n_passengers"] * 2 + state["n_picked_undelivered"]
-        ) / state["n_taxis"]
+        h_1 = (state["n_passengers"] * 2 + state["n_picked_undelivered"]) / state[
+            "n_taxis"
+        ]
         return h_1
 
     def h_2(self, node):
@@ -284,9 +306,11 @@ class TaxiProblem(search.Problem):
         """
         state = json_to_dict(node.state)
 
-        # D[i] = Manhattan distance between the initial location of an unpicked passenger i and her destination
+        # D[i] = Manhattan distance between the initial location of an unpicked passenger i,
+        # and her destination
         D = []
-        # T[i] = Manhattan distance between the taxi where a picked but undelivered passenger is, and her destination
+        # T[i] = Manhattan distance between the taxi where a picked but undelivered passenger is,
+        # and her destination
         T = []
 
         for passenger, dict_params in node.state["passengers"].items():
@@ -297,12 +321,14 @@ class TaxiProblem(search.Problem):
             else:  # then the passenger is picked
                 taxi = node.state["taxis"][dict_params["in_taxi"]]
                 T.append(manhattan_dist(taxi["location"], dict_params["destination"]))
-        for passenger, dict_params in state['passengers'].items():
-            if False == dict_params['in_taxi']:   # then passenger is unpicked
-                D.append(manhattan_dist(dict_params['location'], dict_params['destination']))
-            else:   # then the passenger is picked
-                taxi = state['taxis'][dict_params['in_taxi']]
-                T.append(manhattan_dist(taxi['location'], dict_params['destination']))
+        for passenger, dict_params in state["passengers"].items():
+            if False == dict_params["in_taxi"]:  # then passenger is unpicked
+                D.append(
+                    manhattan_dist(dict_params["location"], dict_params["destination"])
+                )
+            else:  # then the passenger is picked
+                taxi = state["taxis"][dict_params["in_taxi"]]
+                T.append(manhattan_dist(taxi["location"], dict_params["destination"]))
 
         value = (sum(D) + sum(T)) / state["n_taxis"]
         return value
@@ -327,4 +353,3 @@ def json_to_dict(j: str) -> dict:
     j = j.replace("'", '"')
     j_dict = json.loads(j)
     return j_dict
-
