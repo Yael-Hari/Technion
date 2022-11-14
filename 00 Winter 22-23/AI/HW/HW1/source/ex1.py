@@ -104,14 +104,19 @@ class TaxiProblem(search.Problem):
                 ):
                     legal_locations.append(new_location)
             legal_locations_by_taxi[taxi_name] = legal_locations
-
         return legal_locations_by_taxi
 
     def check_legal_refuel(self, state):
+        # TODO: debug and validate all conditions
         # Refueling can be performed only at gas stations
         # check that the location on map is "G"
-        # TODO: complete
-        pass
+        legal_refuels_by_taxi = {}
+        for taxi_name, taxi_dict in state["taxis"].items():
+            map_matrix = state["map"]
+            x, y = taxi_dict["location"]  # current location of taxi
+            legal_refuel = map_matrix[x][y] == "G"  # bool
+            legal_refuels_by_taxi[taxi_name] = legal_refuel
+        return legal_refuels_by_taxi
 
     def check_legal_pick_up(self, state):
         # Pick up passengers if they are on the same tile as the taxi.
@@ -151,11 +156,12 @@ class TaxiProblem(search.Problem):
         #           (“pick up”, “very_fancy_taxi”, “Yossi”))
 
         # for each taxi get possible atomic actions
-        # TODO: complete
         possible_locations_by_taxi = self.generate_locations(state)
         legal_locations_by_taxi = self.get_legal_moves_on_map(
             state, possible_locations_by_taxi
         )
+        legal_refuels_by_taxi = self.check_legal_refuel(state)
+
 
         # get all permutations of atomic actions
         # for each permutation check that the taxis don't clash
