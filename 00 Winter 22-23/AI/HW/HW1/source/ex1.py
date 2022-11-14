@@ -1,7 +1,7 @@
 # import math
 # import random
 import itertools
-import json
+import ast
 from typing import Tuple
 
 import search
@@ -72,15 +72,16 @@ class TaxiProblem(search.Problem):
         for taxi_name, taxi_dict in state["taxis"].items():
             curr_location = taxi_dict["location"]
             possible_locations = [
-                vector_add(curr_location, orien) for orien in orientations
+                vector_add(curr_location, orient) for orient in orientations
             ]
             possible_locations_by_taxi[taxi_name] = possible_locations
 
         return possible_locations_by_taxi
 
-    def get_legal_moves_on_map(self, state, possible_locations_by_taxi):
+    def get_legal_moves_on_map(self, state):
         # TODO: debug and validate all conditions
         legal_locations_by_taxi = {}
+        possible_locations_by_taxi = self.generate_locations(state)
         for taxi_name, taxi_dict in state["taxis"].items():
             # 1. check fuel > 0
             legal_locations = []
@@ -121,16 +122,14 @@ class TaxiProblem(search.Problem):
         # Pick up passengers if they are on the same tile as the taxi.
         legal_pickups_by_taxi = {}
         for taxi_name, taxi_dict in state["taxis"].items():
-            x_taxi, y_taxi = taxi_dict["location"]  # current location of taxi
             capacity = taxi_dict["capacity"]
             passengers_list = taxi_dict["passengers_list"]
             legal_pickups = []
             # The number of passengers in the taxi has to be < taxi’s capacity.
             if len(passengers_list) < capacity:
-                for passenger_name, passenger_dict in state["passengers"]:
-                    x_passenger, y_passenger = passenger_dict["location"]
+                for passenger_name, passenger_dict in state["passengers"].items():
                     # check that location of taxi is the same as location of the passenger
-                    if (x_taxi, y_taxi) == (x_passenger, y_passenger):
+                    if taxi_dict["location"] == passenger_dict["location"]:
                         legal_pickups.append(passenger_name)
             legal_pickups_by_taxi[taxi_name] = legal_pickups
         return legal_pickups_by_taxi
@@ -141,12 +140,10 @@ class TaxiProblem(search.Problem):
         # and will refuse to leave the vehicle otherwise.
         legal_drop_offs_by_taxi = {}
         for taxi_name, taxi_dict in state["taxis"].items():
-            x_taxi, y_taxi = taxi_dict["location"]  # current location of taxi
             legal_drop_offs = []
-            for passenger_name, passenger_dict in state["passengers"]:
+            for passenger_name, passenger_dict in state["passengers"].items():
                 # check that location of taxi is the same as destination of the passenger
-                x_passenger, y_passenger = passenger_dict["destination"]
-                if (x_taxi, y_taxi) == (x_passenger, y_passenger):
+                if taxi_dict["location"] == passenger_dict["destination"]:
                     legal_drop_offs.append(passenger_name)
             legal_drop_offs_by_taxi[taxi_name] = legal_drop_offs
         return legal_drop_offs_by_taxi
@@ -158,7 +155,7 @@ class TaxiProblem(search.Problem):
         state = json_to_dict(state)
         # -----------------------------------------------------------------
         # Atomic Actions: ["move", "pick_up", "drop_off", "refuel", "wait"]
-        # explivit syntax:
+        # explicit syntax:
         # (“move”, “taxi_name”, (x, y))
         # (“pick up”, “taxi_name”, “passenger_name”
         # (“drop off”, “taxi_name”, “passenger_name”)
@@ -172,9 +169,9 @@ class TaxiProblem(search.Problem):
         # -----------------------------------------------------------------
 
         # For each taxi get Possible Atomic Actions
-        possible_locations_by_taxi = self.generate_locations(state)
+
         legal_locations_by_taxi = self.get_legal_moves_on_map(
-            state, possible_locations_by_taxi
+            state
         )  # DICT[taxi_name: list of (x,y) locations]
         legal_pickups_by_taxi = self.get_legal_pick_up(
             state
@@ -238,13 +235,13 @@ class TaxiProblem(search.Problem):
         """Return the state that results from executing the given
         action in the given state. The action must be one of
         self.actions(state)."""
-        result_state = json_to_dict(state)
+        result_state = str_to_dict(state)
 
         for action_tuple in action:
             result_state = self._execute_action_tuple(result_state, action_tuple)
 
         # back into a hashable
-        result_state = dict_to_json(result_state)
+        result_state = dict_to_str(result_state)
         return result_state
 
     def _execute_action_tuple(self, state: dict, action_tuple: Tuple) -> dict:
@@ -343,9 +340,9 @@ class TaxiProblem(search.Problem):
     def goal_test(self, state):
         """Given a state, checks if this is the goal state.
         Returns True if it is, False otherwise."""
-        state = json_to_dict(state)
+        state = str_to_dict(state)
         at_goal = True
-        for passenger, params_dict in self.initial["passengers"].items():
+        for passenger, params_dict in state["passengers"].items():
             location = params_dict["location"]
             dest = params_dict["destination"]
             if location != dest:
@@ -353,7 +350,7 @@ class TaxiProblem(search.Problem):
         return at_goal
 
     def h(self, node):
-        state = json_to_dict(node.state)
+        state = str_to_dict(node.state)
         # TODO
         """This is the heuristic. It gets a node (not a state,
         state can be accessed via node.state)
@@ -366,7 +363,7 @@ class TaxiProblem(search.Problem):
         (number of  passengers * 2 + the number of picked but yet undelivered passengers)
         /(number of taxis in the problem).
         """
-        state = json_to_dict(node.state)
+        state = str_to_dict(node.state)
         h_1 = (state["n_passengers"] * 2 + state["n_picked_undelivered"]) / state[
             "n_taxis"
         ]
@@ -376,7 +373,7 @@ class TaxiProblem(search.Problem):
         """
         This is a slightly more sophisticated Manhattan heuristic
         """
-        state = json_to_dict(node.state)
+        state = str_to_dict(node.state)
 
         # D[i] = Manhattan distance between the initial location of an unpicked passenger i,
         # and her destination
@@ -416,12 +413,11 @@ def create_taxi_problem(game):
     return TaxiProblem(game)
 
 
-def dict_to_json(d: dict) -> str:
-    d_json = str(d).replace("'", '"')
-    return d_json
+def dict_to_str(d: dict) -> str:
+    d_str = str(d)
+    return d_str
 
 
-def json_to_dict(j: str) -> dict:
-    j = j.replace("'", '"')
-    j_dict = json.loads(j)
+def str_to_dict(s: str) -> dict:
+    j_dict = ast.literal_eval(s)
     return j_dict
