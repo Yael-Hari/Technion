@@ -295,7 +295,7 @@ class TaxiProblem(search.Problem):
             #   n_picked_undelivered += 1
             result_state["n_picked_undelivered"] += 1
             #   n_unpicked -= 1
-            result_state["n_unpicked"] += 1
+            result_state["n_unpicked"] -= 1
             # Passenger updates:
             #   update "in_taxi" of passenger to name of taxi
             result_state["passengers"][passenger_name]["in_taxi"] = taxi_name
