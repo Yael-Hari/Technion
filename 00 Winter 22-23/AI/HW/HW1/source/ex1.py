@@ -79,7 +79,6 @@ class TaxiProblem(search.Problem):
         return possible_locations_by_taxi
 
     def get_legal_moves_on_map(self, state: dict) -> dict:
-        # TODO: debug and validate all conditions
         legal_locations_by_taxi = {}
         possible_locations_by_taxi = self.generate_locations(state)
         for taxi_name, taxi_dict in state["taxis"].items():
@@ -107,7 +106,6 @@ class TaxiProblem(search.Problem):
         return legal_locations_by_taxi
 
     def get_legal_refuel(self, state: dict) -> dict:
-        # TODO: debug and validate all conditions
         # Refueling can be performed only at gas stations
         legal_refuels_by_taxi = {}
         for taxi_name, taxi_dict in state["taxis"].items():
