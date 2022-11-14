@@ -36,7 +36,7 @@ class TaxiProblem(search.Problem):
         self.initial["map_size_height"] = len(self.initial["map"])
         self.initial["map_size_width"] = len(self.initial["map"][0])
 
-        self.initial = dict_to_json(self.initial)
+        self.initial = dict_to_str(self.initial)
 
         """
         State example
@@ -65,10 +65,10 @@ class TaxiProblem(search.Problem):
         }
         """
 
-    def generate_locations(self, state):
+    def generate_locations(self, state: dict) -> dict:
         # get new locations by:
         # current location + one step in legal orientation (EAST, NORTH, WEST, SOUTH)
-        possible_locations_by_taxi = {}
+        possible_locations_by_taxi = dict()
         for taxi_name, taxi_dict in state["taxis"].items():
             curr_location = taxi_dict["location"]
             possible_locations = [
@@ -78,7 +78,7 @@ class TaxiProblem(search.Problem):
 
         return possible_locations_by_taxi
 
-    def get_legal_moves_on_map(self, state):
+    def get_legal_moves_on_map(self, state: dict) -> dict:
         # TODO: debug and validate all conditions
         legal_locations_by_taxi = {}
         possible_locations_by_taxi = self.generate_locations(state)
@@ -106,7 +106,7 @@ class TaxiProblem(search.Problem):
             legal_locations_by_taxi[taxi_name] = legal_locations
         return legal_locations_by_taxi
 
-    def get_legal_refuel(self, state):
+    def get_legal_refuel(self, state: dict) -> dict:
         # TODO: debug and validate all conditions
         # Refueling can be performed only at gas stations
         legal_refuels_by_taxi = {}
@@ -118,7 +118,7 @@ class TaxiProblem(search.Problem):
             legal_refuels_by_taxi[taxi_name] = legal_refuel
         return legal_refuels_by_taxi
 
-    def get_legal_pick_up(self, state):
+    def get_legal_pick_up(self, state: dict) -> dict:
         # Pick up passengers if they are on the same tile as the taxi.
         legal_pickups_by_taxi = {}
         for taxi_name, taxi_dict in state["taxis"].items():
@@ -134,25 +134,26 @@ class TaxiProblem(search.Problem):
             legal_pickups_by_taxi[taxi_name] = legal_pickups
         return legal_pickups_by_taxi
 
-    def get_legal_drop_off(self, state):
-        state = json_to_dict(state)
+    def get_legal_drop_off(self, state: dict) -> dict:
         # The passenger can only be dropped off on his destination tile
         # and will refuse to leave the vehicle otherwise.
         legal_drop_offs_by_taxi = {}
         for taxi_name, taxi_dict in state["taxis"].items():
             legal_drop_offs = []
-            for passenger_name, passenger_dict in state["passengers"].items():
+            # for passenger_name, passenger_dict in state["passengers"].items():
+            for passenger_name in taxi_dict['passengers_list']:
+                passenger_dict = state["passengers"][passenger_name]
                 # check that location of taxi is the same as destination of the passenger
                 if taxi_dict["location"] == passenger_dict["destination"]:
                     legal_drop_offs.append(passenger_name)
             legal_drop_offs_by_taxi[taxi_name] = legal_drop_offs
         return legal_drop_offs_by_taxi
 
-    def actions(self, state):
+    def actions(self, state: str) -> Tuple[Tuple[Tuple]]:
         """Returns all the actions that can be executed in the given
         state. The result should be a tuple (or other iterable) of actions
         as defined in the problem description file"""
-        state = json_to_dict(state)
+        state = str_to_dict(state)
         # -----------------------------------------------------------------
         # Atomic Actions: ["move", "pick_up", "drop_off", "refuel", "wait"]
         # explicit syntax:
@@ -201,6 +202,9 @@ class TaxiProblem(search.Problem):
         # -----------------------------------------------------------------
         # Get Actions - all permutations of atomic actions
         actions = list(itertools.product(*atomic_actions_lists))
+        all_wait_action = tuple([("wait", taxi_name) for taxi_name in state["taxis"].keys()])
+        assert all_wait_action in actions
+        actions.remove(all_wait_action)
 
         # -----------------------------------------------------------------
         # For each action - Check That Taxis Don't Clash with each other
