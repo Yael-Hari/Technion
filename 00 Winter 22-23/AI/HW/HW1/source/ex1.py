@@ -82,31 +82,29 @@ class TaxiProblem(search.Problem):
         legal_locations_by_taxi = {}
         for taxi_name, taxi_dict in state["taxis"].items():
             # 1. check fuel > 0
-            if taxi_dict["fuel"] == 0:
-                return None
-
-            map_size_height = state["map_size_height"]
-            map_size_width = state["map_size_width"]
-            map_matrix = state["map"]
-
-            possible_locations = possible_locations_by_taxi[taxi_name]
             legal_locations = []
-            for new_location in possible_locations:
-                x, y = new_location
-                # 2. check that the taxi doesn't get out of the map
-                # 3. check that the taxi is on a passable tile
-                if (
-                    (x >= 0)
-                    and (x < map_size_width)
-                    and (y >= 0)
-                    and (y < map_size_height)
-                    and map_matrix[x][y] == "P"
-                ):
-                    legal_locations.append(new_location)
+            if taxi_dict["fuel"] > 0:
+                map_size_height = state["map_size_height"]
+                map_size_width = state["map_size_width"]
+                map_matrix = state["map"]
+
+                possible_locations = possible_locations_by_taxi[taxi_name]
+                for new_location in possible_locations:
+                    x, y = new_location
+                    # 2. check that the taxi doesn't get out of the map
+                    # 3. check that the taxi is on a passable tile
+                    if (
+                        (x >= 0)
+                        and (x < map_size_width)
+                        and (y >= 0)
+                        and (y < map_size_height)
+                        and map_matrix[x][y] == "P"
+                    ):
+                        legal_locations.append(new_location)
             legal_locations_by_taxi[taxi_name] = legal_locations
         return legal_locations_by_taxi
 
-    def check_legal_refuel(self, state):
+    def get_legal_refuel(self, state):
         # TODO: debug and validate all conditions
         # Refueling can be performed only at gas stations
         # check that the location on map is "G"
@@ -118,17 +116,25 @@ class TaxiProblem(search.Problem):
             legal_refuels_by_taxi[taxi_name] = legal_refuel
         return legal_refuels_by_taxi
 
-    def check_legal_pick_up(self, state):
+    def get_legal_pick_up(self, state):
         # Pick up passengers if they are on the same tile as the taxi.
         # check that location of taxi is the same as location of the passenger
-        # TODO: complete
+        legal_pickups_by_taxi = {}
+        for taxi_name, taxi_dict in state["taxis"].items():
+            x_taxi, y_taxi = taxi_dict["location"]  # current location of taxi
+            capacity = taxi_dict["capacity"]
+            passengers_list = taxi_dict["passengers_list"]
+            # The number of passengers in the taxi has to be < taxi’s capacity.
+            legal_pickups = []
+            if len(passengers_list) < capacity:
+                for passenger_name, passenger_dict in state["passengers"]:
+                    x_passenger, y_passenger = passenger_dict["location"]
+                    if (x_taxi, y_taxi) == (x_passenger, y_passenger):
+                        legal_pickups.append(passenger_name)
+            legal_pickups_by_taxi[taxi_name] = legal_pickups
+        return legal_pickups_by_taxi
 
-        # The number of passengers in the taxi at any given turn cannot exceed this taxi’s capacity.
-        # check num_of_passengers_in_taxi < taxi_capcity
-        # TODO: complete
-        pass
-
-    def check_legal_drop_off(self, state):
+    def get_legal_drop_off(self, state):
         state = json_to_dict(state)
         # The passenger can only be dropped off on his destination tile
         # and will refuse to leave the vehicle otherwise.
@@ -160,8 +166,8 @@ class TaxiProblem(search.Problem):
         legal_locations_by_taxi = self.get_legal_moves_on_map(
             state, possible_locations_by_taxi
         )
-        legal_refuels_by_taxi = self.check_legal_refuel(state)
-
+        legal_refuels_by_taxi = self.get_legal_refuel(state)
+        legal_pickups_by_taxi = self.get_legal_pick_up(state)
 
         # get all permutations of atomic actions
         # for each permutation check that the taxis don't clash
