@@ -174,17 +174,33 @@ class TaxiProblem(search.Problem):
         legal_locations_by_taxi = self.get_legal_moves_on_map(
             state, possible_locations_by_taxi
         )  # DICT[taxi_name: list of (x,y) locations]
-        legal_refuels_by_taxi = self.get_legal_refuel(
-            state
-        )  # DICT[taxi_name: True / False]
         legal_pickups_by_taxi = self.get_legal_pick_up(
             state
         )  # DICT[taxi_name: list of passengers names]
         legal_drop_offs_by_taxi = self.get_legal_drop_off(
             state
         )  # DICT[taxi_name: list of passengers names]
+        legal_refuels_by_taxi = self.get_legal_refuel(
+            state
+        )  # DICT[taxi_name: True / False]
+
+        # get atomic actions with right syntax
+        atomic_actions_by_taxi = {}
+        for taxi_name in state["taxis"].keys():
+            atomic_actions = [("wait", taxi_name)]
+            for location in legal_locations_by_taxi[taxi_name]:
+                atomic_actions.append(("move", taxi_name, location))
+            for passenger_name in legal_pickups_by_taxi[taxi_name]:
+                atomic_actions.append(("move", taxi_name, passenger_name))
+            for passenger_name in legal_drop_offs_by_taxi[taxi_name]:
+                atomic_actions.append(("move", taxi_name, passenger_name))
+            if legal_refuels_by_taxi[taxi_name]:
+                atomic_actions.append(("refuel", taxi_name))
+            atomic_actions_by_taxi[taxi_name] = atomic_actions
 
         # get all permutations of atomic actions
+        
+
         # for each permutation check that the taxis don't clash
         #   not going to the same location (therefor cannot pickup the same passenger)
         # TODO: complete
