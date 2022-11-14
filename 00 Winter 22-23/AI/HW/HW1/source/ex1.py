@@ -222,7 +222,7 @@ class TaxiProblem(search.Problem):
                     else:
                         taxi_next_location = taxi_curr_location
                     taxis_next_locations.append(taxi_next_location)
-                # check if there is 2 taxis in the same location
+                # check if there are 2 taxis in the same location
                 legal_action = len(set(taxis_next_locations)) == n_taxis
                 if legal_action:
                     legal_actions.append(action)
