@@ -156,6 +156,7 @@ class TaxiProblem(search.Problem):
         state. The result should be a tuple (or other iterable) of actions
         as defined in the problem description file"""
         state = json_to_dict(state)
+        # -----------------------------------------------------------------
         # Atomic Actions: ["move", "pick_up", "drop_off", "refuel", "wait"]
         # explivit syntax:
         # (“move”, “taxi_name”, (x, y))
@@ -168,8 +169,9 @@ class TaxiProblem(search.Problem):
         # Example: ((“move”, “taxi 1”, (1, 2)),
         #           (“wait”, “taxi 2”),
         #           (“pick up”, “very_fancy_taxi”, “Yossi”))
+        # -----------------------------------------------------------------
 
-        # for each taxi get possible atomic actions
+        # For each taxi get Possible Atomic Actions
         possible_locations_by_taxi = self.generate_locations(state)
         legal_locations_by_taxi = self.get_legal_moves_on_map(
             state, possible_locations_by_taxi
@@ -184,37 +186,50 @@ class TaxiProblem(search.Problem):
             state
         )  # DICT[taxi_name: True / False]
 
-        # get atomic actions with right syntax
+        # -----------------------------------------------------------------
+        # Get Atomic Actions with right syntax
         atomic_actions_lists = []
         for taxi_name in state["taxis"].keys():
             atomic_actions = [("wait", taxi_name)]
             for location in legal_locations_by_taxi[taxi_name]:
                 atomic_actions.append(("move", taxi_name, location))
             for passenger_name in legal_pickups_by_taxi[taxi_name]:
-                atomic_actions.append(("move", taxi_name, passenger_name))
+                atomic_actions.append(("pick up", taxi_name, passenger_name))
             for passenger_name in legal_drop_offs_by_taxi[taxi_name]:
-                atomic_actions.append(("move", taxi_name, passenger_name))
+                atomic_actions.append(("drop off", taxi_name, passenger_name))
             if legal_refuels_by_taxi[taxi_name]:
                 atomic_actions.append(("refuel", taxi_name))
             atomic_actions_lists.append(atomic_actions)
 
-        # get all permutations of atomic actions
+        # -----------------------------------------------------------------
+        # Get Actions - all permutations of atomic actions
         actions = list(itertools.product(*atomic_actions_lists))
 
-        # for each action check that the taxis don't clash with each other
+        # -----------------------------------------------------------------
+        # For each action - Check That Taxis Don't Clash with each other
         #   == not going to the same location (therefor cannot pickup the same passenger)
-        legal_actions = []
-        for action in actions:
-            result_state = self.result(state, action)
-            taxis_locations = [
-                result_state[taxi_name]["location"]
-                for taxi_name in state["taxis"].keys()
-            ]
-            # check if there is 2 taxis in the same location
-            legal_action = len(set(taxis_locations)) == result_state["n_taxis"]
-            if legal_action:
-                legal_actions.append(action)
+        n_taxis = state["n_taxis"]
+        if n_taxis > 1:
+            legal_actions = []
+            for action in actions:
+                taxis_next_locations = []
+                for atomic_action in atomic_actions_lists:
+                    action_type = atomic_action[0]
+                    taxi_name = atomic_action[1]
+                    taxi_curr_location = state[taxi_name]["location"]
+                    if action_type == "move":
+                        taxi_next_location = atomic_action[2]
+                    else:
+                        taxi_next_location = taxi_curr_location
+                    taxis_next_locations.append(taxi_next_location)
+                # check if there is 2 taxis in the same location
+                legal_action = len(set(taxis_next_locations)) == n_taxis
+                if legal_action:
+                    legal_actions.append(action)
+        else:  # n_taxis == 1 --> no clashing between taxis
+            legal_actions = actions
 
+        # -----------------------------------------------------------------
         # The result should be a tuple (or other iterable) of actions
         # as defined in the problem description file
         return tuple(legal_actions)
