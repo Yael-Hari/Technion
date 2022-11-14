@@ -1,5 +1,6 @@
 # import math
 # import random
+import itertools
 import json
 from typing import Tuple
 
@@ -155,7 +156,6 @@ class TaxiProblem(search.Problem):
         state. The result should be a tuple (or other iterable) of actions
         as defined in the problem description file"""
         state = json_to_dict(state)
-        # TODO
         # Atomic Actions: ["move", "pick_up", "drop_off", "refuel", "wait"]
         # explivit syntax:
         # (“move”, “taxi_name”, (x, y))
@@ -185,7 +185,7 @@ class TaxiProblem(search.Problem):
         )  # DICT[taxi_name: True / False]
 
         # get atomic actions with right syntax
-        atomic_actions_by_taxi = {}
+        atomic_actions_lists = []
         for taxi_name in state["taxis"].keys():
             atomic_actions = [("wait", taxi_name)]
             for location in legal_locations_by_taxi[taxi_name]:
@@ -196,14 +196,28 @@ class TaxiProblem(search.Problem):
                 atomic_actions.append(("move", taxi_name, passenger_name))
             if legal_refuels_by_taxi[taxi_name]:
                 atomic_actions.append(("refuel", taxi_name))
-            atomic_actions_by_taxi[taxi_name] = atomic_actions
+            atomic_actions_lists.append(atomic_actions)
 
         # get all permutations of atomic actions
-        
+        actions = list(itertools.product(*atomic_actions_lists))
 
-        # for each permutation check that the taxis don't clash
-        #   not going to the same location (therefor cannot pickup the same passenger)
-        # TODO: complete
+        # for each action check that the taxis don't clash with each other
+        #   == not going to the same location (therefor cannot pickup the same passenger)
+        legal_actions = []
+        for action in actions:
+            result_state = self.result(state, action)
+            taxis_locations = [
+                result_state[taxi_name]["location"]
+                for taxi_name in state["taxis"].keys()
+            ]
+            # check if there is 2 taxis in the same location
+            legal_action = len(set(taxis_locations)) == result_state["n_taxis"]
+            if legal_action:
+                legal_actions.append(action)
+
+        # The result should be a tuple (or other iterable) of actions
+        # as defined in the problem description file
+        return tuple(legal_actions)
 
     def result(self, state: str, action: Tuple[Tuple]) -> str:
         """Return the state that results from executing the given
