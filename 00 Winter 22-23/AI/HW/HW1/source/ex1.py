@@ -107,28 +107,28 @@ class TaxiProblem(search.Problem):
     def get_legal_refuel(self, state):
         # TODO: debug and validate all conditions
         # Refueling can be performed only at gas stations
-        # check that the location on map is "G"
         legal_refuels_by_taxi = {}
         for taxi_name, taxi_dict in state["taxis"].items():
             map_matrix = state["map"]
             x, y = taxi_dict["location"]  # current location of taxi
+            # check that the location on map is "G"
             legal_refuel = map_matrix[x][y] == "G"  # bool
             legal_refuels_by_taxi[taxi_name] = legal_refuel
         return legal_refuels_by_taxi
 
     def get_legal_pick_up(self, state):
         # Pick up passengers if they are on the same tile as the taxi.
-        # check that location of taxi is the same as location of the passenger
         legal_pickups_by_taxi = {}
         for taxi_name, taxi_dict in state["taxis"].items():
             x_taxi, y_taxi = taxi_dict["location"]  # current location of taxi
             capacity = taxi_dict["capacity"]
             passengers_list = taxi_dict["passengers_list"]
-            # The number of passengers in the taxi has to be < taxi’s capacity.
             legal_pickups = []
+            # The number of passengers in the taxi has to be < taxi’s capacity.
             if len(passengers_list) < capacity:
                 for passenger_name, passenger_dict in state["passengers"]:
                     x_passenger, y_passenger = passenger_dict["location"]
+                    # check that location of taxi is the same as location of the passenger
                     if (x_taxi, y_taxi) == (x_passenger, y_passenger):
                         legal_pickups.append(passenger_name)
             legal_pickups_by_taxi[taxi_name] = legal_pickups
@@ -138,9 +138,17 @@ class TaxiProblem(search.Problem):
         state = json_to_dict(state)
         # The passenger can only be dropped off on his destination tile
         # and will refuse to leave the vehicle otherwise.
-        # check that location of taxi is the same as destination of the passenger
-        # TODO: complete
-        pass
+        legal_drop_offs_by_taxi = {}
+        for taxi_name, taxi_dict in state["taxis"].items():
+            x_taxi, y_taxi = taxi_dict["location"]  # current location of taxi
+            legal_drop_offs = []
+            for passenger_name, passenger_dict in state["passengers"]:
+                # check that location of taxi is the same as destination of the passenger
+                x_passenger, y_passenger = passenger_dict["destination"]
+                if (x_taxi, y_taxi) == (x_passenger, y_passenger):
+                    legal_drop_offs.append(passenger_name)
+            legal_drop_offs_by_taxi[taxi_name] = legal_drop_offs
+        return legal_drop_offs_by_taxi
 
     def actions(self, state):
         """Returns all the actions that can be executed in the given
@@ -165,9 +173,16 @@ class TaxiProblem(search.Problem):
         possible_locations_by_taxi = self.generate_locations(state)
         legal_locations_by_taxi = self.get_legal_moves_on_map(
             state, possible_locations_by_taxi
-        )
-        legal_refuels_by_taxi = self.get_legal_refuel(state)
-        legal_pickups_by_taxi = self.get_legal_pick_up(state)
+        )  # DICT[taxi_name: list of (x,y) locations]
+        legal_refuels_by_taxi = self.get_legal_refuel(
+            state
+        )  # DICT[taxi_name: True / False]
+        legal_pickups_by_taxi = self.get_legal_pick_up(
+            state
+        )  # DICT[taxi_name: list of passengers names]
+        legal_drop_offs_by_taxi = self.get_legal_drop_off(
+            state
+        )  # DICT[taxi_name: list of passengers names]
 
         # get all permutations of atomic actions
         # for each permutation check that the taxis don't clash
