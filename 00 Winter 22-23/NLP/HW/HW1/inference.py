@@ -14,18 +14,15 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     """
     @ n: number of words in the sentence
     @ v_tag: tag of current word           (position k)
-    @ u_tag: tag of previous word          (positoin k-1)
-    @ t_tag: tag of previous-previous word (positoin k-2)
-    @ x: word in sentence
+    @ u_tag: tag of previous word          (position k-1)
+    @ t_tag: tag of previous-previous word (position k-2)
+    @ x: sentence
     @ sentence[i] == x_i : word i in the sentence
     @ weights: pre_trained_weights
 
-    @ S_k: for k = -1, 0, 1, ..., n is the set of possible tags at position k
-        S_-1 = S_0 = {*}
-        S_1 = S_2 = ... = S_n = {all_the_tags_in_train_set}
-    @ Pi: matrix of size n * |S| * |S|
+    @ Pi: matrix of size n_words, n_tags, n_tags
         Pi[k][u][v] = maximum probability of a tag sequence ending in tags u, v at position k
-    @ Bp: matrix of size n * |S| * |S|
+    @ Bp: matrix of size n_words, n_tags, n_tags
         BP[k][u][v] = argmax of probability of a tag sequence ending in tags u, v at position k
     @ Qv: np array
         Qv[v] = exp(w * feature_vec(v |k_history))
