@@ -23,7 +23,7 @@ class FeatureStatistics:
         self.tags.add("~")
         self.tags_counts = defaultdict(int)  # a dictionary with the number of times each tag appeared in the text
         self.words_count = defaultdict(int)  # a dictionary with the number of times each word appeared in the text
-        self.histories = []  # a list of all the histories seen at the test
+        self.histories = []  # a list of all the histories seen at the text
 
     def increment_val_in_feature_dict(self, val: tuple, feature: str):
         if val not in self.feature_rep_dict[feature]:
@@ -84,8 +84,12 @@ class FeatureStatistics:
                     next_word_tag = (n_word.lower(), cur_tag)
                     self.increment_val_in_feature_dict(next_word_tag, "f107")
 
-                    # f200 ...
-                    # TODO: complete!
+                    # f200 - (bool: is starting with capital letter, tag)
+                    is_first_capital_true_tag = (cur_word[0].isupper(), cur_tag)
+                    self.increment_val_in_feature_dict(is_first_capital_true_tag, "f200")
+                    # f201 - (bool: has capital letter and it is first word in sentence, tag)
+                    
+
 
                     # create history
                     history = (cur_word, cur_tag, p_word, p_tag, pp_word, pp_tag, n_word)
@@ -104,14 +108,23 @@ class Feature2id:
         self.n_total_features = 0  # Total number of features accumulated
 
         # Init all features dictionaries
-        self.feature_to_idx = {
-            f"f10{i}": OrderedDict() for i in range(8)
-        }
+        self.feature_to_idx = self.merge_dicts(
+            [
+                {f"f10{i}": OrderedDict() for i in range(8)},
+                {f"f20{i}": OrderedDict() for i in range(6)},
+            ]
+        )
         self.represent_input_with_features = OrderedDict()
         self.histories_matrix = OrderedDict()
         self.histories_features = OrderedDict()
         self.small_matrix = sparse.csr_matrix
         self.big_matrix = sparse.csr_matrix
+
+    def merge_dicts(self, dict_list: List[Dict]) -> dict:
+        result_dict = dict_list[0]
+        for d in dict_list[1:]:
+            result_dict.update(d)
+        return result_dict
 
     def get_features_idx(self) -> None:
         """
@@ -214,12 +227,17 @@ def represent_input_with_features(history: Tuple, dict_of_dicts: Dict[str, Dict[
         features.append(dict_of_dicts["f200"][f200_tuple])
 
     # f201 - (bool: has capital letter and it is first word in sentence, tag)
-    # TODO: check if there is efficient way to check instead of the following:
-    letters = c_word.split()
+    # TODO: check if there is a efficient way to check instead of the following:
+    alphabetical_cnt = 0
     capital_letter_cnt = 0
-    for letter in letters:
-        if letter.isupper():
-            capital_letter_cnt += 1
+    digits_cnt = 0
+    for letter in c_word:
+        if letter.isalpha():
+            alphabetical_cnt += 1
+            if letter.isupper():
+                capital_letter_cnt += 1
+        if letter.isdigit():
+            digits_cnt += 1
 
     is_first_word = (p_word == "*")
     has_capital_letter = (capital_letter_cnt != 0)
@@ -237,12 +255,21 @@ def represent_input_with_features(history: Tuple, dict_of_dicts: Dict[str, Dict[
     # f203 - (bool: has exactly 1 capital letter no matter where, tag)
     has_exactly_one_capital = (capital_letter_cnt == 1)
     f203_tuple = (has_exactly_one_capital, c_tag)
-    if f202_tuple in dict_of_dicts["f203"]:
+    if f203_tuple in dict_of_dicts["f203"]:
         features.append(dict_of_dicts["f203"][f203_tuple])
 
     # f204 - (bool: is a number, tag)
-    # TODO: complete
+    is_number = c_word.isnumeric()
+    f204_tuple = (is_number, c_tag)
+    if f204_tuple in dict_of_dicts["f204"]:
+        features.append(dict_of_dicts["f204"][f204_tuple])
+
     # f205 - (bool: has a digit and a letter, tag)
+    has_letter_and_digit = (alphabetical_cnt > 0) and (digits_cnt > 0)
+    f205_tuple = (has_letter_and_digit, c_tag)
+    if f205_tuple in dict_of_dicts["f205"]:
+        features.append(dict_of_dicts["f205"][f205_tuple])
+
 
     # f206 ...
     # TODO: invent more...
