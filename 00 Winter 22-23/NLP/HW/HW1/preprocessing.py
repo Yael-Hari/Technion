@@ -13,7 +13,8 @@ class FeatureStatistics:
         self.n_total_features = 0  # Total number of features accumulated
 
         # Init all features dictionaries
-        feature_dict_list = [f'f10{i}' for i in range(8)]  # the feature classes used in the code
+        feature_dict_list = [f'f10{i}' for i in range(8)] + \
+            [f'f20{i}' for i in range(6)]  # the feature classes used in the code
         self.feature_rep_dict = {fd: OrderedDict() for fd in feature_dict_list}
         '''
         A dictionary containing the counts of each data regarding a feature class. For example in f100, would contain
@@ -57,18 +58,20 @@ class FeatureStatistics:
                     self.tags.add(cur_tag)
                     self.tags_counts[cur_tag] += 1
                     self.words_count[cur_word] += 1
+                    cur_word_len = len(cur_word)
 
-                    # count for every features family:
-
+                    # ~~~~~~~~~~ COUNT FOR EVERY FEATURE FAMILIES ~~~~~~~~~~
                     # f100 - cont appearances of <word, tags> tuples
                     word_tag = (cur_word.lower(), cur_tag)
                     self.increment_val_in_feature_dict(word_tag, "f100")
                     # f101 - suffix <=4 and tag pairs
-                    suffix_tag = (cur_word[-4:].lower(), cur_tag)
-                    self.increment_val_in_feature_dict(suffix_tag, "f101")
+                    for i in range(1, cur_word_len):
+                        suffix_tag = (cur_word[-i:].lower(), cur_tag)
+                        self.increment_val_in_feature_dict(suffix_tag, "f101")
                     # f102 - prefix <=4 and tag pairs
-                    prefix_tag = (cur_word[:4].lower(), cur_tag)
-                    self.increment_val_in_feature_dict(prefix_tag, "f102")
+                    for i in range(1, cur_word_len):
+                        prefix_tag = (cur_word[:i].lower(), cur_tag)
+                        self.increment_val_in_feature_dict(prefix_tag, "f102")
                     # f103 - trigram tags
                     trigram_tags = (pp_tag, p_tag, cur_tag)
                     self.increment_val_in_feature_dict(trigram_tags, "f103")
@@ -84,12 +87,38 @@ class FeatureStatistics:
                     next_word_tag = (n_word.lower(), cur_tag)
                     self.increment_val_in_feature_dict(next_word_tag, "f107")
 
+                    # ~~~~~~~~~~ COUNT FOR FEATURES FOR CAPITAL LETTERS AND DIGITS HANDLING ~~~~~~~~~~
                     # f200 - (bool: is starting with capital letter, tag)
-                    is_first_capital_true_tag = (cur_word[0].isupper(), cur_tag)
+                    first_letter_is_capital = cur_word[0].isupper()
+                    is_first_capital_true_tag = (first_letter_is_capital, cur_tag)
                     self.increment_val_in_feature_dict(is_first_capital_true_tag, "f200")
-                    # f201 - (bool: has capital letter and it is first word in sentence, tag)
-                    
 
+                    # f201 - (bool: is first word in sentence, tag)
+                    is_first_word = (p_word == "*") and (pp_word == "*")
+                    f201_tuple = (is_first_word, cur_tag)
+                    self.increment_val_in_feature_dict(f201_tuple, "f201")
+
+                    alphabetical_cnt, capital_letter_cnt, digits_cnt = get_alpha_capital_digits_counts(cur_word)
+
+                    # f202 - (bool: has more than 1 capital letter, tag)
+                    has_more_than_one_capital = (capital_letter_cnt > 1)
+                    f202_tuple = (has_more_than_one_capital, cur_tag)
+                    self.increment_val_in_feature_dict(f202_tuple, "f202")
+
+                    # f203 - (bool: has exactly 1 capital letter no matter where, tag)
+                    has_exactly_one_capital = (capital_letter_cnt == 1)
+                    f203_tuple = (has_exactly_one_capital, cur_tag)
+                    self.increment_val_in_feature_dict(f203_tuple, "f203")
+
+                    # f204 - (bool: is a number, tag)
+                    is_number = cur_word.isnumeric()
+                    f204_tuple = (is_number, cur_word)
+                    self.increment_val_in_feature_dict(f204_tuple, "f204")
+
+                    # f205 - (bool: has a digit and a letter, tag)
+                    has_letter_and_digit = (alphabetical_cnt > 0) and (digits_cnt > 0)
+                    f205_tuple = (has_letter_and_digit, cur_tag)
+                    self.increment_val_in_feature_dict(f205_tuple, "f205")
 
                     # create history
                     history = (cur_word, cur_tag, p_word, p_tag, pp_word, pp_tag, n_word)
@@ -171,7 +200,7 @@ class Feature2id:
                 self.feature_statistics.histories), self.n_total_features), dtype=bool)
 
 
-def represent_input_with_features(history: Tuple, dict_of_dicts: Dict[str, Dict[Tuple[str, str], int]])\
+def represent_input_with_features(history: Tuple, dict_of_dicts: Dict[str, Dict[Tuple, int]])\
         -> List[int]:
     """
         Extract feature vector in per a given history
@@ -180,21 +209,26 @@ def represent_input_with_features(history: Tuple, dict_of_dicts: Dict[str, Dict[
         @return a list with all features that are relevant to the given history
     """
     c_word, c_tag, p_word, p_tag, pp_word, pp_tag, n_word = history
+    cur_word_len = len(c_word)
     features = []
+
+    # ~~~~~~~~~~ RATNAPARKHI FEATURES ~~~~~~~~~~
 
     # f100 - word / tag pairs
     if (c_word, c_tag) in dict_of_dicts["f100"]:
         features.append(dict_of_dicts["f100"][(c_word, c_tag)])
 
     # f101 - suffix <=4 and tag pairs
-    suffix_tag = (c_word[-4:], c_tag)
-    if suffix_tag in dict_of_dicts["f101"]:
-        features.append(dict_of_dicts["f101"][suffix_tag])
+    for i in range(1, cur_word_len):
+        suffix_tag = (c_word[-i:], c_tag)
+        if suffix_tag in dict_of_dicts["f101"]:
+            features.append(dict_of_dicts["f101"][suffix_tag])
 
     # f102 - prefix <=4 and tag pairs
-    prefix_tag = (c_word[:4], c_tag)
-    if prefix_tag in dict_of_dicts["f102"]:
-        features.append(dict_of_dicts["f102"][prefix_tag])
+    for i in range(1, cur_word_len):
+        prefix_tag = (c_word[:i], c_tag)
+        if prefix_tag in dict_of_dicts["f102"]:
+            features.append(dict_of_dicts["f102"][prefix_tag])
 
     # f103 - trigram tags
     trigram_tags = (pp_tag, p_tag, c_tag)
@@ -220,34 +254,24 @@ def represent_input_with_features(history: Tuple, dict_of_dicts: Dict[str, Dict[
     if next_word_tag in dict_of_dicts["f107"]:
         features.append(dict_of_dicts["f107"][next_word_tag])
 
+    # ~~~~~~~~~~ ADDED FEATURES FOR CAPITAL LETTERS AND DIGITS HANDLING ~~~~~~~~~~
+
     # f200 - (bool: is starting with capital letter, tag)
     first_letter_is_capital = c_word[0].isupper()
     f200_tuple = (first_letter_is_capital, c_tag)
     if f200_tuple in dict_of_dicts["f200"]:
         features.append(dict_of_dicts["f200"][f200_tuple])
 
-    # f201 - (bool: has capital letter and it is first word in sentence, tag)
-    # TODO: check if there is a efficient way to check instead of the following:
-    alphabetical_cnt = 0
-    capital_letter_cnt = 0
-    digits_cnt = 0
-    for letter in c_word:
-        if letter.isalpha():
-            alphabetical_cnt += 1
-            if letter.isupper():
-                capital_letter_cnt += 1
-        if letter.isdigit():
-            digits_cnt += 1
+    alphabetical_cnt, capital_letter_cnt, digits_cnt = get_alpha_capital_digits_counts(c_word)
 
-    is_first_word = (p_word == "*")
-    has_capital_letter = (capital_letter_cnt != 0)
-    has_capital_letter_and_first_word = has_capital_letter and is_first_word
-    f201_tuple = (has_capital_letter_and_first_word, c_tag)
+    # f201 - (is first word in sentence, tag)
+    is_first_word = (p_word == "*") and (pp_word == "*")
+    f201_tuple = (is_first_word, c_tag)
     if f201_tuple in dict_of_dicts["f201"]:
         features.append(dict_of_dicts["f201"][f201_tuple])
 
     # f202 - (bool: has more than 1 capital letter, tag)
-    has_more_than_one_capital = (capital_letter_cnt > 1)
+    has_more_than_one_capital = capital_letter_cnt > 1
     f202_tuple = (has_more_than_one_capital, c_tag)
     if f202_tuple in dict_of_dicts["f202"]:
         features.append(dict_of_dicts["f202"][f202_tuple])
@@ -269,10 +293,6 @@ def represent_input_with_features(history: Tuple, dict_of_dicts: Dict[str, Dict[
     f205_tuple = (has_letter_and_digit, c_tag)
     if f205_tuple in dict_of_dicts["f205"]:
         features.append(dict_of_dicts["f205"][f205_tuple])
-
-
-    # f206 ...
-    # TODO: invent more...
 
     return features
 
@@ -318,3 +338,20 @@ def read_test(file_path, tagged=True) -> List[Tuple[List[str], List[str]]]:
             sentence[TAG].append("~")
             list_of_sentences.append(sentence)
     return list_of_sentences
+
+
+def get_alpha_capital_digits_counts(c_word: str) -> Tuple[int, int, int]:
+    # TODO: check if there is a efficient way to check instead of the following:
+        alphabetical_cnt = 0
+        capital_letter_cnt = 0
+        digits_cnt = 0
+        for letter in c_word:
+            if letter.isalpha():
+                alphabetical_cnt += 1
+                if letter.isupper():
+                    capital_letter_cnt += 1
+            if letter.isdigit():
+                digits_cnt += 1
+
+        return alphabetical_cnt, capital_letter_cnt, digits_cnt
+
