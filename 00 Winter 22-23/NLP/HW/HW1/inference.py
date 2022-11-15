@@ -4,6 +4,12 @@ from tqdm import tqdm
 from preprocessing import read_test
 
 
+def get_top_B_idx(Pi: np.array, B: int):
+    # TODO: complete
+    "return B_best_idx"
+    pass
+
+
 def memm_viterbi(sentence, pre_trained_weights, feature2id):
     """
     Write your MEMM Viterbi implementation below
@@ -45,6 +51,8 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     Pi = np.zeros([n_words, n_tags, n_tags])
     Bp = np.zeros([n_words, n_tags, n_tags])
     pred_tags = np.array(n_words)
+    B = 3  # Beam search parameter
+    B_best_idx = []
 
     # histories_features: OrderedDict[history_tuple: [relevant_features_indexes]]
     histories_features = feature2id.histories_features
@@ -96,7 +104,10 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                         Pi[k - 1]["*"][u_idx] * Qv[u_idx][v_idx] / Q_all_v_tags[u_idx]
                     )
 
-        # ------------------ Calc Pi k > 1 ----------------------
+            # find Top B Pi values indexes
+            B_best_idx = get_top_B_idx(Pi[k], B)
+
+        # ------------------ Calc Pi k >= 2 ----------------------
         else:
             # by defenition:
             # Pi(k, u, v) = Pi(k-1, t, u) * Q(k_history)
@@ -104,35 +115,38 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
             # calculate Q and we'll use it later a lot
             Qv = np.zeros([n_tags, n_tags, n_tags])
             Q_all_v_tags = np.zeros([n_tags, n_tags])
-            for t_idx, t_tag in enumerate(tags_list):
-                for u_idx, u_tag in enumerate(tags_list):
-                    for v_idx, v_tag in enumerate(tags_list):
-                        # history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
-                        history_tuple = (
-                            x[k],
-                            v_tag,
-                            x[k - 1],
-                            u_tag,
-                            x[k - 2],
-                            t_tag,
-                            x[k + 1],
-                        )
-                        relevant_idx = histories_features[history_tuple]
-                        Qv[t_idx][u_idx][v_idx] = np.exp(weights[relevant_idx].sum())
-                        Q_all_v_tags[t_idx][u_idx] += Qv[t_idx][u_idx][v_idx]
+            for t_idx, u_idx in B_best_idx:
+                t_tag = tags_list[t_idx]
+                u_tag = tags_list[u_idx]
+                for v_idx, v_tag in enumerate(tags_list):
+                    # history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
+                    history_tuple = (
+                        x[k],
+                        v_tag,
+                        x[k - 1],
+                        u_tag,
+                        x[k - 2],
+                        t_tag,
+                        x[k + 1],
+                    )
+                    relevant_idx = histories_features[history_tuple]
+                    Qv[t_idx][u_idx][v_idx] = np.exp(weights[relevant_idx].sum())
+                    Q_all_v_tags[t_idx][u_idx] += Qv[t_idx][u_idx][v_idx]
 
             # calculate Pi
-            for u_idx, u_tag in enumerate(tags_list):
+            for t_idx, u_idx in B_best_idx:
                 for v_idx, v_tag in enumerate(tags_list):
                     t_scores = np.zeros(n_tags)
-                    for t_idx, t_tag in enumerate(tags_list):
-                        t_scores[t_idx] = (
-                            Pi[k - 1][t_idx][u_idx]
-                            * Qv[t_idx][u_idx][v_idx]
-                            / Q_all_v_tags[t_idx][u_idx]
-                        )
+                    t_scores[t_idx] = (
+                        Pi[k - 1][t_idx][u_idx]
+                        * Qv[t_idx][u_idx][v_idx]
+                        / Q_all_v_tags[t_idx][u_idx]
+                    )
                     Pi[k][u_idx][v_idx] = np.max(t_scores)
                     Bp[k][u_idx][v_idx] = tags_list[np.argmax(t_scores)]
+
+            # find Top B Pi values indexes
+            B_best_idx = get_top_B_idx(Pi[k], B)
 
     # ------------------ Get Predicted Tags by Bp ----------------------
     # last 2 words in sentence
