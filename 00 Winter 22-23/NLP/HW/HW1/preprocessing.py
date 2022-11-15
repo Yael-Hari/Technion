@@ -109,7 +109,7 @@ class Feature2id:
         }
         self.represent_input_with_features = OrderedDict()
         self.histories_matrix = OrderedDict()
-        self.histories_features = OrderedDict()
+        self.histories_features = OrderedDict()  # Dict[(tuple{c_word, c_tag, p_word, p_tag, pp_word, pp_tag, n_word}): [relevant_features_indexes]]
         self.small_matrix = sparse.csr_matrix
         self.big_matrix = sparse.csr_matrix
 
