@@ -76,7 +76,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     """
     tags_list = feature2id.tags_list  # list of all possible tags
     n_tags = feature2id.n_tags  # number of tags in train set
-    x = sentence[:-1]  # last letter is always '~'
+    x = sentence[2:-1]  # last letter is always '~'
     weights = np.array(pre_trained_weights)
     n_words = len(x)
     Pi = np.zeros([n_words, n_tags, n_tags])
