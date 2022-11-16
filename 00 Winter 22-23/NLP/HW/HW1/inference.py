@@ -1,12 +1,14 @@
+from typing import List, Tuple
+
 import numpy as np
 from tqdm import tqdm
-from typing import List, Tuple
+
 from preprocessing import read_test
 
 
 def get_top_B_idx(Matrix: np.array, B: int) -> List[Tuple[int, int]]:
     # TODO: complete
-    """ return B_best_idx """
+    """return B_best_idx"""
     m = Matrix.copy()
     B_best_idx = []
 
@@ -166,12 +168,13 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     return pred_tags
 
 
-def find_n_argmin_idx(list: list, n: int):
+def find_n_argmin_idx(values_list: list, n: int):
+    values_list = values_list.copy()
     n_argmin_idx = []
-    n = min(n, len(list))
+    n = min(n, len(values_list))
     for i in range(n):
-        n_argmin_idx.append(np.argmin(list))
-        list.remove(np.min(list))
+        n_argmin_idx.append(np.argmin(values_list))
+        values_list.remove(np.min(values_list))
     return n_argmin_idx
 
 
@@ -240,12 +243,12 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
                     Fp[pred] += 1  # pred is the wrong tag
 
     output_file.close()
-    
+
     # ------------------------- calc evaluations -------------------------
     if tagged:
         # accuracy
         accuracy = sum(list(Tp.values())) / n_preds
-        
+
         # precision, recall, f1 for each tag
         for tag in tags_list:
             precision[tag] = Tp[tag] / (Tp[tag] + Fp[tag])
@@ -253,8 +256,8 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
             f1[tag] = (
                 2 * (precision[tag] * recall[tag]) / (precision[tag] + recall[tag])
             )
-        
-        # f1 
+
+        # f1
         mean_f1 = np.mean(list(f1.values()))
         median_f1 = np.median(list(f1.values()))
         print(f"{accuracy=}, {mean_f1=}, {median_f1=}")
@@ -268,7 +271,7 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
             precision_val = precision_vals_list[argmin_idx]
             print("10 tags with the lowest precision: \n")
             print(f"{tag=}, {precision_val=} \n")
-        
+
         # 10 tags with the lowest recall
         recall_vals_list = list(recall.values())
         recall_keys_list = list(recall.keys())
