@@ -4,6 +4,8 @@ import numpy as np
 from tqdm import tqdm
 
 from preprocessing import read_test
+from sklearn.metrics import ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
 
 
 def get_top_B_idx(Matrix: np.array, B: int) -> List[Tuple[int, int]]:
@@ -186,8 +188,9 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
 
     # prepare for test evaluation
     if tagged:
+        true_list = []
+        pred_list = []
         tags_list = []
-        confusion_matrix = {}
         Tp = {}
         Fp = {}
         Fn = {}
@@ -220,22 +223,21 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
                 true = true_tags[k]
                 pred = pred_tags[k]
                 n_preds += 1
+                true_list.append(true)
+                pred_list.append(pred)
 
                 # if new tag add relevant details
                 if true not in tags_list:
                     tags_list.append(true)
-                    confusion_matrix[true] = {}
                     Tp[true] = 0
                     Fp[true] = 0
                     Fn[true] = 0
                 if pred not in tags_list:
                     tags_list.append(pred)
-                    confusion_matrix[pred] = {}
                     Tp[pred] = 0
                     Fp[pred] = 0
                     Fn[pred] = 0
 
-                confusion_matrix[true][pred] += 1
                 if true == pred:
                     Tp[true] += 1
                 else:  # true != pred:
@@ -281,3 +283,9 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
             recall_val = recall_vals_list[argmin_idx]
             print("10 tags with the lowest recall: \n")
             print(f"{tag=}, {recall_val=} \n")
+
+        # confusion matrix
+        # disp = ConfusionMatrixDisplay.from_predictions(true_list, pred_list, normalize="false")
+        # plt.show()
+        # disp = ConfusionMatrixDisplay.from_predictions(true_list, pred_list, normalize="true")
+        # plt.show()
