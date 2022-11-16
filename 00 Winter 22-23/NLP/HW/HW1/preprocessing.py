@@ -9,12 +9,20 @@ TAG = 1
 
 
 class FeatureStatistics:
-    def __init__(self):
-        self.n_total_features = 0  # Total number of features accumulated
+    F200 = True
+    F300 = True
 
+    def __init__(self, f200=True, f300=True):
+        self.n_total_features = 0  # Total number of features accumulated
+        FeatureStatistics.F200 = f200
+        FeatureStatistics.F300 = f300
         # Init all features dictionaries
-        feature_dict_list = [f'f10{i}' for i in range(8)] + \
-            [f'f20{i}' for i in range(6)]  # the feature classes used in the code
+        # the feature classes used in the code
+        feature_dict_list = [f'f10{i}' for i in range(8)]
+        if FeatureStatistics.F200:
+            feature_dict_list += [f'f20{i}' for i in range(6)]
+        if FeatureStatistics.F300:
+            feature_dict_list += [f'f30{i}' for i in range(9)]
         self.feature_rep_dict = {fd: OrderedDict() for fd in feature_dict_list}
         '''
         A dictionary containing the counts of each data regarding a feature class. For example in f100, would contain
@@ -28,7 +36,7 @@ class FeatureStatistics:
         self.n_tags = 0
         self.tags_list = []
 
-    def increment_val_in_feature_dict(self, val: tuple, feature: str):
+    def increment_val_in_feature_dict(self, feature: str, val: tuple):
         if val not in self.feature_rep_dict[feature]:
             self.feature_rep_dict[feature][val] = 1
         else:
@@ -61,6 +69,8 @@ class FeatureStatistics:
                     self.tags_counts[cur_tag] += 1
                     self.words_count[cur_word] += 1
                     cur_word_len = len(cur_word)
+                    p_word_len = len(p_word)
+                    n_word_len = len(n_word)
 
                     if cur_tag not in self.tags_list:
                         self.tags_list.append(cur_tag)
@@ -69,62 +79,114 @@ class FeatureStatistics:
                     # ~~~~~~~~~~ COUNT FOR EVERY FEATURE FAMILIES ~~~~~~~~~~
                     # f100 - cont appearances of <word, tags> tuples
                     word_tag = (cur_word.lower(), cur_tag)
-                    self.increment_val_in_feature_dict(word_tag, "f100")
+                    self.increment_val_in_feature_dict("f100", word_tag)
                     # f101 - suffix <=4 and tag pairs
                     for i in range(1, cur_word_len):
                         suffix_tag = (cur_word[-i:].lower(), cur_tag)
-                        self.increment_val_in_feature_dict(suffix_tag, "f101")
+                        self.increment_val_in_feature_dict("f101", suffix_tag)
                     # f102 - prefix <=4 and tag pairs
                     for i in range(1, cur_word_len):
                         prefix_tag = (cur_word[:i].lower(), cur_tag)
-                        self.increment_val_in_feature_dict(prefix_tag, "f102")
+                        self.increment_val_in_feature_dict("f102", prefix_tag)
                     # f103 - trigram tags
                     trigram_tags = (pp_tag, p_tag, cur_tag)
-                    self.increment_val_in_feature_dict(trigram_tags, "f103")
+                    self.increment_val_in_feature_dict("f103", trigram_tags)
                     # f104
                     bigram_tags = (p_tag, cur_tag)
-                    self.increment_val_in_feature_dict(bigram_tags, 'f104')
+                    self.increment_val_in_feature_dict('f104', bigram_tags)
                     # f105 - count appearances of <tag>
-                    self.increment_val_in_feature_dict(cur_tag, 'f105')
+                    self.increment_val_in_feature_dict('f105', cur_tag)
                     # f106 - previous word and tag pairs
                     prev_word_tag = (p_word.lower(), cur_tag)
-                    self.increment_val_in_feature_dict(prev_word_tag, "f106")
+                    self.increment_val_in_feature_dict("f106", prev_word_tag)
                     # f107 - next word and tag pairs
                     next_word_tag = (n_word.lower(), cur_tag)
-                    self.increment_val_in_feature_dict(next_word_tag, "f107")
+                    self.increment_val_in_feature_dict("f107", next_word_tag)
 
-                    # ~~~~~~~~~~ COUNT FOR FEATURES FOR CAPITAL LETTERS AND DIGITS HANDLING ~~~~~~~~~~
-                    # f200 - (bool: is starting with capital letter, tag)
-                    first_letter_is_capital = cur_word[0].isupper()
-                    is_first_capital_true_tag = (first_letter_is_capital, cur_tag)
-                    self.increment_val_in_feature_dict(is_first_capital_true_tag, "f200")
+                    if self.F200:
+                        # ~~~~~~~~~~ COUNT FOR FEATURES FOR CAPITAL LETTERS AND DIGITS HANDLING ~~~~~~~~~~
 
-                    # f201 - (bool: is first word in sentence, tag)
-                    is_first_word = (p_word == "*") and (pp_word == "*")
-                    f201_tuple = (is_first_word, cur_tag)
-                    self.increment_val_in_feature_dict(f201_tuple, "f201")
+                        # f200 - (bool: is starting with capital letter, tag)
+                        first_letter_is_capital = cur_word[0].isupper()
+                        is_first_capital_true_tag = (first_letter_is_capital, cur_tag)
+                        self.increment_val_in_feature_dict("f200", is_first_capital_true_tag)
 
-                    alphabetical_cnt, capital_letter_cnt, digits_cnt = get_alpha_capital_digits_counts(cur_word)
+                        # f201 - (bool: is first word in sentence, tag)
+                        is_first_word = (p_word == "*") and (pp_word == "*")
+                        f201_tuple = (is_first_word, cur_tag)
+                        self.increment_val_in_feature_dict("f201", f201_tuple)
 
-                    # f202 - (bool: has more than 1 capital letter, tag)
-                    has_more_than_one_capital = (capital_letter_cnt > 1)
-                    f202_tuple = (has_more_than_one_capital, cur_tag)
-                    self.increment_val_in_feature_dict(f202_tuple, "f202")
+                        alphabetical_cnt, capital_letter_cnt, digits_cnt = get_alpha_capital_digits_counts(cur_word)
 
-                    # f203 - (bool: has exactly 1 capital letter no matter where, tag)
-                    has_exactly_one_capital = (capital_letter_cnt == 1)
-                    f203_tuple = (has_exactly_one_capital, cur_tag)
-                    self.increment_val_in_feature_dict(f203_tuple, "f203")
+                        # f202 - (bool: has more than 1 capital letter, tag)
+                        has_more_than_one_capital = (capital_letter_cnt > 1)
+                        f202_tuple = (has_more_than_one_capital, cur_tag)
+                        self.increment_val_in_feature_dict("f202", f202_tuple)
 
-                    # f204 - (bool: is a number, tag)
-                    is_number = cur_word.isnumeric()
-                    f204_tuple = (is_number, cur_word)
-                    self.increment_val_in_feature_dict(f204_tuple, "f204")
+                        # f203 - (bool: has exactly 1 capital letter no matter where, tag)
+                        has_exactly_one_capital = (capital_letter_cnt == 1)
+                        f203_tuple = (has_exactly_one_capital, cur_tag)
+                        self.increment_val_in_feature_dict("f203", f203_tuple)
 
-                    # f205 - (bool: has a digit and a letter, tag)
-                    has_letter_and_digit = (alphabetical_cnt > 0) and (digits_cnt > 0)
-                    f205_tuple = (has_letter_and_digit, cur_tag)
-                    self.increment_val_in_feature_dict(f205_tuple, "f205")
+                        # f204 - (bool: is a number, tag)
+                        is_number = cur_word.isnumeric()
+                        f204_tuple = (is_number, cur_word)
+                        self.increment_val_in_feature_dict("f204", f204_tuple)
+
+                        # f205 - (bool: has a digit and a letter, tag)
+                        has_letter_and_digit = (alphabetical_cnt > 0) and (digits_cnt > 0)
+                        f205_tuple = (has_letter_and_digit, cur_tag)
+                        self.increment_val_in_feature_dict("f205", f205_tuple)
+
+                    if self.F300:
+                        # ~~~~~~~~~~ OUR ADDED SPECIAL FEATURES  ~~~~~~~~~~
+
+                        # f300 - (suffix of prev word, tag_curr)
+                        for i in range(1, p_word_len):
+                            p_suffix_tag = (p_word[-i:], cur_tag)
+                            self.increment_val_in_feature_dict('f300', p_suffix_tag)
+
+                        # f301 - (prefix of prev word, tag_curr)
+                        for i in range(1, p_word_len):
+                            p_prefix_tag = (p_word[:i], cur_tag)
+                            self.increment_val_in_feature_dict('f301', p_prefix_tag)
+
+                        # f302 - (suffix of next word, tag_curr)
+                        for i in range(1, n_word_len):
+                            n_suffix_tag = (n_word[-i:], cur_tag)
+                            self.increment_val_in_feature_dict('f302', n_suffix_tag)
+
+                        # f303 - (prefix of next word, tag_curr)
+                        for i in range(1, p_word_len):
+                            p_prefix_tag = (p_word[:i], cur_tag)
+                            self.increment_val_in_feature_dict('f303', p_prefix_tag)
+
+                        # f304 - (curr word contains a punctuation mark, tag_curr)
+                        puncs = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
+                        c_word_has_puncs = (cur_word.strip(puncs) != cur_word) and (len(cur_word.strip(puncs)) > 0)
+                        f304_tuple = (c_word_has_puncs, cur_tag)
+                        self.increment_val_in_feature_dict('f304', f304_tuple)
+
+                        # f305 - (curr word contains a dots, tag_curr)
+                        c_word_has_dot = ('.' in cur_word) and (len(cur_word) > 0)
+                        f305_tuple = (c_word_has_dot, cur_tag)
+                        self.increment_val_in_feature_dict('f305', f305_tuple)
+
+                        # f306 - (bigram of pp_tag and cur tag, tag curr)
+                        pp_bigram_tags = (pp_tag, cur_tag)
+                        self.increment_val_in_feature_dict('f306', pp_bigram_tags)
+
+                        # f307 - (is word contains "x", tag curr)
+                        c_word_has_x = 'x' in cur_word
+                        f307_tuple = (c_word_has_x, cur_tag)
+                        self.increment_val_in_feature_dict('f307', f307_tuple)
+
+                        # f308 - (is word starts with "z", tag curr)
+                        c_word_starts_with_z = cur_word[0] == 'z'
+                        f308_tuple = (c_word_starts_with_z, cur_tag)
+                        self.increment_val_in_feature_dict('f308', f308_tuple)
+
+                    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                     # create history
                     history = (cur_word, cur_tag, p_word, p_tag, pp_word, pp_tag, n_word)
@@ -143,12 +205,22 @@ class Feature2id:
         self.n_total_features = 0  # Total number of features accumulated
 
         # Init all features dictionaries
-        self.feature_to_idx = self.merge_dicts(
-            [
-                {f"f10{i}": OrderedDict() for i in range(8)},
-                {f"f20{i}": OrderedDict() for i in range(6)},
-            ]
-        )
+        self.feature_to_idx = {f"f10{i}": OrderedDict() for i in range(8)}
+        if FeatureStatistics.F200:
+            self.feature_to_idx = self.merge_dicts(
+                [
+                    self.feature_to_idx,
+                    {f"f20{i}": OrderedDict() for i in range(6)},
+                ]
+            )
+        if FeatureStatistics.F300:
+            self.feature_to_idx = self.merge_dicts(
+                [
+                    self.feature_to_idx,
+                    {f"f30{i}": OrderedDict() for i in range(9)},
+                ]
+            )
+
         self.represent_input_with_features = OrderedDict()
         self.histories_matrix = OrderedDict()
         self.histories_features = OrderedDict()  # Dict[(tuple{c_word, c_tag, p_word, p_tag, pp_word, pp_tag, n_word}): [relevant_features_indexes]]
@@ -218,96 +290,139 @@ def represent_input_with_features(history: Tuple, dict_of_dicts: Dict[str, Dict[
     """
     c_word, c_tag, p_word, p_tag, pp_word, pp_tag, n_word = history
     cur_word_len = len(c_word)
+    p_word_len = len(p_word)
+    n_word_len = len(n_word)
     features = []
+
+    # ~~~~~~~~~~ LOCAL FUNC FOR UPDATING FEATURES ~~~~~~~~~~
+
+    def update_features(feature_name: str, feature_tuple: tuple) -> None:
+        if feature_tuple in dict_of_dicts[feature_name]:
+            features.append(dict_of_dicts[feature_name][feature_tuple])
 
     # ~~~~~~~~~~ RATNAPARKHI FEATURES ~~~~~~~~~~
 
     # f100 - word / tag pairs
-    if (c_word, c_tag) in dict_of_dicts["f100"]:
-        features.append(dict_of_dicts["f100"][(c_word, c_tag)])
+    update_features("f100", (c_word, c_tag))
 
     # f101 - suffix <=4 and tag pairs
     for i in range(1, cur_word_len):
-        suffix_tag = (c_word[-i:], c_tag)
-        if suffix_tag in dict_of_dicts["f101"]:
-            features.append(dict_of_dicts["f101"][suffix_tag])
+        c_suffix_tag = (c_word[-i:], c_tag)
+        update_features('f101', c_suffix_tag)
 
     # f102 - prefix <=4 and tag pairs
     for i in range(1, cur_word_len):
-        prefix_tag = (c_word[:i], c_tag)
-        if prefix_tag in dict_of_dicts["f102"]:
-            features.append(dict_of_dicts["f102"][prefix_tag])
+        c_prefix_tag = (c_word[:i], c_tag)
+        update_features('f102', c_prefix_tag)
 
     # f103 - trigram tags
     trigram_tags = (pp_tag, p_tag, c_tag)
-    if trigram_tags in dict_of_dicts["f103"]:
-        features.append(dict_of_dicts["f103"][trigram_tags])
+    update_features('f103', trigram_tags)
 
     # f104 - bigram tags
     bigram_tags = (p_tag, c_tag)
-    if bigram_tags in dict_of_dicts["f104"]:
-        features.append(dict_of_dicts["f104"][bigram_tags])
+    update_features('f104', bigram_tags)
 
     # f105 - unigram tag
-    if c_tag in dict_of_dicts["f105"]:
-        features.append(dict_of_dicts["f105"][c_tag])
+    update_features('f105', c_tag)
 
     # f106 - previous word and tag pairs
     prev_word_tag = (p_word, c_tag)
-    if prev_word_tag in dict_of_dicts["f106"]:
-        features.append(dict_of_dicts["f106"][prev_word_tag])
+    update_features('f106', prev_word_tag)
 
     # f107 - next word and tag pairs
     next_word_tag = (n_word, c_tag)
-    if next_word_tag in dict_of_dicts["f107"]:
-        features.append(dict_of_dicts["f107"][next_word_tag])
+    update_features('f107', next_word_tag)
 
-    # ~~~~~~~~~~ ADDED FEATURES FOR CAPITAL LETTERS AND DIGITS HANDLING ~~~~~~~~~~
+    if FeatureStatistics.F200:
+        # ~~~~~~~~~~ ADDED FEATURES FOR CAPITAL LETTERS AND DIGITS HANDLING ~~~~~~~~~~
 
-    # f200 - (bool: is starting with capital letter, tag)
-    first_letter_is_capital = c_word[0].isupper()
-    f200_tuple = (first_letter_is_capital, c_tag)
-    if f200_tuple in dict_of_dicts["f200"]:
-        features.append(dict_of_dicts["f200"][f200_tuple])
+        # f200 - (bool: is starting with capital letter, tag)
+        first_letter_is_capital = c_word[0].isupper()
+        f200_tuple = (first_letter_is_capital, c_tag)
+        update_features('f200', f200_tuple)
 
-    alphabetical_cnt, capital_letter_cnt, digits_cnt = get_alpha_capital_digits_counts(c_word)
+        alphabetical_cnt, capital_letter_cnt, digits_cnt = get_alpha_capital_digits_counts(c_word)
 
-    # f201 - (is first word in sentence, tag)
-    is_first_word = (p_word == "*") and (pp_word == "*")
-    f201_tuple = (is_first_word, c_tag)
-    if f201_tuple in dict_of_dicts["f201"]:
-        features.append(dict_of_dicts["f201"][f201_tuple])
+        # f201 - (is first word in sentence, tag)
+        is_first_word = (p_word == "*") and (pp_word == "*")
+        f201_tuple = (is_first_word, c_tag)
+        update_features('f201', f201_tuple)
 
-    # f202 - (bool: has more than 1 capital letter, tag)
-    has_more_than_one_capital = capital_letter_cnt > 1
-    f202_tuple = (has_more_than_one_capital, c_tag)
-    if f202_tuple in dict_of_dicts["f202"]:
-        features.append(dict_of_dicts["f202"][f202_tuple])
+        # f202 - (bool: has more than 1 capital letter, tag)
+        has_more_than_one_capital = capital_letter_cnt > 1
+        f202_tuple = (has_more_than_one_capital, c_tag)
+        update_features('f202', f202_tuple)
 
-    # f203 - (bool: has exactly 1 capital letter no matter where, tag)
-    has_exactly_one_capital = (capital_letter_cnt == 1)
-    f203_tuple = (has_exactly_one_capital, c_tag)
-    if f203_tuple in dict_of_dicts["f203"]:
-        features.append(dict_of_dicts["f203"][f203_tuple])
+        # f203 - (bool: has exactly 1 capital letter no matter where, tag)
+        has_exactly_one_capital = (capital_letter_cnt == 1)
+        f203_tuple = (has_exactly_one_capital, c_tag)
+        update_features('f203', f203_tuple)
 
-    # f204 - (bool: is a number, tag)
-    is_number = c_word.isnumeric()
-    f204_tuple = (is_number, c_tag)
-    if f204_tuple in dict_of_dicts["f204"]:
-        features.append(dict_of_dicts["f204"][f204_tuple])
+        # f204 - (bool: is a number, tag)
+        is_number = c_word.isnumeric()
+        f204_tuple = (is_number, c_tag)
+        update_features('f204', f204_tuple)
 
-    # f205 - (bool: has a digit and a letter, tag)
-    has_letter_and_digit = (alphabetical_cnt > 0) and (digits_cnt > 0)
-    f205_tuple = (has_letter_and_digit, c_tag)
-    if f205_tuple in dict_of_dicts["f205"]:
-        features.append(dict_of_dicts["f205"][f205_tuple])
+        # f205 - (bool: has a digit and a letter, tag)
+        has_letter_and_digit = (alphabetical_cnt > 0) and (digits_cnt > 0)
+        f205_tuple = (has_letter_and_digit, c_tag)
+        update_features('f205', f205_tuple)
+
+    if FeatureStatistics.F300:
+        # ~~~~~~~~~~ OUR ADDED SPECIAL FEATURES  ~~~~~~~~~~
+
+        # f300 - (suffix of prev word, tag_curr)
+        for i in range(1, p_word_len):
+            p_suffix_tag = (p_word[-i:], c_tag)
+            update_features('f300', p_suffix_tag)
+
+        # f301 - (prefix of prev word, tag_curr)
+        for i in range(1, p_word_len):
+            p_prefix_tag = (p_word[:i], c_tag)
+            update_features('f301', p_prefix_tag)
+
+        # f302 - (suffix of next word, tag_curr)
+        for i in range(1, n_word_len):
+            n_suffix_tag = (n_word[-i:], c_tag)
+            update_features('f302', n_suffix_tag)
+
+        # f303 - (prefix of next word, tag_curr)
+        for i in range(1, p_word_len):
+            p_prefix_tag = (p_word[:i], c_tag)
+            update_features('f303', p_prefix_tag)
+
+        # f304 - (curr word contains a punctuation mark, tag_curr)
+        puncs = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
+        c_word_has_puncs = (c_word.strip(puncs) != c_word) and (len(c_word.strip(puncs)) > 0)
+        f304_tuple = (c_word_has_puncs, c_tag)
+        update_features('f304', f304_tuple)
+
+        # f305 - (curr word contains a dots, tag_curr)
+        c_word_has_dot = ('.' in c_word) and (len(c_word) > 0)
+        f305_tuple = (c_word_has_dot, c_tag)
+        update_features('f305', f305_tuple)
+
+        # f306 - (bigram of pp_tag and cur tag, tag curr)
+        pp_bigram_tags = (pp_tag, c_tag)
+        update_features('f306', pp_bigram_tags)
+
+        # f307 - (is word contains "x", tag curr)
+        c_word_has_x = 'x' in c_word
+        f307_tuple = (c_word_has_x, c_tag)
+        update_features('f307', f307_tuple)
+
+        # f308 - (is word starts with "z", tag curr)
+        c_word_starts_with_z = c_word[0] == 'z'
+        f308_tuple = (c_word_starts_with_z, c_tag)
+        update_features('f308', f308_tuple)
 
     return features
 
 
-def preprocess_train(train_path, threshold):
+def preprocess_train(train_path, threshold, f200, f300):
     # Statistics
-    statistics = FeatureStatistics()
+    statistics = FeatureStatistics(f200, f300)
     statistics.get_word_tag_pair_count(train_path)
 
     # feature2id
