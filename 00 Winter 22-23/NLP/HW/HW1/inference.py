@@ -1,13 +1,21 @@
 import numpy as np
 from tqdm import tqdm
-
+from typing import List, Tuple
 from preprocessing import read_test
 
 
-def get_top_B_idx(Matrix: np.array, B: int):
+def get_top_B_idx(Matrix: np.array, B: int) -> List[Tuple[int, int]]:
     # TODO: complete
-    "return B_best_idx"
-    pass
+    """ return B_best_idx """
+    m = Matrix.copy()
+    B_best_idx = []
+
+    for i in range(B):
+        cur_max = np.unravel_index(m.argmax(), m.shape)
+        B_best_idx.append(cur_max)
+        m[cur_max] = 0
+
+    return B_best_idx
 
 
 def memm_viterbi(sentence, pre_trained_weights, feature2id):
