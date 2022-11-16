@@ -25,6 +25,8 @@ class FeatureStatistics:
         self.tags_counts = defaultdict(int)  # a dictionary with the number of times each tag appeared in the text
         self.words_count = defaultdict(int)  # a dictionary with the number of times each word appeared in the text
         self.histories = []  # a list of all the histories seen at the text
+        self.n_tags = 0
+        self.tags_list = []
 
     def increment_val_in_feature_dict(self, val: tuple, feature: str):
         if val not in self.feature_rep_dict[feature]:
@@ -59,6 +61,10 @@ class FeatureStatistics:
                     self.tags_counts[cur_tag] += 1
                     self.words_count[cur_word] += 1
                     cur_word_len = len(cur_word)
+
+                    if cur_tag not in self.tags_list:
+                        self.tags_list.append(cur_tag)
+                        self.n_tags += 1
 
                     # ~~~~~~~~~~ COUNT FOR EVERY FEATURE FAMILIES ~~~~~~~~~~
                     # f100 - cont appearances of <word, tags> tuples
@@ -148,6 +154,8 @@ class Feature2id:
         self.histories_features = OrderedDict()  # Dict[(tuple{c_word, c_tag, p_word, p_tag, pp_word, pp_tag, n_word}): [relevant_features_indexes]]
         self.small_matrix = sparse.csr_matrix
         self.big_matrix = sparse.csr_matrix
+        self.tags_list = feature_statistics.tags_list
+        self.n_tags = feature_statistics.n_tags
 
     def merge_dicts(self, dict_list: List[Dict]) -> dict:
         result_dict = dict_list[0]
