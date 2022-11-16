@@ -1,5 +1,5 @@
 import pickle
-from time import time
+import time
 
 from inference import tag_all_test
 from optimization import get_optimal_vector
@@ -34,10 +34,10 @@ def main():
         )
         end = time.time()
         model1_time = end - start
-        print(f"model 1 train time: {model1_time}")
+        print(f"model train time: {model1_time}")
 
-    train_model(train_1_path, weights_1_path, threshold=1, lam=1, f200=True, f300=True)
-    train_model(train_2_path, weights_2_path, threshold=1, lam=1, f200=True, f300=True)
+    train_model(train_1_path, weights_1_path, threshold=3, lam=1, f200=True, f300=True)
+    train_model(train_2_path, weights_2_path, threshold=3, lam=1, f200=True, f300=True)
 
     # -----------------------------
     # Generate Comp Tagged
