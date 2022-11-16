@@ -9,7 +9,8 @@ def main():
     lam = 1
 
     train_path = "data/train1.wtag"
-    test_path = "data/comp1.words"
+    test_path = "data/test1.wtag"
+    # test_path = "data/comp1.words"
 
     weights_path = 'weights.pkl'
     predictions_path = 'predictions.wtag'

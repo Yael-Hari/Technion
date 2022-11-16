@@ -4,7 +4,7 @@ from tqdm import tqdm
 from preprocessing import read_test
 
 
-def get_top_B_idx(Pi: np.array, B: int):
+def get_top_B_idx(Matrix: np.array, B: int):
     # TODO: complete
     "return B_best_idx"
     pass
@@ -165,6 +165,9 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
 
     output_file = open(predictions_path, "a+")
 
+    if tagged:
+        confusion_matrix = np.array(feature2id.tags_num, feature2id.tags_num)
+
     for k, sen in tqdm(enumerate(test), total=len(test)):
         sentence = sen[0]
         pred = memm_viterbi(sentence, pre_trained_weights, feature2id)[1:]
@@ -174,4 +177,15 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
                 output_file.write(" ")
             output_file.write(f"{sentence[i]}_{pred[i]}")
         output_file.write("\n")
+
+        if tagged:
+            true_tags = sen[1]
+            pred_tags = pred
+            n_words = len(true_tags)
+            for k in range(n_words):
+                confusion_matrix[true_tags[k]][pred_tags[k]] += 1
+
     output_file.close()
+    if tagged:
+        accuracy = confusion_matrix.trace() / confusion_matrix.sum()
+        print(f"{accuracy=}")
