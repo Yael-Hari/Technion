@@ -103,7 +103,7 @@ class FeatureStatistics:
                     next_word_tag = (n_word.lower(), cur_tag)
                     self.increment_val_in_feature_dict("f107", next_word_tag)
 
-                    if self.F200:
+                    if FeatureStatistics.F200:
                         # ~~~~~~~~~~ COUNT FOR FEATURES FOR CAPITAL LETTERS AND DIGITS HANDLING ~~~~~~~~~~
 
                         # f200 - (bool: is starting with capital letter, tag)
@@ -138,7 +138,7 @@ class FeatureStatistics:
                         f205_tuple = (has_letter_and_digit, cur_tag)
                         self.increment_val_in_feature_dict("f205", f205_tuple)
 
-                    if self.F300:
+                    if FeatureStatistics.F300:
                         # ~~~~~~~~~~ OUR ADDED SPECIAL FEATURES  ~~~~~~~~~~
 
                         # f300 - (suffix of prev word, tag_curr)
