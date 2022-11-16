@@ -42,7 +42,6 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
         ==   exp(sum the cordinates of w in the relevant indexes of feature_vec)
              / sum_over_all_tags_v'[exp(-- same as above --)]
     """
-    # TODO: add n_tags, tags_list to feature2id class
     tags_list = feature2id.tags_list  # list of all possible tags
     n_tags = feature2id.n_tags  # number of tags in train set
     x = sentence[:-1]  # last letter is always '~'
@@ -155,8 +154,17 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     for k in reversed(range(n_words - 2)):
         pred_tags[k] = Bp(k + 2, pred_tags[k + 1], pred_tags[k + 2])
 
-    pred_tags[n_words] = '~'
+    pred_tags[n_words] = "~"
     return pred_tags
+
+
+def find_n_argmin_idx(list: list, n: int):
+    n_argmin_idx = []
+    n = min(n, len(list))
+    for i in range(n):
+        n_argmin_idx.append(np.argmin(list))
+        list.remove(np.min(list))
+    return n_argmin_idx
 
 
 def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
@@ -165,27 +173,100 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
 
     output_file = open(predictions_path, "a+")
 
+    # prepare for test evaluation
     if tagged:
-        confusion_matrix = np.array(feature2id.tags_num, feature2id.tags_num)
+        tags_list = []
+        confusion_matrix = {}
+        Tp = {}
+        Fp = {}
+        Fn = {}
+        precision = {}
+        recall = {}
+        f1 = {}
+        n_preds = 0
 
+    # go over each sentence in test set
     for k, sen in tqdm(enumerate(test), total=len(test)):
+        # take only words without tags
         sentence = sen[0]
+        # get pred
         pred = memm_viterbi(sentence, pre_trained_weights, feature2id)[1:]
+        # remove * *
         sentence = sentence[2:]
+        # write preds to file
         for i in range(len(pred)):
             if i > 0:
                 output_file.write(" ")
             output_file.write(f"{sentence[i]}_{pred[i]}")
         output_file.write("\n")
 
+        # add details tp fp ...
         if tagged:
             true_tags = sen[1]
             pred_tags = pred
             n_words = len(true_tags)
             for k in range(n_words):
-                confusion_matrix[true_tags[k]][pred_tags[k]] += 1
+                true = true_tags[k]
+                pred = pred_tags[k]
+                n_preds += 1
+
+                # if new tag add relevant details
+                if true not in tags_list:
+                    tags_list.append(true)
+                    confusion_matrix[true] = {}
+                    Tp[true] = 0
+                    Fp[true] = 0
+                    Fn[true] = 0
+                if pred not in tags_list:
+                    tags_list.append(pred)
+                    confusion_matrix[pred] = {}
+                    Tp[pred] = 0
+                    Fp[pred] = 0
+                    Fn[pred] = 0
+
+                confusion_matrix[true][pred] += 1
+                if true == pred:
+                    Tp[true] += 1
+                else:  # true != pred:
+                    Fn[true] += 1  # didn't catch the true tag
+                    Fp[pred] += 1  # pred is the wrong tag
 
     output_file.close()
+    
+    # ------------------------- calc evaluations -------------------------
     if tagged:
-        accuracy = confusion_matrix.trace() / confusion_matrix.sum()
-        print(f"{accuracy=}")
+        # accuracy
+        accuracy = sum(list(Tp.values())) / n_preds
+        
+        # precision, recall, f1 for each tag
+        for tag in tags_list:
+            precision[tag] = Tp[tag] / (Tp[tag] + Fp[tag])
+            recall[tag] = Tp[tag] / (Tp[tag] + Fn[tag])
+            f1[tag] = (
+                2 * (precision[tag] * recall[tag]) / (precision[tag] + recall[tag])
+            )
+        
+        # f1 
+        mean_f1 = np.mean(list(f1.values()))
+        median_f1 = np.median(list(f1.values()))
+        print(f"{accuracy=}, {mean_f1=}, {median_f1=}")
+
+        # 10 tags with the lowest precision
+        precision_vals_list = list(precision.values())
+        precision_keys_list = list(precision.keys())
+        argmin_10_idx = find_n_argmin_idx(precision_vals_list, n=10)
+        for argmin_idx in argmin_10_idx:
+            tag = precision_keys_list[argmin_idx]
+            precision_val = precision_vals_list[argmin_idx]
+            print("10 tags with the lowest precision: \n")
+            print(f"{tag=}, {precision_val=} \n")
+        
+        # 10 tags with the lowest recall
+        recall_vals_list = list(recall.values())
+        recall_keys_list = list(recall.keys())
+        argmin_10_idx = find_n_argmin_idx(recall_vals_list, n=10)
+        for argmin_idx in argmin_10_idx:
+            tag = recall_keys_list[argmin_idx]
+            recall_val = recall_vals_list[argmin_idx]
+            print("10 tags with the lowest recall: \n")
+            print(f"{tag=}, {recall_val=} \n")
