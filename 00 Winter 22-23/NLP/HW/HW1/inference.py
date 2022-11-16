@@ -1,11 +1,11 @@
 from typing import List, Tuple
 
+import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.metrics import ConfusionMatrixDisplay
 from tqdm import tqdm
 
 from preprocessing import read_test
-from sklearn.metrics import ConfusionMatrixDisplay
-import matplotlib.pyplot as plt
 
 
 def get_top_B_idx(Matrix: np.array, B: int) -> List[Tuple[int, int]]:
@@ -180,6 +180,17 @@ def find_n_argmin_idx(values_list: list, n: int):
     return n_argmin_idx
 
 
+def print_10_tags_with_lowest_val(score_method: dict):
+    vals_list = list(score_method.values())
+    keys_list = list(score_method.keys())
+    argmin_10_idx = find_n_argmin_idx(vals_list, n=10)
+    for argmin_idx in argmin_10_idx:
+        tag = keys_list[argmin_idx]
+        val = vals_list[argmin_idx]
+        print(f"10 tags with the lowest {score_method}: \n")
+        print(f"{tag=}, {val=} \n")
+
+
 def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
     tagged = "test" in test_path
     test = read_test(test_path, tagged=tagged)
@@ -265,24 +276,11 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
         print(f"{accuracy=}, {mean_f1=}, {median_f1=}")
 
         # 10 tags with the lowest precision
-        precision_vals_list = list(precision.values())
-        precision_keys_list = list(precision.keys())
-        argmin_10_idx = find_n_argmin_idx(precision_vals_list, n=10)
-        for argmin_idx in argmin_10_idx:
-            tag = precision_keys_list[argmin_idx]
-            precision_val = precision_vals_list[argmin_idx]
-            print("10 tags with the lowest precision: \n")
-            print(f"{tag=}, {precision_val=} \n")
-
+        print_10_tags_with_lowest_val(precision)
         # 10 tags with the lowest recall
-        recall_vals_list = list(recall.values())
-        recall_keys_list = list(recall.keys())
-        argmin_10_idx = find_n_argmin_idx(recall_vals_list, n=10)
-        for argmin_idx in argmin_10_idx:
-            tag = recall_keys_list[argmin_idx]
-            recall_val = recall_vals_list[argmin_idx]
-            print("10 tags with the lowest recall: \n")
-            print(f"{tag=}, {recall_val=} \n")
+        print_10_tags_with_lowest_val(recall)
+        # 10 tags with the lowest f1 score
+        print_10_tags_with_lowest_val(f1)
 
         # confusion matrix
         # disp = ConfusionMatrixDisplay.from_predictions(true_list, pred_list, normalize="false")
