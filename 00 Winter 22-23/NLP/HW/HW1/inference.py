@@ -45,12 +45,12 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     # TODO: add n_tags, tags_list to feature2id class
     tags_list = feature2id.tags_list  # list of all possible tags
     n_tags = feature2id.n_tags  # number of tags in train set
-    x = sentence
+    x = sentence[:-1]  # last letter is always '~'
     weights = np.array(pre_trained_weights)
     n_words = len(x)
     Pi = np.zeros([n_words, n_tags, n_tags])
     Bp = np.zeros([n_words, n_tags, n_tags])
-    pred_tags = np.array(n_words)
+    pred_tags = np.array(len(sentence))
     B = 3  # Beam search parameter
     B_best_idx = []
 
@@ -155,6 +155,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     for k in reversed(range(n_words - 2)):
         pred_tags[k] = Bp(k + 2, pred_tags[k + 1], pred_tags[k + 2])
 
+    pred_tags[n_words] = '~'
     return pred_tags
 
 
