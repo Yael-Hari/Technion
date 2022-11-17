@@ -75,7 +75,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
              / sum_over_all_tags_v'[exp(-- same as above --)]
     """
     tags_list = feature2id.tags_list  # list of all possible tags
-    n_tags = feature2id.n_tags  # number of tags in train set
+    n_tags = feature2id.n_tags + 1  # number of tags in train set, +1 for "*"
     x = sentence[2:-1]  # last letter is always '~'
     weights = np.array(pre_trained_weights)
     n_words = len(x)
@@ -85,6 +85,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     B = 3  # Beam search parameter
     B_best_idx = []
     dict_tag_to_idx = {v_tag: v_idx for v_idx, v_tag in enumerate(tags_list)}
+    star_idx = n_tags   # "*"
 
     # histories_features: OrderedDict[history_tuple: [relevant_features_indexes]]
     histories_features = feature2id.histories_features
@@ -101,8 +102,8 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
             # check if known word:
             if known_tag:
                 v_idx = dict_tag_to_idx[known_tag]
-                Pi[k]["*"][v_idx] = 1
-                Bp[k]["*"][v_idx] = "*"
+                Pi[k][star_idx][v_idx] = 1
+                Bp[k][star_idx][v_idx] = "*"
             else:
                 # calculate Q and we'll use it later a lot
                 Qv = np.zeros(n_tags)
@@ -116,8 +117,8 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
 
                 # calculate Pi
                 for v_idx, v_tag in enumerate(tags_list):
-                    Pi[k]["*"][v_idx] = Qv[v_idx] / Q_all_v_tags
-                    Bp[k]["*"][v_idx] = "*"
+                    Pi[k][star_idx][v_idx] = Qv[v_idx] / Q_all_v_tags
+                    Bp[k][star_idx][v_idx] = "*"
 
         # ------------------ Calc Pi k = 1 ----------------------
         if k == 1:
@@ -147,7 +148,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
             for u_idx, u_tag in enumerate(tags_list):
                 for v_idx, v_tag in enumerate(v_tags_list):
                     Pi[k][u_idx][v_idx] = (
-                        Pi[k - 1]["*"][u_idx] * Qv[u_idx][v_idx] / Q_all_v_tags[u_idx]
+                        Pi[k - 1][star_idx][u_idx] * Qv[u_idx][v_idx] / Q_all_v_tags[u_idx]
                     )
                     Bp[k][u_idx][v_idx] = "*"
 
