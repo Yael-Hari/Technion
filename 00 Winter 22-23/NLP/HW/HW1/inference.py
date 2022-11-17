@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.metrics import ConfusionMatrixDisplay
 from tqdm import tqdm
 
-from preprocessing import read_test
+from preprocessing import read_test, represent_input_with_features
 
 
 def get_top_B_idx(Matrix: np.array, B: int) -> List[np.array]:
@@ -25,16 +25,33 @@ def get_top_B_idx(Matrix: np.array, B: int) -> List[np.array]:
 def check_if_known_word(word):
     # check number
     if word.isdigit():
-        return 'CD'
+        return "CD"
 
     # check known tags
     known_tags_dict = {
-        ',': ',', "``": "``", 'The': 'DT', "$": "$",
-        "''": "''", "in": "IN", "a": "DT", "A": "DT",
-        ":": ":", ";": ":", "--": ":", "of": "IN",
-        "to": "TO", "from": "IN", "for": "IN", 'because': 'IN',
-        "than": 'IN', "that": 'IN', "at": 'IN', "as": 'IN',
-        "into": 'IN', "by": 'IN', "on": 'IN',
+        ",": ",",
+        "``": "``",
+        "The": "DT",
+        "$": "$",
+        "''": "''",
+        "in": "IN",
+        "a": "DT",
+        "A": "DT",
+        ":": ":",
+        ";": ":",
+        "--": ":",
+        "of": "IN",
+        "to": "TO",
+        "from": "IN",
+        "for": "IN",
+        "because": "IN",
+        "than": "IN",
+        "that": "IN",
+        "at": "IN",
+        "as": "IN",
+        "into": "IN",
+        "by": "IN",
+        "on": "IN",
     }
     if word in known_tags_dict.keys():
         return known_tags_dict[word]
@@ -81,11 +98,16 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     n_words = len(x)
     Pi = np.zeros([n_words, n_tags, n_tags])
     Bp = np.zeros([n_words, n_tags, n_tags])
-    pred_tags = np.array(len(sentence))
+    pred_tags_idx = np.array(len(sentence))
     B = 3  # Beam search parameter
     B_best_idx = []
     dict_tag_to_idx = {v_tag: v_idx for v_idx, v_tag in enumerate(tags_list)}
-    star_idx = n_tags - 1   # "*"
+    dict_idx_to_tag = {v_idx: v_tag for v_idx, v_tag in enumerate(tags_list)}
+    star_idx = n_tags - 1  # "*"
+    dict_tag_to_idx["*"] = star_idx
+    dict_tag_to_idx[star_idx] = "*"
+
+    feature_to_idx = feature2id.feature_to_idx
 
     # histories_features: OrderedDict[history_tuple: [relevant_features_indexes]]
     histories_features = feature2id.histories_features
@@ -111,7 +133,12 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                 for v_idx, v_tag in enumerate(tags_list):
                     # history tuple: (x_k, v_tag, x_k-1, u_tag, x_k-2, t_tag, x_k+1)
                     history_tuple = (x[k], v_tag, "*", "*", "*", "*", x[k + 1])
-                    relevant_idx = histories_features[history_tuple]
+                    if history_tuple in histories_features:
+                        relevant_idx = histories_features[history_tuple]
+                    else:
+                        relevant_idx = represent_input_with_features(
+                            history_tuple, feature_to_idx
+                        )
                     Qv[v_idx] = np.exp(weights[relevant_idx].sum())
                     Q_all_v_tags += Qv[v_idx]
 
@@ -140,7 +167,12 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                 for v_idx, v_tag in enumerate(v_tags_list):
                     # history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
                     history_tuple = (x[k], v_tag, x[k - 1], u_tag, "*", "*", x[k + 1])
-                    relevant_idx = histories_features[history_tuple]
+                    if history_tuple in histories_features:
+                        relevant_idx = histories_features[history_tuple]
+                    else:
+                        relevant_idx = represent_input_with_features(
+                            history_tuple, feature_to_idx
+                        )
                     Qv[u_idx][v_idx] = np.exp(weights[relevant_idx].sum())
                     Q_all_v_tags[u_idx] += Qv[u_idx][v_idx]
 
@@ -148,7 +180,9 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
             for u_idx, u_tag in enumerate(tags_list):
                 for v_idx, v_tag in enumerate(v_tags_list):
                     Pi[k][u_idx][v_idx] = (
-                        Pi[k - 1][star_idx][u_idx] * Qv[u_idx][v_idx] / Q_all_v_tags[u_idx]
+                        Pi[k - 1][star_idx][u_idx]
+                        * Qv[u_idx][v_idx]
+                        / Q_all_v_tags[u_idx]
                     )
                     Bp[k][u_idx][v_idx] = star_idx
 
@@ -174,17 +208,37 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                 t_tag = tags_list[t_idx]
                 u_tag = tags_list[u_idx]
                 for v_idx, v_tag in enumerate(v_tags_list):
+
                     # history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
-                    history_tuple = (
-                        x[k],
-                        v_tag,
-                        x[k - 1],
-                        u_tag,
-                        x[k - 2],
-                        t_tag,
-                        x[k + 1],
-                    )
-                    relevant_idx = histories_features[history_tuple]
+                    # if last word
+                    # TODO: check if in prepreocess, when inserting history of last word, we using ~ as the n_word
+                    if k == n_words - 1:
+                        history_tuple = (
+                            x[k],
+                            v_tag,
+                            x[k - 1],
+                            u_tag,
+                            x[k - 2],
+                            t_tag,
+                            "~",
+                        )
+                    else:
+                        history_tuple = (
+                            x[k],
+                            v_tag,
+                            x[k - 1],
+                            u_tag,
+                            x[k - 2],
+                            t_tag,
+                            x[k + 1],
+                        )
+
+                    if history_tuple in histories_features:
+                        relevant_idx = histories_features[history_tuple]
+                    else:
+                        relevant_idx = represent_input_with_features(
+                            history_tuple, feature_to_idx
+                        )
                     Qv[t_idx][u_idx][v_idx] = np.exp(weights[relevant_idx].sum())
                     Q_all_v_tags[t_idx][u_idx] += Qv[t_idx][u_idx][v_idx]
 
@@ -206,13 +260,13 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
 
     # ------------------ Get Predicted Tags by Bp ----------------------
     # last 2 words in sentence
-    pred_tags[n_words - 1] = tags_list[np.argmax(Pi[n_words - 1])]
-    pred_tags[n_words - 2] = tags_list[np.argmax(Pi[n_words - 2])]
+    pred_tag_minus2_idx, pred_tag_minus1_idx = np.argmax(Pi[n_words - 1])
+    pred_tags_idx[n_words - 1] = pred_tag_minus1_idx
+    pred_tags_idx[n_words - 2] = pred_tag_minus2_idx
     for k in reversed(range(n_words - 2)):
-        pred_tag_idx = Bp[k + 2][pred_tags[k + 1]][pred_tags[k + 2]]
-        pred_tags[k] = dict_tag_to_idx[pred_tag_idx]
+        pred_tags_idx[k] = Bp[k + 2][pred_tags_idx[k + 1]][pred_tags_idx[k + 2]]
 
-    pred_tags[n_words] = "~"
+    pred_tags = [dict_idx_to_tag[pred_idx] for pred_idx in pred_tags_idx]
     return pred_tags
 
 
@@ -261,21 +315,20 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
         # take only words without tags
         sentence = sen[0]
         # get pred
-        pred = memm_viterbi(sentence, pre_trained_weights, feature2id)[1:]
-        # remove * *
-        sentence = sentence[2:]
+        pred_tags = memm_viterbi(sentence, pre_trained_weights, feature2id)
+        # remove * * ~
+        sentence = sentence[2:-1]
         # write preds to file
-        for i in range(len(pred)):
+        n_words = len(sentence)
+        for i in range(n_words):
             if i > 0:
                 output_file.write(" ")
-            output_file.write(f"{sentence[i]}_{pred[i]}")
+            output_file.write(f"{sentence[i]}_{pred_tags[i]}")
         output_file.write("\n")
 
         # add details tp fp ...
         if tagged:
             true_tags = sen[1]
-            pred_tags = pred
-            n_words = len(true_tags)
             for k in range(n_words):
                 true = true_tags[k]
                 pred = pred_tags[k]
