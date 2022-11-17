@@ -85,7 +85,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     B = 3  # Beam search parameter
     B_best_idx = []
     dict_tag_to_idx = {v_tag: v_idx for v_idx, v_tag in enumerate(tags_list)}
-    star_idx = n_tags   # "*"
+    star_idx = n_tags - 1   # "*"
 
     # histories_features: OrderedDict[history_tuple: [relevant_features_indexes]]
     histories_features = feature2id.histories_features
@@ -103,7 +103,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
             if known_tag:
                 v_idx = dict_tag_to_idx[known_tag]
                 Pi[k][star_idx][v_idx] = 1
-                Bp[k][star_idx][v_idx] = "*"
+                Bp[k][star_idx][v_idx] = star_idx
             else:
                 # calculate Q and we'll use it later a lot
                 Qv = np.zeros(n_tags)
@@ -118,7 +118,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                 # calculate Pi
                 for v_idx, v_tag in enumerate(tags_list):
                     Pi[k][star_idx][v_idx] = Qv[v_idx] / Q_all_v_tags
-                    Bp[k][star_idx][v_idx] = "*"
+                    Bp[k][star_idx][v_idx] = star_idx
 
         # ------------------ Calc Pi k = 1 ----------------------
         if k == 1:
@@ -150,7 +150,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                     Pi[k][u_idx][v_idx] = (
                         Pi[k - 1][star_idx][u_idx] * Qv[u_idx][v_idx] / Q_all_v_tags[u_idx]
                     )
-                    Bp[k][u_idx][v_idx] = "*"
+                    Bp[k][u_idx][v_idx] = star_idx
 
             # find Top B Pi values indexes
             B_best_idx = get_top_B_idx(Pi[k], B)
@@ -198,7 +198,8 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                         / Q_all_v_tags[t_idx][u_idx]
                     )
                     Pi[k][u_idx][v_idx] = np.max(t_scores)
-                    Bp[k][u_idx][v_idx] = tags_list[np.argmax(t_scores)]
+                    argmax_tag = tags_list[np.argmax(t_scores)]
+                    Bp[k][u_idx][v_idx] = dict_tag_to_idx[argmax_tag]
 
             # find Top B Pi values indexes
             B_best_idx = get_top_B_idx(Pi[k], B)
@@ -208,7 +209,8 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     pred_tags[n_words - 1] = tags_list[np.argmax(Pi[n_words - 1])]
     pred_tags[n_words - 2] = tags_list[np.argmax(Pi[n_words - 2])]
     for k in reversed(range(n_words - 2)):
-        pred_tags[k] = Bp[k + 2][pred_tags[k + 1]][pred_tags[k + 2]]
+        pred_tag_idx = Bp[k + 2][pred_tags[k + 1]][pred_tags[k + 2]]
+        pred_tags[k] = dict_tag_to_idx[pred_tag_idx]
 
     pred_tags[n_words] = "~"
     return pred_tags
