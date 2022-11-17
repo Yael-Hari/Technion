@@ -97,12 +97,15 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     n_words = len(x)
     Pi = np.zeros([n_words, n_tags, n_tags])
     Bp = np.zeros([n_words, n_tags, n_tags])
-    pred_tags = np.array(len(sentence))
+    pred_tags_idx = np.array(len(sentence))
+    pred_tags_dict = {}
     B = 3  # Beam search parameter
     B_best_idx = []
     dict_tag_to_idx = {v_tag: v_idx for v_idx, v_tag in enumerate(tags_list)}
+    dict_idx_to_tag = {v_idx: v_tag for v_idx, v_tag in enumerate(tags_list)}
     star_idx = n_tags - 1  # "*"
     dict_tag_to_idx["*"] = star_idx
+    dict_tag_to_idx[star_idx] = "*"
 
     feature_to_idx = feature2id.feature_to_idx
 
@@ -142,7 +145,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                 # calculate Pi
                 for v_idx, v_tag in enumerate(tags_list):
                     Pi[k][star_idx][v_idx] = Qv[v_idx] / Q_all_v_tags
-                    Bp[k][star_idx][v_idx] = "*"
+                    Bp[k][star_idx][v_idx] = star_idx
 
         # ------------------ Calc Pi k = 1 ----------------------
         if k == 1:
@@ -181,7 +184,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                         * Qv[u_idx][v_idx]
                         / Q_all_v_tags[u_idx]
                     )
-                    Bp[k][u_idx][v_idx] = "*"
+                    Bp[k][u_idx][v_idx] = star_idx
 
             # find Top B Pi values indexes
             B_best_idx = get_top_B_idx(Pi[k], B)
@@ -234,17 +237,18 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                         / Q_all_v_tags[t_idx][u_idx]
                     )
                     Pi[k][u_idx][v_idx] = np.max(t_scores)
-                    Bp[k][u_idx][v_idx] = tags_list[np.argmax(t_scores)]
-
+                    argmax_tag = tags_list[np.argmax(t_scores)]
+                    Bp[k][u_idx][v_idx] = dict_tag_to_idx[argmax_tag]
             # find Top B Pi values indexes
             B_best_idx = get_top_B_idx(Pi[k], B)
 
     # ------------------ Get Predicted Tags by Bp ----------------------
     # last 2 words in sentence
-    pred_tags[n_words - 1] = tags_list[np.argmax(Pi[n_words - 1])]
-    pred_tags[n_words - 2] = tags_list[np.argmax(Pi[n_words - 2])]
+    pred_tag_minus2_idx, pred_tag_minus1_idx = np.argmax(Pi[n_words - 1])
+    pred_tags_idx[n_words - 1] = pred_tag_minus1_idx
+    pred_tags_idx[n_words - 2] = pred_tag_minus2_idx
     for k in reversed(range(n_words - 2)):
-        pred_tags[k] = Bp[k + 2][pred_tags[k + 1]][pred_tags[k + 2]]
+        pred_tags_idx[k] = Bp[k + 2][pred_tags_idx[k + 1]][pred_tags_idx[k + 2]]
 
     # TODO: remove pred for the last word ~
     # and also in the evaluation in get test preds

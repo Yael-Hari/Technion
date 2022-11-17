@@ -44,12 +44,16 @@ def main():
     # -----------------------------
 
     def generate_comp(weights_path, test_path, predictions_path):
+        start = time.time()
         with open(weights_path, "rb") as f:
             optimal_params, feature2id = pickle.load(f)
         pre_trained_weights = optimal_params[0]
 
         print(pre_trained_weights)
         tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path)
+        end = time.time()
+        model1_time = end - start
+        print(f"model test + evaluate time: {model1_time}")
 
     generate_comp(weights_1_path, comp_1_input_path, comp_1_output_path)
     generate_comp(weights_2_path, comp_2_input_path, comp_2_output_path)
