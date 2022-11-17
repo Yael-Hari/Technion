@@ -107,6 +107,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     dict_tag_to_idx["*"] = star_idx
     dict_tag_to_idx[star_idx] = "*"
 
+
     feature_to_idx = feature2id.feature_to_idx
 
     # histories_features: OrderedDict[history_tuple: [relevant_features_indexes]]
