@@ -208,21 +208,30 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                 u_tag = tags_list[u_idx]
                 for v_idx, v_tag in enumerate(v_tags_list):
 
+                    # history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
                     # if last word
                     # TODO: check if in prepreocess, when inserting history of last word, we using ~ as the n_word
                     if k == n_words - 1:
-                        x[k + 1] = "~"
+                        history_tuple = (
+                            x[k],
+                            v_tag,
+                            x[k - 1],
+                            u_tag,
+                            x[k - 2],
+                            t_tag,
+                            "~",
+                        )
+                    else:
+                        history_tuple = (
+                            x[k],
+                            v_tag,
+                            x[k - 1],
+                            u_tag,
+                            x[k - 2],
+                            t_tag,
+                            x[k + 1],
+                        )
 
-                    # history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
-                    history_tuple = (
-                        x[k],
-                        v_tag,
-                        x[k - 1],
-                        u_tag,
-                        x[k - 2],
-                        t_tag,
-                        x[k + 1],
-                    )
                     if history_tuple in histories_features:
                         relevant_idx = histories_features[history_tuple]
                     else:
