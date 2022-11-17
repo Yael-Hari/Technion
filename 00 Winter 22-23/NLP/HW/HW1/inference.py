@@ -98,7 +98,6 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     Pi = np.zeros([n_words, n_tags, n_tags])
     Bp = np.zeros([n_words, n_tags, n_tags])
     pred_tags_idx = np.array(len(sentence))
-    pred_tags_dict = {}
     B = 3  # Beam search parameter
     B_best_idx = []
     dict_tag_to_idx = {v_tag: v_idx for v_idx, v_tag in enumerate(tags_list)}
@@ -208,6 +207,12 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                 t_tag = tags_list[t_idx]
                 u_tag = tags_list[u_idx]
                 for v_idx, v_tag in enumerate(v_tags_list):
+
+                    # if last word
+                    # TODO: check if in prepreocess, when inserting history of last word, we using ~ as the n_word
+                    if k == n_words - 1:
+                        x[k + 1] = "~"
+
                     # history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
                     history_tuple = (
                         x[k],
@@ -249,7 +254,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     pred_tags_idx[n_words - 2] = pred_tag_minus2_idx
     for k in reversed(range(n_words - 2)):
         pred_tags_idx[k] = Bp[k + 2][pred_tags_idx[k + 1]][pred_tags_idx[k + 2]]
-    
+
     pred_tags = [dict_idx_to_tag[pred_idx] for pred_idx in pred_tags_idx]
     return pred_tags
 
