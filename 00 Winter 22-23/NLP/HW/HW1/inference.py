@@ -55,6 +55,7 @@ def check_if_known_word(word):
         "into": "IN",
         "by": "IN",
         "on": "IN",
+        "?": "."
     }
     if word in known_tags_dict.keys():
         return known_tags_dict[word]
@@ -110,7 +111,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     dict_idx_to_tag = {v_idx: v_tag for v_idx, v_tag in enumerate(tags_list)}
     star_idx = n_tags - 1  # "*"
     dict_tag_to_idx["*"] = star_idx
-    dict_tag_to_idx[star_idx] = "*"
+    dict_idx_to_tag[star_idx] = "*"
 
     feature_to_idx = feature2id.feature_to_idx
 
@@ -137,7 +138,12 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                 Q_all_v_tags = 0
                 for v_idx, v_tag in enumerate(tags_list):
                     # history tuple: (x_k, v_tag, x_k-1, u_tag, x_k-2, t_tag, x_k+1)
-                    history_tuple = (x[k], v_tag, "*", "*", "*", "*", x[k + 1])
+                    if len(x) >1:
+                        history_tuple = (x[k], v_tag, "*", "*", "*", "*", x[k + 1])
+                    elif len(x) == 1:
+                        history_tuple = (x[k], v_tag, "*", "*", "*", "*", "~")
+                    elif len(x) == 0:
+                        raise f"ERROR!: len({x}) == 0"
                     if history_tuple in histories_features:
                         relevant_idx = histories_features[history_tuple]
                     else:
@@ -171,7 +177,12 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
             for u_idx, u_tag in enumerate(tags_list):
                 for v_idx, v_tag in enumerate(v_tags_list):
                     # history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
-                    history_tuple = (x[k], v_tag, x[k - 1], u_tag, "*", "*", x[k + 1])
+                    if len(x) > 2:
+                        history_tuple = (x[k], v_tag, x[k - 1], u_tag, "*", "*", x[k + 1])
+                    elif len(x) == 2:
+                        history_tuple = (x[k], v_tag, x[k - 1], u_tag, "*", "*", "~")
+                    else:
+                        raise f"ERROR!: this shouldnt happen here! {x=}, {k=}, {len(x)=}"
                     if history_tuple in histories_features:
                         relevant_idx = histories_features[history_tuple]
                     else:
@@ -366,8 +377,11 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
         # accuracy
         accuracy = sum(list(Tp.values())) / n_preds
 
+        # TODO DEBUG
         # precision, recall, f1 for each tag
         for tag in tags_list:
+            if tag == "*" or tag == "~":
+                continue
             precision[tag] = Tp[tag] / (Tp[tag] + Fp[tag])
             recall[tag] = Tp[tag] / (Tp[tag] + Fn[tag])
             f1[tag] = (
