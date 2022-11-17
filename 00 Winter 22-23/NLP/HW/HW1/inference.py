@@ -8,6 +8,9 @@ from tqdm import tqdm
 from preprocessing import read_test, represent_input_with_features
 
 
+COUNT_CALLS_TO_VITERBI = 0
+
+
 def get_top_B_idx(Matrix: np.array, B: int) -> List[np.array]:
     # TODO: complete
     """return B_best_idx"""
@@ -91,6 +94,8 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
         ==   exp(sum the cordinates of w in the relevant indexes of feature_vec)
              / sum_over_all_tags_v'[exp(-- same as above --)]
     """
+    global COUNT_CALLS_TO_VITERBI
+    COUNT_CALLS_TO_VITERBI += 1
     tags_list = feature2id.tags_list  # list of all possible tags
     n_tags = feature2id.n_tags + 1  # number of tags in train set, +1 for "*"
     x = sentence[2:-1]  # last letter is always '~'
@@ -98,7 +103,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     n_words = len(x)
     Pi = np.zeros([n_words, n_tags, n_tags])
     Bp = np.zeros([n_words, n_tags, n_tags])
-    pred_tags_idx = np.array(len(sentence))
+    pred_tags_idx = [-1 for _ in range(n_words)]
     B = 3  # Beam search parameter
     B_best_idx = []
     dict_tag_to_idx = {v_tag: v_idx for v_idx, v_tag in enumerate(tags_list)}
@@ -106,7 +111,6 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     star_idx = n_tags - 1  # "*"
     dict_tag_to_idx["*"] = star_idx
     dict_tag_to_idx[star_idx] = "*"
-
 
     feature_to_idx = feature2id.feature_to_idx
 
@@ -261,11 +265,11 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
 
     # ------------------ Get Predicted Tags by Bp ----------------------
     # last 2 words in sentence
-    pred_tag_minus2_idx, pred_tag_minus1_idx = np.argmax(Pi[n_words - 1])
+    pred_tag_minus2_idx, pred_tag_minus1_idx = np.unravel_index(Pi[n_words - 1].argmax(), Pi[n_words - 1].shape)
     pred_tags_idx[n_words - 1] = pred_tag_minus1_idx
     pred_tags_idx[n_words - 2] = pred_tag_minus2_idx
     for k in reversed(range(n_words - 2)):
-        pred_tags_idx[k] = Bp[k + 2][pred_tags_idx[k + 1]][pred_tags_idx[k + 2]]
+        pred_tags_idx[k] = int(Bp[k + 2][pred_tags_idx[k + 1]][pred_tags_idx[k + 2]])
 
     pred_tags = [dict_idx_to_tag[pred_idx] for pred_idx in pred_tags_idx]
     return pred_tags

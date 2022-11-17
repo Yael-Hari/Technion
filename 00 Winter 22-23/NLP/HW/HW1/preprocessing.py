@@ -334,7 +334,7 @@ def represent_input_with_features(history: Tuple, dict_of_dicts: Dict[str, Dict[
     next_word_tag = (n_word, c_tag)
     update_features('f107', next_word_tag)
 
-    if FeatureStatistics.F200:
+    if "f200" in dict_of_dicts:
         # ~~~~~~~~~~ ADDED FEATURES FOR CAPITAL LETTERS AND DIGITS HANDLING ~~~~~~~~~~
 
         # f200 - (bool: is starting with capital letter, tag)
@@ -369,7 +369,7 @@ def represent_input_with_features(history: Tuple, dict_of_dicts: Dict[str, Dict[
         f205_tuple = (has_letter_and_digit, c_tag)
         update_features('f205', f205_tuple)
 
-    if FeatureStatistics.F300:
+    if "f300" in dict_of_dicts:
         # ~~~~~~~~~~ OUR ADDED SPECIAL FEATURES  ~~~~~~~~~~
 
         # f300 - (suffix of prev word, tag_curr)
@@ -416,6 +416,10 @@ def represent_input_with_features(history: Tuple, dict_of_dicts: Dict[str, Dict[
         c_word_starts_with_z = c_word[0] == 'z'
         f308_tuple = (c_word_starts_with_z, c_tag)
         update_features('f308', f308_tuple)
+
+        # TODO f309 - (is 2nd word in sentence, tag curr)
+        # TODO f310 - (is last word in sentence, tag curr)
+        # TODO f311 - (is not 1st\2nd\last word in sentence, tag curr)
 
     return features
 
