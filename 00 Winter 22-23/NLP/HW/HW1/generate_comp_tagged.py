@@ -36,8 +36,8 @@ def main():
         model1_time = end - start
         print(f"model train time: {model1_time}")
 
-    train_model(train_1_path, weights_1_path, threshold=3, lam=1, f200=True, f300=True)
-    train_model(train_2_path, weights_2_path, threshold=3, lam=1, f200=True, f300=True)
+    # train_model(train_1_path, weights_1_path, threshold=3, lam=1, f200=True, f300=True)
+    # train_model(train_2_path, weights_2_path, threshold=3, lam=1, f200=True, f300=True)
 
     # -----------------------------
     # Generate Comp Tagged
