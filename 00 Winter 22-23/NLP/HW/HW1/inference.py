@@ -9,7 +9,6 @@ from preprocessing import read_test
 
 
 def get_top_B_idx(Matrix: np.array, B: int) -> List[np.array]:
-    # TODO: complete
     """return B_best_idx"""
     m = Matrix.copy()
     B_best_idx = []
@@ -25,16 +24,33 @@ def get_top_B_idx(Matrix: np.array, B: int) -> List[np.array]:
 def check_if_known_word(word):
     # check number
     if word.isdigit():
-        return 'CD'
+        return "CD"
 
     # check known tags
     known_tags_dict = {
-        ',': ',', "``": "``", 'The': 'DT', "$": "$",
-        "''": "''", "in": "IN", "a": "DT", "A": "DT",
-        ":": ":", ";": ":", "--": ":", "of": "IN",
-        "to": "TO", "from": "IN", "for": "IN", 'because': 'IN',
-        "than": 'IN', "that": 'IN', "at": 'IN', "as": 'IN',
-        "into": 'IN', "by": 'IN', "on": 'IN',
+        ",": ",",
+        "``": "``",
+        "The": "DT",
+        "$": "$",
+        "''": "''",
+        "in": "IN",
+        "a": "DT",
+        "A": "DT",
+        ":": ":",
+        ";": ":",
+        "--": ":",
+        "of": "IN",
+        "to": "TO",
+        "from": "IN",
+        "for": "IN",
+        "because": "IN",
+        "than": "IN",
+        "that": "IN",
+        "at": "IN",
+        "as": "IN",
+        "into": "IN",
+        "by": "IN",
+        "on": "IN",
     }
     if word in known_tags_dict.keys():
         return known_tags_dict[word]
@@ -85,7 +101,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     B = 3  # Beam search parameter
     B_best_idx = []
     dict_tag_to_idx = {v_tag: v_idx for v_idx, v_tag in enumerate(tags_list)}
-    star_idx = n_tags   # "*"
+    star_idx = n_tags  # "*"
 
     # histories_features: OrderedDict[history_tuple: [relevant_features_indexes]]
     histories_features = feature2id.histories_features
@@ -148,7 +164,9 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
             for u_idx, u_tag in enumerate(tags_list):
                 for v_idx, v_tag in enumerate(v_tags_list):
                     Pi[k][u_idx][v_idx] = (
-                        Pi[k - 1][star_idx][u_idx] * Qv[u_idx][v_idx] / Q_all_v_tags[u_idx]
+                        Pi[k - 1][star_idx][u_idx]
+                        * Qv[u_idx][v_idx]
+                        / Q_all_v_tags[u_idx]
                     )
                     Bp[k][u_idx][v_idx] = "*"
 
@@ -210,6 +228,8 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     for k in reversed(range(n_words - 2)):
         pred_tags[k] = Bp[k + 2][pred_tags[k + 1]][pred_tags[k + 2]]
 
+    # TODO: remove pred for the last word ~
+    # and also in the evaluation in get test preds
     pred_tags[n_words] = "~"
     return pred_tags
 
