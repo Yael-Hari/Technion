@@ -101,7 +101,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     B = 3  # Beam search parameter
     B_best_idx = []
     dict_tag_to_idx = {v_tag: v_idx for v_idx, v_tag in enumerate(tags_list)}
-    star_idx = n_tags  # "*"
+    star_idx = n_tags - 1  # "*"
     dict_tag_to_idx["*"] = star_idx
 
     feature_to_idx = feature2id.feature_to_idx
