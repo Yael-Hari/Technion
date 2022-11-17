@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.metrics import ConfusionMatrixDisplay
 from tqdm import tqdm
 
-from preprocessing import read_test
+from preprocessing import read_test, represent_input_with_features
 
 
 def get_top_B_idx(Matrix: np.array, B: int) -> List[np.array]:
@@ -102,6 +102,9 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     B_best_idx = []
     dict_tag_to_idx = {v_tag: v_idx for v_idx, v_tag in enumerate(tags_list)}
     star_idx = n_tags  # "*"
+    dict_tag_to_idx["*"] = star_idx
+
+    feature_to_idx = feature2id.feature_to_idx
 
     # histories_features: OrderedDict[history_tuple: [relevant_features_indexes]]
     histories_features = feature2id.histories_features
@@ -127,7 +130,12 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                 for v_idx, v_tag in enumerate(tags_list):
                     # history tuple: (x_k, v_tag, x_k-1, u_tag, x_k-2, t_tag, x_k+1)
                     history_tuple = (x[k], v_tag, "*", "*", "*", "*", x[k + 1])
-                    relevant_idx = histories_features[history_tuple]
+                    if history_tuple in histories_features:
+                        relevant_idx = histories_features[history_tuple]
+                    else:
+                        relevant_idx = represent_input_with_features(
+                            history_tuple, feature_to_idx
+                        )
                     Qv[v_idx] = np.exp(weights[relevant_idx].sum())
                     Q_all_v_tags += Qv[v_idx]
 
@@ -156,7 +164,12 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                 for v_idx, v_tag in enumerate(v_tags_list):
                     # history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
                     history_tuple = (x[k], v_tag, x[k - 1], u_tag, "*", "*", x[k + 1])
-                    relevant_idx = histories_features[history_tuple]
+                    if history_tuple in histories_features:
+                        relevant_idx = histories_features[history_tuple]
+                    else:
+                        relevant_idx = represent_input_with_features(
+                            history_tuple, feature_to_idx
+                        )
                     Qv[u_idx][v_idx] = np.exp(weights[relevant_idx].sum())
                     Q_all_v_tags[u_idx] += Qv[u_idx][v_idx]
 
@@ -202,7 +215,12 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                         t_tag,
                         x[k + 1],
                     )
-                    relevant_idx = histories_features[history_tuple]
+                    if history_tuple in histories_features:
+                        relevant_idx = histories_features[history_tuple]
+                    else:
+                        relevant_idx = represent_input_with_features(
+                            history_tuple, feature_to_idx
+                        )
                     Qv[t_idx][u_idx][v_idx] = np.exp(weights[relevant_idx].sum())
                     Q_all_v_tags[t_idx][u_idx] += Qv[t_idx][u_idx][v_idx]
 
