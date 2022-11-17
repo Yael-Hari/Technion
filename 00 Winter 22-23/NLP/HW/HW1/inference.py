@@ -249,10 +249,8 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     pred_tags_idx[n_words - 2] = pred_tag_minus2_idx
     for k in reversed(range(n_words - 2)):
         pred_tags_idx[k] = Bp[k + 2][pred_tags_idx[k + 1]][pred_tags_idx[k + 2]]
-
-    # TODO: remove pred for the last word ~
-    # and also in the evaluation in get test preds
-    pred_tags[n_words] = "~"
+    
+    pred_tags = [dict_idx_to_tag[pred_idx] for pred_idx in pred_tags_idx]
     return pred_tags
 
 
@@ -301,21 +299,20 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
         # take only words without tags
         sentence = sen[0]
         # get pred
-        pred = memm_viterbi(sentence, pre_trained_weights, feature2id)[1:]
-        # remove * *
-        sentence = sentence[2:]
+        pred_tags = memm_viterbi(sentence, pre_trained_weights, feature2id)
+        # remove * * ~
+        sentence = sentence[2:-1]
         # write preds to file
-        for i in range(len(pred)):
+        n_words = len(sentence)
+        for i in range(n_words):
             if i > 0:
                 output_file.write(" ")
-            output_file.write(f"{sentence[i]}_{pred[i]}")
+            output_file.write(f"{sentence[i]}_{pred_tags[i]}")
         output_file.write("\n")
 
         # add details tp fp ...
         if tagged:
             true_tags = sen[1]
-            pred_tags = pred
-            n_words = len(true_tags)
             for k in range(n_words):
                 true = true_tags[k]
                 pred = pred_tags[k]
