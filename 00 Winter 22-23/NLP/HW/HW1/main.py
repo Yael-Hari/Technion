@@ -77,7 +77,7 @@ def main():
     #     f200=True,
     #     f300=True,
     # )
-    train_model(train_1_path, weights_1_path_200_300, threshold=1, lam=1, f200=True, f300=True)
+    # train_model(train_1_path, weights_1_path_200_300, threshold=1, lam=1, f200=True, f300=True)
     # train_model(train_2_path, weights_2_path, threshold=3, lam=1, f200=True, f300=True)
 
     # -----------------------------

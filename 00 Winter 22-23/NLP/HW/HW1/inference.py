@@ -68,6 +68,105 @@ def check_if_known_word(word):
     return None
 
 
+def get_history_tuple(k, x, n_words, v_tag, u_tag, t_tag):
+    # get history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
+    # next word
+    if k == n_words - 1:  # last word
+        next_word = "~"
+    else:
+        next_word = x[k + 1]
+
+    if k == 0:
+        prev_prev_word = "*"
+        prev_word = "*"
+
+    elif k == 1:
+        prev_prev_word = "*"
+        prev_word = x[k - 1]
+
+    else:  # k>=2
+        prev_prev_word = x[k - 2]
+        prev_word = x[k - 1]
+
+    history_tuple = (x[k], v_tag, prev_word, u_tag, prev_prev_word, t_tag, next_word)
+
+    return history_tuple
+
+
+def get_relevant_idx(
+    k, x, v_tag, u_tag, t_tag, n_words, histories_features, feature_to_idx
+):
+    history_tuple = get_history_tuple(k, x, n_words, v_tag, u_tag, t_tag)
+    # get relevant indexes
+    if history_tuple in histories_features:
+        relevant_idx = histories_features[history_tuple]
+    else:
+        relevant_idx = represent_input_with_features(history_tuple, feature_to_idx)
+    return relevant_idx
+
+
+def calc_Pi_Bp_known_tag(k, known_tag, B_best_idx, Pi, Bp, dict_tag_to_idx, n_tags):
+    v_idx = dict_tag_to_idx[known_tag]
+    # calc Pi, we know that (Qv / all_v will be 1)
+    for u_idx, t_list_by_u in B_best_idx.items():
+        t_scores = np.zeros(n_tags)
+        for t_idx in t_list_by_u:
+            t_scores[t_idx] = Pi[k - 1][t_idx][u_idx]
+        Pi[k][u_idx][v_idx] = np.max(t_scores)
+        Bp[k][u_idx][v_idx] = np.argmax(t_scores)
+    return Pi, Bp
+
+
+def calc_Pi_Bp(
+    k,
+    B_best_idx,
+    Pi,
+    Bp,
+    tags_list,
+    n_tags,
+    x,
+    n_words,
+    histories_features,
+    feature_to_idx,
+    weights,
+):
+    # calculate Q and we'll use it later a lot
+    Qv = np.zeros([n_tags, n_tags, n_tags])
+    Q_all_v_tags = np.zeros([n_tags, n_tags])
+    for u_idx, t_list_by_u in B_best_idx.items():
+        u_tag = tags_list[u_idx]
+        for t_idx in t_list_by_u:
+            t_tag = tags_list[t_idx]
+            for v_idx, v_tag in enumerate(tags_list):
+                relevant_idx = get_relevant_idx(
+                    k,
+                    x,
+                    v_tag,
+                    u_tag,
+                    t_tag,
+                    n_words,
+                    histories_features,
+                    feature_to_idx,
+                )
+                Qv[t_idx][u_idx][v_idx] = np.exp(weights[relevant_idx].sum())
+                Q_all_v_tags[t_idx][u_idx] += Qv[t_idx][u_idx][v_idx]
+
+    # calculate Pi
+    for u_idx, t_list_by_u in B_best_idx.items():
+        for v_idx, v_tag in enumerate(tags_list):
+            t_scores = np.zeros(n_tags)
+            for t_idx in t_list_by_u:
+                t_scores[t_idx] = (
+                    Pi[k - 1][t_idx][u_idx]
+                    * Qv[t_idx][u_idx][v_idx]
+                    / Q_all_v_tags[t_idx][u_idx]
+                )
+            Pi[k][u_idx][v_idx] = np.max(t_scores)
+            Bp[k][u_idx][v_idx] = np.argmax(t_scores)
+
+    return Pi, Bp
+
+
 def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
     """
     Write your MEMM Viterbi implementation below
@@ -123,6 +222,11 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
     histories_features = feature2id.histories_features
 
     for k in range(n_words):
+
+        # for debug only!!!!
+        true_tag = true_tags[2:-1][k]
+        # !!!!
+
         known_tag = check_if_known_word(x[k])
         # ------------------ Calc Pi k = 0 ----------------------
         if k == 0:
@@ -141,13 +245,9 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
                 Qv = np.zeros(n_tags)
                 Q_all_v_tags = 0
                 for v_idx, v_tag in enumerate(tags_list):
-                    # history tuple: (x_k, v_tag, x_k-1, u_tag, x_k-2, t_tag, x_k+1)
-                    if len(x) > 1:
-                        history_tuple = (x[k], v_tag, "*", "*", "*", "*", x[k + 1])
-                    elif len(x) == 1:
-                        history_tuple = (x[k], v_tag, "*", "*", "*", "*", "~")
-                    elif len(x) == 0:
-                        raise f"ERROR!: len({x}) == 0"
+                    history_tuple = get_history_tuple(
+                        k, x, n_words, v_tag, u_tag="*", t_tag="*"
+                    )
                     if history_tuple in histories_features:
                         relevant_idx = histories_features[history_tuple]
                     else:
@@ -180,21 +280,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
             Q_all_v_tags = np.zeros(n_tags)
             for u_idx, u_tag in enumerate(tags_list):
                 for v_idx, v_tag in enumerate(v_tags_list):
-                    # history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
-                    if len(x) > 2:
-                        history_tuple = (
-                            x[k],
-                            v_tag,
-                            x[k - 1],
-                            u_tag,
-                            "*",
-                            "*",
-                            x[k + 1],
-                        )
-                    elif len(x) == 2:
-                        history_tuple = (x[k], v_tag, x[k - 1], u_tag, "*", "*", "~")
-                    else:
-                        raise f"ERROR!: this shouldnt happen here! {x=}, {k=}, {len(x)=}"
+                    get_history_tuple(k, x, n_words, v_tag, u_tag, t_tag="*")
                     if history_tuple in histories_features:
                         relevant_idx = histories_features[history_tuple]
                     else:
@@ -221,66 +307,25 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
         else:
             # by definition:
             # Pi(k, u, v) = Pi(k-1, t, u) * Q(k_history)
-
             # check if known word and if so, put only the known tag in the possible tags for v:
             if known_tag:
-                v_idx = dict_tag_to_idx[known_tag]
-                v_tags_list = [v_idx]
+                Pi, Bp = calc_Pi_Bp_known_tag(
+                    k, known_tag, B_best_idx, Pi, Bp, dict_tag_to_idx, n_tags
+                )
             else:
-                v_tags_list = tags_list
-
-            # calculate Q and we'll use it later a lot
-            Qv = np.zeros([n_tags, n_tags, n_tags])
-            Q_all_v_tags = np.zeros([n_tags, n_tags])
-            for u_idx, t_list_by_u in B_best_idx.items():
-                u_tag = tags_list[u_idx]
-                for t_idx in t_list_by_u:
-                    t_tag = tags_list[t_idx]
-                    for v_idx, v_tag in enumerate(v_tags_list):
-                        # get history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
-                        if k == n_words - 1:  # last word
-                            history_tuple = (
-                                x[k],
-                                v_tag,
-                                x[k - 1],
-                                u_tag,
-                                x[k - 2],
-                                t_tag,
-                                "~",
-                            )
-                        else:
-                            history_tuple = (
-                                x[k],
-                                v_tag,
-                                x[k - 1],
-                                u_tag,
-                                x[k - 2],
-                                t_tag,
-                                x[k + 1],
-                            )
-                        # get relevant indexes
-                        if history_tuple in histories_features:
-                            relevant_idx = histories_features[history_tuple]
-                        else:
-                            relevant_idx = represent_input_with_features(
-                                history_tuple, feature_to_idx
-                            )
-
-                        Qv[t_idx][u_idx][v_idx] = np.exp(weights[relevant_idx].sum())
-                        Q_all_v_tags[t_idx][u_idx] += Qv[t_idx][u_idx][v_idx]
-
-            # calculate Pi
-            for u_idx, t_list_by_u in B_best_idx.items():
-                for v_idx, v_tag in enumerate(v_tags_list):
-                    t_scores = np.zeros(n_tags)
-                    for t_idx in t_list_by_u:
-                        t_scores[t_idx] = (
-                            Pi[k - 1][t_idx][u_idx]
-                            * Qv[t_idx][u_idx][v_idx]
-                            / Q_all_v_tags[t_idx][u_idx]
-                        )
-                    Pi[k][u_idx][v_idx] = np.max(t_scores)
-                    Bp[k][u_idx][v_idx] = np.argmax(t_scores)
+                Pi, Bp = calc_Pi_Bp(
+                    k,
+                    B_best_idx,
+                    Pi,
+                    Bp,
+                    tags_list,
+                    n_tags,
+                    x,
+                    n_words,
+                    histories_features,
+                    feature_to_idx,
+                    weights,
+                )
 
             # find Top B Pi values indexes
             B_best_idx = get_top_B_idx_dict(Pi[k], B)
@@ -297,16 +342,6 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
 
     pred_tags = [dict_idx_to_tag[pred_idx] for pred_idx in pred_tags_idx]
     return pred_tags
-
-# def print_10_tags_with_lowest_val(score_method: dict, name_score_method: str):
-#     vals_list = list(score_method.values())
-#     keys_list = list(score_method.keys())
-#     argmin_10_idx = find_n_argmin_idx(vals_list, n=10)
-#     print(f" ------------ 10 tags with the lowest {name_score_method} ---------\n")
-#     for argmin_idx in argmin_10_idx:
-#         tag = keys_list[argmin_idx]
-#         val = vals_list[argmin_idx]
-#         print(f"{tag=}, {val=} \n")
 
 
 def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
@@ -413,12 +448,12 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
         print("10 tags with the lowest precision")
         print(sorted(precision.items(), key=lambda item: item[1])[:10])
         print("----------------------------------")
-        print("10 tags with the lowest precision")
+        print("10 tags with the lowest recall")
         print(sorted(recall.items(), key=lambda item: item[1])[:10])
         print("----------------------------------")
-        print("10 tags with the lowest precision")
+        print("10 tags with the lowest f1")
         print(sorted(f1.items(), key=lambda item: item[1])[:10])
-
+        print("---")
         # confusion matrix
         # disp = ConfusionMatrixDisplay.from_predictions(true_list, pred_list, normalize="false")
         # plt.show()
