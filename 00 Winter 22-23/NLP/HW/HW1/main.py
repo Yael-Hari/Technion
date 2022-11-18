@@ -1,4 +1,5 @@
 import pickle
+import time
 
 from inference import tag_all_test
 from optimization import get_optimal_vector

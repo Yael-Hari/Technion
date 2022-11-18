@@ -105,7 +105,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     Pi = np.zeros([n_words, n_tags, n_tags])
     Bp = np.zeros([n_words, n_tags, n_tags])
     pred_tags_idx = [-1 for _ in range(n_words)]
-    B = 3  # Beam search parameter
+    B = 5  # Beam search parameter
     B_best_idx = []
     dict_tag_to_idx = {v_tag: v_idx for v_idx, v_tag in enumerate(tags_list)}
     dict_idx_to_tag = {v_idx: v_tag for v_idx, v_tag in enumerate(tags_list)}
@@ -389,9 +389,13 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
                 recall[tag] = 1
             else:
                 recall[tag] = Tp[tag] / (Tp[tag] + Fn[tag])
-            f1[tag] = (
-                2 * (precision[tag] * recall[tag]) / (precision[tag] + recall[tag])
-            )
+            # TODO: decide if it this is good
+            if (precision[tag] + recall[tag]) == 0:
+                f1[tag] = 0  #?????
+            else:
+                f1[tag] = (
+                    2 * (precision[tag] * recall[tag]) / (precision[tag] + recall[tag])
+                )
 
         # f1
         mean_f1 = np.mean(list(f1.values()))
