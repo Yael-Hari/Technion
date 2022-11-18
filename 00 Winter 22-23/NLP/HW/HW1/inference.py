@@ -10,7 +10,7 @@ from preprocessing import read_test, represent_input_with_features
 COUNT_CALLS_TO_VITERBI = 0
 
 
-def get_top_B_idx(Matrix: np.array, B: int) -> List[np.array]:
+def get_top_B_idx_dict(Matrix: np.array, B: int) -> List[np.array]:
     # TODO: complete
     """return B_best_idx"""
     m = Matrix.copy()
@@ -21,7 +21,13 @@ def get_top_B_idx(Matrix: np.array, B: int) -> List[np.array]:
         B_best_idx.append(cur_max)
         m[cur_max] = 0
 
-    return B_best_idx
+    u_to_t_best_dict = dict()
+    for t, u in B_best_idx:
+        if u not in u_to_t_best_dict.keys():
+            u_to_t_best_dict[u] = [t]
+        else:
+            u_to_t_best_dict[u].append(t)
+    return u_to_t_best_dict
 
 
 def check_if_known_word(word):
@@ -105,7 +111,6 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
     Bp = np.ones([n_words, n_tags, n_tags]) * -1
     pred_tags_idx = [-1 for _ in range(n_words)]
     B = 10  # Beam search parameter
-    B_best_idx = []
     dict_tag_to_idx = {v_tag: v_idx for v_idx, v_tag in enumerate(tags_list)}
     dict_idx_to_tag = {v_idx: v_tag for v_idx, v_tag in enumerate(tags_list)}
     star_idx = n_tags - 1  # "*"
@@ -210,7 +215,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
                     Bp[k][u_idx][v_idx] = star_idx
 
             # find Top B Pi values indexes
-            B_best_idx = get_top_B_idx(Pi[k], B)
+            B_best_idx = get_top_B_idx_dict(Pi[k], B)
 
         # ------------------ Calc Pi k >= 2 ----------------------
         else:
@@ -227,49 +232,48 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
             # calculate Q and we'll use it later a lot
             Qv = np.zeros([n_tags, n_tags, n_tags])
             Q_all_v_tags = np.zeros([n_tags, n_tags])
-            for t_idx, u_idx in B_best_idx:
-                t_tag = tags_list[t_idx]
+            for u_idx, t_list_by_u in B_best_idx.items():
                 u_tag = tags_list[u_idx]
-                for v_idx, v_tag in enumerate(v_tags_list):
-                    # get history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
-                    if k == n_words - 1:  # last word
-                        history_tuple = (
-                            x[k],
-                            v_tag,
-                            x[k - 1],
-                            u_tag,
-                            x[k - 2],
-                            t_tag,
-                            "~",
-                        )
-                    else:
-                        history_tuple = (
-                            x[k],
-                            v_tag,
-                            x[k - 1],
-                            u_tag,
-                            x[k - 2],
-                            t_tag,
-                            x[k + 1],
-                        )
-                    # get relevant indexes
-                    if history_tuple in histories_features:
-                        relevant_idx = histories_features[history_tuple]
-                    else:
-                        relevant_idx = represent_input_with_features(
-                            history_tuple, feature_to_idx
-                        )
+                for t_idx in t_list_by_u:
+                    t_tag = tags_list[t_idx]
+                    for v_idx, v_tag in enumerate(v_tags_list):
+                        # get history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
+                        if k == n_words - 1:  # last word
+                            history_tuple = (
+                                x[k],
+                                v_tag,
+                                x[k - 1],
+                                u_tag,
+                                x[k - 2],
+                                t_tag,
+                                "~",
+                            )
+                        else:
+                            history_tuple = (
+                                x[k],
+                                v_tag,
+                                x[k - 1],
+                                u_tag,
+                                x[k - 2],
+                                t_tag,
+                                x[k + 1],
+                            )
+                        # get relevant indexes
+                        if history_tuple in histories_features:
+                            relevant_idx = histories_features[history_tuple]
+                        else:
+                            relevant_idx = represent_input_with_features(
+                                history_tuple, feature_to_idx
+                            )
 
-                    Qv[t_idx][u_idx][v_idx] = np.exp(weights[relevant_idx].sum())
-                    Q_all_v_tags[t_idx][u_idx] += Qv[t_idx][u_idx][v_idx]
+                        Qv[t_idx][u_idx][v_idx] = np.exp(weights[relevant_idx].sum())
+                        Q_all_v_tags[t_idx][u_idx] += Qv[t_idx][u_idx][v_idx]
 
             # calculate Pi
-            u_best_list = [best_idx[1] for best_idx in B_best_idx]
-            t_best_list = [best_idx[0] for best_idx in B_best_idx]
-            for u_idx in u_best_list:
+            for u_idx, t_list_by_u in B_best_idx.items():
                 for v_idx, v_tag in enumerate(v_tags_list):
                     t_scores = np.zeros(n_tags)
-                    for t_idx in t_best_list:
+                    for t_idx in t_list_by_u:
                         t_scores[t_idx] = (
                             Pi[k - 1][t_idx][u_idx]
                             * Qv[t_idx][u_idx][v_idx]
@@ -279,7 +283,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
                     Bp[k][u_idx][v_idx] = np.argmax(t_scores)
 
             # find Top B Pi values indexes
-            B_best_idx = get_top_B_idx(Pi[k], B)
+            B_best_idx = get_top_B_idx_dict(Pi[k], B)
 
     # ------------------ Get Predicted Tags by Bp ----------------------
     # last 2 words in sentence
