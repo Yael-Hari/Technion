@@ -377,13 +377,18 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
         # accuracy
         accuracy = sum(list(Tp.values())) / n_preds
 
-        # TODO DEBUG
         # precision, recall, f1 for each tag
         for tag in tags_list:
             if tag == "*" or tag == "~":
                 continue
-            precision[tag] = Tp[tag] / (Tp[tag] + Fp[tag])
-            recall[tag] = Tp[tag] / (Tp[tag] + Fn[tag])
+            if (Tp[tag] + Fp[tag]) == 0:
+                precision[tag] = 1
+            else:
+                precision[tag] = Tp[tag] / (Tp[tag] + Fp[tag])
+            if (Tp[tag] + Fn[tag]) == 0:
+                recall[tag] = 1
+            else:
+                recall[tag] = Tp[tag] / (Tp[tag] + Fn[tag])
             f1[tag] = (
                 2 * (precision[tag] * recall[tag]) / (precision[tag] + recall[tag])
             )
