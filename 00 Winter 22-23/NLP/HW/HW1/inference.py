@@ -154,7 +154,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
 
                 # calculate Pi
                 for v_idx, v_tag in enumerate(tags_list):
-                    Pi[k][star_idx][v_idx] = (Qv[v_idx] / Q_all_v_tags)
+                    Pi[k][star_idx][v_idx] = Qv[v_idx] / Q_all_v_tags
                     Bp[k][star_idx][v_idx] = star_idx
 
         # ------------------ Calc Pi k = 1 ----------------------
@@ -233,9 +233,25 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
                 for v_idx, v_tag in enumerate(v_tags_list):
                     # get history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
                     if k == n_words - 1:  # last word
-                        history_tuple = (x[k], v_tag, x[k - 1], u_tag, x[k - 2], t_tag, "~")
+                        history_tuple = (
+                            x[k],
+                            v_tag,
+                            x[k - 1],
+                            u_tag,
+                            x[k - 2],
+                            t_tag,
+                            "~",
+                        )
                     else:
-                        history_tuple = (x[k], v_tag, x[k - 1], u_tag, x[k - 2], t_tag, x[k + 1])
+                        history_tuple = (
+                            x[k],
+                            v_tag,
+                            x[k - 1],
+                            u_tag,
+                            x[k - 2],
+                            t_tag,
+                            x[k + 1],
+                        )
                     # get relevant indexes
                     if history_tuple in histories_features:
                         relevant_idx = histories_features[history_tuple]
@@ -248,14 +264,17 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
                     Q_all_v_tags[t_idx][u_idx] += Qv[t_idx][u_idx][v_idx]
 
             # calculate Pi
-            for t_idx, u_idx in B_best_idx:
+            u_best_list = [best_idx[1] for best_idx in B_best_idx]
+            t_best_list = [best_idx[0] for best_idx in B_best_idx]
+            for u_idx in u_best_list:
                 for v_idx, v_tag in enumerate(v_tags_list):
                     t_scores = np.zeros(n_tags)
-                    t_scores[t_idx] = (
-                        Pi[k - 1][t_idx][u_idx]
-                        * Qv[t_idx][u_idx][v_idx]
-                        / Q_all_v_tags[t_idx][u_idx]
-                    )
+                    for t_idx in t_best_list:
+                        t_scores[t_idx] = (
+                            Pi[k - 1][t_idx][u_idx]
+                            * Qv[t_idx][u_idx][v_idx]
+                            / Q_all_v_tags[t_idx][u_idx]
+                        )
                     Pi[k][u_idx][v_idx] = np.max(t_scores)
                     Bp[k][u_idx][v_idx] = np.argmax(t_scores)
 
