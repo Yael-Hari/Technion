@@ -56,7 +56,7 @@ def main():
     test_1_output_path = "data/test1_predictions.wtag"
     weights_1_path = "weights_1.pkl"
     weights_1_path_200 = "weights_200.pkl"
-     weights_1_path_200_300 = "weights_200_300.pkl"
+    weights_1_path_200_300 = "weights_200_300.pkl"
     comp_1_input_path = "data/comp1.words"
     comp_1_output_path = "data/comp_m1_123456789_987654321.wtag"
 
