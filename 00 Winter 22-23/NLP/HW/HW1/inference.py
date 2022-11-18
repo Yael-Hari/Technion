@@ -7,7 +7,6 @@ from tqdm import tqdm
 
 from preprocessing import read_test, represent_input_with_features
 
-
 COUNT_CALLS_TO_VITERBI = 0
 
 
@@ -55,7 +54,7 @@ def check_if_known_word(word):
         "into": "IN",
         "by": "IN",
         "on": "IN",
-        "?": "."
+        "?": ".",
     }
     if word in known_tags_dict.keys():
         return known_tags_dict[word]
@@ -63,7 +62,7 @@ def check_if_known_word(word):
     return None
 
 
-def memm_viterbi(sentence, pre_trained_weights, feature2id):
+def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
     """
     Write your MEMM Viterbi implementation below
     You can implement Beam Search to improve runtime
@@ -103,9 +102,9 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
     weights = np.array(pre_trained_weights)
     n_words = len(x)
     Pi = np.zeros([n_words, n_tags, n_tags])
-    Bp = np.zeros([n_words, n_tags, n_tags])
+    Bp = np.ones([n_words, n_tags, n_tags]) * -1
     pred_tags_idx = [-1 for _ in range(n_words)]
-    B = 5  # Beam search parameter
+    B = 10  # Beam search parameter
     B_best_idx = []
     dict_tag_to_idx = {v_tag: v_idx for v_idx, v_tag in enumerate(tags_list)}
     dict_idx_to_tag = {v_idx: v_tag for v_idx, v_tag in enumerate(tags_list)}
@@ -138,7 +137,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                 Q_all_v_tags = 0
                 for v_idx, v_tag in enumerate(tags_list):
                     # history tuple: (x_k, v_tag, x_k-1, u_tag, x_k-2, t_tag, x_k+1)
-                    if len(x) >1:
+                    if len(x) > 1:
                         history_tuple = (x[k], v_tag, "*", "*", "*", "*", x[k + 1])
                     elif len(x) == 1:
                         history_tuple = (x[k], v_tag, "*", "*", "*", "*", "~")
@@ -155,11 +154,11 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
 
                 # calculate Pi
                 for v_idx, v_tag in enumerate(tags_list):
-                    Pi[k][star_idx][v_idx] = Qv[v_idx] / Q_all_v_tags
+                    Pi[k][star_idx][v_idx] = (Qv[v_idx] / Q_all_v_tags)
                     Bp[k][star_idx][v_idx] = star_idx
 
         # ------------------ Calc Pi k = 1 ----------------------
-        if k == 1:
+        elif k == 1:
             # by definition:
             # Pi(k, u, v) = Pi(k-1, t, u) * Q(k_history)
             # Pi(1, u, v) = Pi(0, "*", u) * Q(k_history)
@@ -178,7 +177,15 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                 for v_idx, v_tag in enumerate(v_tags_list):
                     # history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
                     if len(x) > 2:
-                        history_tuple = (x[k], v_tag, x[k - 1], u_tag, "*", "*", x[k + 1])
+                        history_tuple = (
+                            x[k],
+                            v_tag,
+                            x[k - 1],
+                            u_tag,
+                            "*",
+                            "*",
+                            x[k + 1],
+                        )
                     elif len(x) == 2:
                         history_tuple = (x[k], v_tag, x[k - 1], u_tag, "*", "*", "~")
                     else:
@@ -224,37 +231,19 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                 t_tag = tags_list[t_idx]
                 u_tag = tags_list[u_idx]
                 for v_idx, v_tag in enumerate(v_tags_list):
-
-                    # history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
-                    # if last word
-                    # TODO: check if in prepreocess, when inserting history of last word, we using ~ as the n_word
-                    if k == n_words - 1:
-                        history_tuple = (
-                            x[k],
-                            v_tag,
-                            x[k - 1],
-                            u_tag,
-                            x[k - 2],
-                            t_tag,
-                            "~",
-                        )
+                    # get history tuple: (x_k, v, x_k-1, u, x_k-2, t, x_k+1)
+                    if k == n_words - 1:  # last word
+                        history_tuple = (x[k], v_tag, x[k - 1], u_tag, x[k - 2], t_tag, "~")
                     else:
-                        history_tuple = (
-                            x[k],
-                            v_tag,
-                            x[k - 1],
-                            u_tag,
-                            x[k - 2],
-                            t_tag,
-                            x[k + 1],
-                        )
-
+                        history_tuple = (x[k], v_tag, x[k - 1], u_tag, x[k - 2], t_tag, x[k + 1])
+                    # get relevant indexes
                     if history_tuple in histories_features:
                         relevant_idx = histories_features[history_tuple]
                     else:
                         relevant_idx = represent_input_with_features(
                             history_tuple, feature_to_idx
                         )
+
                     Qv[t_idx][u_idx][v_idx] = np.exp(weights[relevant_idx].sum())
                     Q_all_v_tags[t_idx][u_idx] += Qv[t_idx][u_idx][v_idx]
 
@@ -268,15 +257,16 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id):
                         / Q_all_v_tags[t_idx][u_idx]
                     )
                     Pi[k][u_idx][v_idx] = np.max(t_scores)
-                    argmax_tag = tags_list[np.argmax(t_scores)]
-                    Bp[k][u_idx][v_idx] = dict_tag_to_idx[argmax_tag]
+                    Bp[k][u_idx][v_idx] = np.argmax(t_scores)
 
             # find Top B Pi values indexes
             B_best_idx = get_top_B_idx(Pi[k], B)
 
     # ------------------ Get Predicted Tags by Bp ----------------------
     # last 2 words in sentence
-    pred_tag_minus2_idx, pred_tag_minus1_idx = np.unravel_index(Pi[n_words - 1].argmax(), Pi[n_words - 1].shape)
+    pred_tag_minus2_idx, pred_tag_minus1_idx = np.unravel_index(
+        Pi[n_words - 1].argmax(), Pi[n_words - 1].shape
+    )
     pred_tags_idx[n_words - 1] = pred_tag_minus1_idx
     pred_tags_idx[n_words - 2] = pred_tag_minus2_idx
     for k in reversed(range(n_words - 2)):
@@ -296,19 +286,19 @@ def find_n_argmin_idx(values_list: list, n: int):
     return n_argmin_idx
 
 
-def print_10_tags_with_lowest_val(score_method: dict):
+def print_10_tags_with_lowest_val(score_method: dict, name_score_method: str):
     vals_list = list(score_method.values())
     keys_list = list(score_method.keys())
     argmin_10_idx = find_n_argmin_idx(vals_list, n=10)
+    print(f" ------------ 10 tags with the lowest {name_score_method} ---------\n")
     for argmin_idx in argmin_10_idx:
         tag = keys_list[argmin_idx]
         val = vals_list[argmin_idx]
-        print(f"10 tags with the lowest {score_method}: \n")
         print(f"{tag=}, {val=} \n")
 
 
 def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
-    tagged = "test" in test_path
+    tagged = ("test" in test_path) or ("train" in test_path)
     test = read_test(test_path, tagged=tagged)
 
     output_file = open(predictions_path, "a+")
@@ -330,8 +320,12 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
     for k, sen in tqdm(enumerate(test), total=len(test)):
         # take only words without tags
         sentence = sen[0]
+        if tagged:
+            true_tags = sen[1]
+        else:
+            true_tags = None
         # get pred
-        pred_tags = memm_viterbi(sentence, pre_trained_weights, feature2id)
+        pred_tags = memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags)
         # remove * * ~
         sentence = sentence[2:-1]
         # write preds to file
@@ -344,7 +338,7 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
 
         # add details tp fp ...
         if tagged:
-            true_tags = sen[1]
+            true_tags = sen[1][2:-1]
             for k in range(n_words):
                 true = true_tags[k]
                 pred = pred_tags[k]
@@ -375,7 +369,7 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
     # ------------------------- calc evaluations -------------------------
     if tagged:
         # accuracy
-        accuracy = sum(list(Tp.values())) / n_preds
+        accuracy = np.round(sum(list(Tp.values())) / n_preds, 2)
 
         # precision, recall, f1 for each tag
         for tag in tags_list:
@@ -384,17 +378,18 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
             if (Tp[tag] + Fp[tag]) == 0:
                 precision[tag] = 1
             else:
-                precision[tag] = Tp[tag] / (Tp[tag] + Fp[tag])
+                precision[tag] = np.round(Tp[tag] / (Tp[tag] + Fp[tag]), 2)
             if (Tp[tag] + Fn[tag]) == 0:
                 recall[tag] = 1
             else:
-                recall[tag] = Tp[tag] / (Tp[tag] + Fn[tag])
+                recall[tag] = np.round(Tp[tag] / (Tp[tag] + Fn[tag]), 2)
             # TODO: decide if it this is good
             if (precision[tag] + recall[tag]) == 0:
-                f1[tag] = 0  #?????
+                f1[tag] = 0  # ?????
             else:
-                f1[tag] = (
-                    2 * (precision[tag] * recall[tag]) / (precision[tag] + recall[tag])
+                f1[tag] = np.round(
+                    2 * (precision[tag] * recall[tag]) / (precision[tag] + recall[tag]),
+                    2,
                 )
 
         # f1
@@ -403,11 +398,11 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
         print(f"{accuracy=}, {mean_f1=}, {median_f1=}")
 
         # 10 tags with the lowest precision
-        print_10_tags_with_lowest_val(precision)
+        print_10_tags_with_lowest_val(precision, "precision")
         # 10 tags with the lowest recall
-        print_10_tags_with_lowest_val(recall)
+        print_10_tags_with_lowest_val(recall, "recall")
         # 10 tags with the lowest f1 score
-        print_10_tags_with_lowest_val(f1)
+        print_10_tags_with_lowest_val(f1, "f1")
 
         # confusion matrix
         # disp = ConfusionMatrixDisplay.from_predictions(true_list, pred_list, normalize="false")
