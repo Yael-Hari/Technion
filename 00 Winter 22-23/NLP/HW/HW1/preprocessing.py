@@ -222,9 +222,9 @@ class Feature2id:
         @param threshold: the minimal number of appearances a feature should have to be taken
         """
         # statistics class, for each feature gives empirical counts
-        self.feature_statistics = feature_statistics  
+        self.feature_statistics = feature_statistics
         # feature count threshold - empirical count must be higher than this
-        self.threshold = threshold  
+        self.threshold = threshold
 
         self.n_total_features = 0  # Total number of features accumulated
 
@@ -279,7 +279,7 @@ class Feature2id:
 
     def calc_represent_input_with_features(self) -> None:
         """
-        initializes the matrices used in the optimization process - 
+        initializes the matrices used in the optimization process -
         self.big_matrix and self.small_matrix
         """
         big_r = 0
@@ -506,7 +506,7 @@ def read_test(file_path, tagged=True) -> List[Tuple[List[str], List[str]]]:
     reads a test file
     @param file_path: the path to the file
     @param tagged: whether the file is tagged (validation set) or not (test set)
-    @return: a list of all the sentences, each sentence represented 
+    @return: a list of all the sentences, each sentence represented
             as tuple of list of the words and a list of tags
     """
     list_of_sentences = []
