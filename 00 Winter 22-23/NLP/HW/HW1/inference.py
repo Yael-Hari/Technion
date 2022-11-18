@@ -113,7 +113,7 @@ def calc_Pi_Bp_known_tag(
         # t_tag = "*"  ==>  t_idx = star_idx
         v_idx = dict_tag_to_idx[known_tag]
         # calc Pi, we know that (Qv / all_v will be 1)
-        for u_idx, t_list_by_u in B_best_idx.items():
+        for (u_idx,) in range(n_tags):
             Pi[k][u_idx][v_idx] = Pi[k - 1][star_idx][u_idx]
             Bp[k][u_idx][v_idx] = star_idx
 
