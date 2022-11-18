@@ -7,9 +7,6 @@ from tqdm import tqdm
 
 from preprocessing import read_test, represent_input_with_features
 
-COUNT_CALLS_TO_VITERBI = 0
-
-
 def get_top_B_idx_dict(Matrix: np.array, B: int) -> List[np.array]:
     """return B_best_idx"""
     m = Matrix.copy()
@@ -40,6 +37,7 @@ def check_if_known_word(word):
         "``": "``",
         "The": "DT",
         "$": "$",
+        "#": "#",
         "''": "''",
         "in": "IN",
         "a": "DT",
@@ -61,7 +59,7 @@ def check_if_known_word(word):
         "on": "IN",
         "?": ".",
     }
-    if word in known_tags_dict.keys():
+    if word.lower() in known_tags_dict.keys():
         return known_tags_dict[word]
 
     return None
