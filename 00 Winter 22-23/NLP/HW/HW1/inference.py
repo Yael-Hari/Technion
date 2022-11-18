@@ -298,26 +298,15 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
     pred_tags = [dict_idx_to_tag[pred_idx] for pred_idx in pred_tags_idx]
     return pred_tags
 
-
-def find_n_argmin_idx(values_list: list, n: int):
-    values_list = values_list.copy()
-    n_argmin_idx = []
-    n = min(n, len(values_list))
-    for i in range(n):
-        n_argmin_idx.append(np.argmin(values_list))
-        values_list.remove(np.min(values_list))
-    return n_argmin_idx
-
-
-def print_10_tags_with_lowest_val(score_method: dict, name_score_method: str):
-    vals_list = list(score_method.values())
-    keys_list = list(score_method.keys())
-    argmin_10_idx = find_n_argmin_idx(vals_list, n=10)
-    print(f" ------------ 10 tags with the lowest {name_score_method} ---------\n")
-    for argmin_idx in argmin_10_idx:
-        tag = keys_list[argmin_idx]
-        val = vals_list[argmin_idx]
-        print(f"{tag=}, {val=} \n")
+# def print_10_tags_with_lowest_val(score_method: dict, name_score_method: str):
+#     vals_list = list(score_method.values())
+#     keys_list = list(score_method.keys())
+#     argmin_10_idx = find_n_argmin_idx(vals_list, n=10)
+#     print(f" ------------ 10 tags with the lowest {name_score_method} ---------\n")
+#     for argmin_idx in argmin_10_idx:
+#         tag = keys_list[argmin_idx]
+#         val = vals_list[argmin_idx]
+#         print(f"{tag=}, {val=} \n")
 
 
 def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
@@ -420,12 +409,15 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
         median_f1 = np.median(list(f1.values()))
         print(f"{accuracy=}, {mean_f1=}, {median_f1=}")
 
-        # 10 tags with the lowest precision
-        print_10_tags_with_lowest_val(precision, "precision")
-        # 10 tags with the lowest recall
-        print_10_tags_with_lowest_val(recall, "recall")
-        # 10 tags with the lowest f1 score
-        print_10_tags_with_lowest_val(f1, "f1")
+        print("----------------------------------")
+        print("10 tags with the lowest precision")
+        print(sorted(precision.items(), key=lambda item: item[1])[:10])
+        print("----------------------------------")
+        print("10 tags with the lowest precision")
+        print(sorted(recall.items(), key=lambda item: item[1])[:10])
+        print("----------------------------------")
+        print("10 tags with the lowest precision")
+        print(sorted(f1.items(), key=lambda item: item[1])[:10])
 
         # confusion matrix
         # disp = ConfusionMatrixDisplay.from_predictions(true_list, pred_list, normalize="false")
