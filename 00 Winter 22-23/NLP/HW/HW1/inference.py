@@ -147,13 +147,13 @@ def calc_Q(
         Q_all_v_tags = 0
         for v_idx, v_tag in enumerate(tags_list):
             relevant_idx = get_relevant_idx(
-                k,
-                x,
-                v_tag,
-                histories_features,
-                feature_to_idx,
+                k=k,
+                x=x,
+                v_tag=v_tag,
                 u_tag="*",
                 t_tag="*",
+                histories_features=histories_features,
+                feature_to_idx=feature_to_idx,
             )
             Qv[v_idx] = np.exp(weights[relevant_idx].sum())
             Q_all_v_tags += Qv[v_idx]
@@ -164,13 +164,13 @@ def calc_Q(
         for u_idx, u_tag in enumerate(tags_list):
             for v_idx, v_tag in enumerate(tags_list):
                 relevant_idx = get_relevant_idx(
-                    k,
-                    x,
-                    v_tag,
-                    histories_features,
-                    feature_to_idx,
-                    u_tag,
+                    k=k,
+                    x=x,
+                    v_tag=v_tag,
+                    u_tag=u_tag,
                     t_tag="*",
+                    histories_features=histories_features,
+                    feature_to_idx=feature_to_idx,
                 )
                 Qv[u_idx][v_idx] = np.exp(weights[relevant_idx].sum())
                 Q_all_v_tags[u_idx] += Qv[u_idx][v_idx]
@@ -184,13 +184,13 @@ def calc_Q(
                 t_tag = tags_list[t_idx]
                 for v_idx, v_tag in enumerate(tags_list):
                     relevant_idx = get_relevant_idx(
-                        k,
-                        x,
-                        v_tag,
-                        u_tag,
-                        t_tag,
-                        histories_features,
-                        feature_to_idx,
+                        k=k,
+                        x=x,
+                        v_tag=v_tag,
+                        u_tag=u_tag,
+                        t_tag=t_tag,
+                        histories_features=histories_features,
+                        feature_to_idx=feature_to_idx,
                     )
                     Qv[t_idx][u_idx][v_idx] = np.exp(weights[relevant_idx].sum())
                     Q_all_v_tags[t_idx][u_idx] += Qv[t_idx][u_idx][v_idx]
