@@ -7,6 +7,7 @@ from tqdm import tqdm
 
 from preprocessing import read_test, represent_input_with_features
 
+
 def get_top_B_idx_dict(Matrix: np.array, B: int) -> List[np.array]:
     """return B_best_idx"""
     m = Matrix.copy()
@@ -33,20 +34,21 @@ def check_if_known_word(word):
 
     # check known tags
     known_tags_dict = {
+        ".": ".",
+        "?": ".",
         ",": ",",
         "``": "``",
-        "The": "DT",
         "$": "$",
         "#": "#",
         "''": "''",
-        "in": "IN",
-        "a": "DT",
-        "A": "DT",
         ":": ":",
         ";": ":",
         "--": ":",
-        "of": "IN",
+        "the": "DT",
+        "a": "DT",
         "to": "TO",
+        "of": "IN",
+        "in": "IN",
         "from": "IN",
         "for": "IN",
         "because": "IN",
@@ -57,10 +59,9 @@ def check_if_known_word(word):
         "into": "IN",
         "by": "IN",
         "on": "IN",
-        "?": ".",
     }
     if word.lower() in known_tags_dict.keys():
-        return known_tags_dict[word]
+        return known_tags_dict[word.lower()]
 
     return None
 
@@ -444,6 +445,8 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
         print("----------------------------------")
         print("10 tags with the lowest f1")
         print(sorted(f1.items(), key=lambda item: item[1])[:10])
+        print("----------------------------------")
+        print("FINISH")
         print("---")
         # confusion matrix
         # disp = ConfusionMatrixDisplay.from_predictions(true_list, pred_list, normalize="false")
