@@ -414,16 +414,16 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
             if tag == "*" or tag == "~":
                 continue
             if (Tp[tag] + Fp[tag]) == 0:
-                precision[tag] = 1
+                # TODO: maybe somthing else?
+                precision[tag] = 0
             else:
                 precision[tag] = np.round(Tp[tag] / (Tp[tag] + Fp[tag]), 2)
             if (Tp[tag] + Fn[tag]) == 0:
                 recall[tag] = 1
             else:
                 recall[tag] = np.round(Tp[tag] / (Tp[tag] + Fn[tag]), 2)
-            # TODO: decide if it this is good
             if (precision[tag] + recall[tag]) == 0:
-                f1[tag] = 0  # ?????
+                f1[tag] = 0
             else:
                 f1[tag] = np.round(
                     2 * (precision[tag] * recall[tag]) / (precision[tag] + recall[tag]),
