@@ -11,7 +11,7 @@ TAG = 1
 class FeatureStatistics:
     F200 = True
     F300 = True
-    "try"
+
     def __init__(self, f200=True, f300=True):
         self.n_total_features = 0  # Total number of features accumulated
         FeatureStatistics.F200 = f200
@@ -22,11 +22,10 @@ class FeatureStatistics:
         if FeatureStatistics.F200:
             feature_dict_list += [f"f20{i}" for i in range(6)]
         if FeatureStatistics.F300:
-            feature_dict_list += [f'f30{i}' for i in range(9)]
+            feature_dict_list += [f"f30{i}" for i in range(9)]
         self.feature_rep_dict = {fd: OrderedDict() for fd in feature_dict_list}
         """
-        A dictionary containing the counts of each data regarding a feature class. 
-        For example in f100, would contain
+        A dictionary containing the counts of each data regarding a feature class. For example in f100, would contain
         the number of times each (word, tag) pair appeared in the text.
         """
         self.tags = set()  # a set of all the seen tags
@@ -156,23 +155,23 @@ class FeatureStatistics:
 
                         # f300 - (suffix of prev word, tag_curr)
                         for i in range(1, p_word_len):
-                            p_suffix_tag = (p_word.lower()[-i:], cur_tag)
-                            self.increment_val_in_feature_dict('f300', p_suffix_tag)
+                            p_suffix_tag = (p_word[-i:], cur_tag)
+                            self.increment_val_in_feature_dict("f300", p_suffix_tag)
 
                         # f301 - (prefix of prev word, tag_curr)
                         for i in range(1, p_word_len):
-                            p_prefix_tag = (p_word[:i].lower(), cur_tag)
-                            self.increment_val_in_feature_dict('f301', p_prefix_tag)
+                            p_prefix_tag = (p_word[:i], cur_tag)
+                            self.increment_val_in_feature_dict("f301", p_prefix_tag)
 
                         # f302 - (suffix of next word, tag_curr)
                         for i in range(1, n_word_len):
-                            n_suffix_tag = (n_word.lower()[-i:], cur_tag)
-                            self.increment_val_in_feature_dict('f302', n_suffix_tag)
+                            n_suffix_tag = (n_word[-i:], cur_tag)
+                            self.increment_val_in_feature_dict("f302", n_suffix_tag)
 
                         # f303 - (prefix of next word, tag_curr)
                         for i in range(1, p_word_len):
-                            p_prefix_tag = (p_word.lower()[:i], cur_tag)
-                            self.increment_val_in_feature_dict('f303', p_prefix_tag)
+                            p_prefix_tag = (p_word[:i], cur_tag)
+                            self.increment_val_in_feature_dict("f303", p_prefix_tag)
 
                         # f304 - (curr word contains a punctuation mark, tag_curr)
                         puncs = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
@@ -192,29 +191,14 @@ class FeatureStatistics:
                         self.increment_val_in_feature_dict("f306", pp_bigram_tags)
 
                         # f307 - (is word contains "x", tag curr)
-                        c_word_has_x = 'x' in cur_word.lower()
+                        c_word_has_x = "x" in cur_word
                         f307_tuple = (c_word_has_x, cur_tag)
                         self.increment_val_in_feature_dict("f307", f307_tuple)
 
                         # f308 - (is word starts with "z", tag curr)
-                        c_word_starts_with_z = cur_word[0].lower() == 'z'
+                        c_word_starts_with_z = cur_word[0] == "z"
                         f308_tuple = (c_word_starts_with_z, cur_tag)
                         self.increment_val_in_feature_dict("f308", f308_tuple)
-
-                        # # TODO f309 - (is 2nd word in sentence, tag curr)
-                        # is_2nd_word = (p_word != "*") and (pp_word == "*")
-                        # f309_tuple = (is_2nd_word, c_tag)
-                        # self.increment_val_in_feature_dict('f309', f309_tuple)
-                        #
-                        # # TODO f310 - (is last word in sentence, tag curr)
-                        # is_last_word = (n_word == "~")
-                        # f310_tuple = (is_last_word, c_tag)
-                        # self.increment_val_in_feature_dict('f310', f310_tuple)
-                        #
-                        # # TODO f311 - (is not 1st\2nd\last word in sentence, tag curr)
-                        # is_middle_word = (p_word != "*") and (pp_word != "*") and (n_word != "~")
-                        # f311_tuple = (is_middle_word, c_tag)
-                        # self.increment_val_in_feature_dict('f311', f311_tuple)
 
                     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -265,9 +249,7 @@ class Feature2id:
         self.histories_matrix = OrderedDict()
         self.histories_features = (
             OrderedDict()
-        )  
-        # Dict[(tuple{c_word, c_tag, p_word, p_tag, pp_word, pp_tag, n_word}):
-        # [relevant_features_indexes]]
+        )  # Dict[(tuple{c_word, c_tag, p_word, p_tag, pp_word, pp_tag, n_word}): [relevant_features_indexes]]
         self.small_matrix = sparse.csr_matrix
         self.big_matrix = sparse.csr_matrix
         self.tags_list = feature_statistics.tags_list
@@ -369,13 +351,13 @@ def represent_input_with_features(
 
     # f101 - suffix <=4 and tag pairs
     for i in range(1, cur_word_len):
-        c_suffix_tag = (c_word[-i:].lower(), c_tag)
-        update_features('f101', c_suffix_tag)
+        c_suffix_tag = (c_word[-i:], c_tag)
+        update_features("f101", c_suffix_tag)
 
     # f102 - prefix <=4 and tag pairs
     for i in range(1, cur_word_len):
-        c_prefix_tag = (c_word[:i].lower(), c_tag)
-        update_features('f102', c_prefix_tag)
+        c_prefix_tag = (c_word[:i], c_tag)
+        update_features("f102", c_prefix_tag)
 
     # f103 - trigram tags
     trigram_tags = (pp_tag, p_tag, c_tag)
@@ -389,12 +371,12 @@ def represent_input_with_features(
     update_features("f105", c_tag)
 
     # f106 - previous word and tag pairs
-    prev_word_tag = (p_word.lower(), c_tag)
-    update_features('f106', prev_word_tag)
+    prev_word_tag = (p_word, c_tag)
+    update_features("f106", prev_word_tag)
 
     # f107 - next word and tag pairs
-    next_word_tag = (n_word.lower(), c_tag)
-    update_features('f107', next_word_tag)
+    next_word_tag = (n_word, c_tag)
+    update_features("f107", next_word_tag)
 
     if "f200" in dict_of_dicts:
         # ~~~~~~~~~~ ADDED FEATURES FOR CAPITAL LETTERS AND DIGITS HANDLING ~~~~~~~~~~
@@ -440,23 +422,23 @@ def represent_input_with_features(
 
         # f300 - (suffix of prev word, tag_curr)
         for i in range(1, p_word_len):
-            p_suffix_tag = (p_word[-i:].lower(), c_tag)
-            update_features('f300', p_suffix_tag)
+            p_suffix_tag = (p_word[-i:], c_tag)
+            update_features("f300", p_suffix_tag)
 
         # f301 - (prefix of prev word, tag_curr)
         for i in range(1, p_word_len):
-            p_prefix_tag = (p_word[:i].lower(), c_tag)
-            update_features('f301', p_prefix_tag)
+            p_prefix_tag = (p_word[:i], c_tag)
+            update_features("f301", p_prefix_tag)
 
         # f302 - (suffix of next word, tag_curr)
         for i in range(1, n_word_len):
-            n_suffix_tag = (n_word[-i:].lower(), c_tag)
-            update_features('f302', n_suffix_tag)
+            n_suffix_tag = (n_word[-i:], c_tag)
+            update_features("f302", n_suffix_tag)
 
         # f303 - (prefix of next word, tag_curr)
         for i in range(1, p_word_len):
-            p_prefix_tag = (p_word[:i].lower(), c_tag)
-            update_features('f303', p_prefix_tag)
+            p_prefix_tag = (p_word[:i], c_tag)
+            update_features("f303", p_prefix_tag)
 
         # f304 - (curr word contains a punctuation mark, tag_curr)
         puncs = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
@@ -476,12 +458,12 @@ def represent_input_with_features(
         update_features("f306", pp_bigram_tags)
 
         # f307 - (is word contains "x", tag curr)
-        c_word_has_x = 'x' in c_word.lower()
+        c_word_has_x = "x" in c_word
         f307_tuple = (c_word_has_x, c_tag)
         update_features("f307", f307_tuple)
 
         # f308 - (is word starts with "z", tag curr)
-        c_word_starts_with_z = c_word[0].lower() == 'z'
+        c_word_starts_with_z = c_word[0] == "z"
         f308_tuple = (c_word_starts_with_z, c_tag)
         update_features("f308", f308_tuple)
 
