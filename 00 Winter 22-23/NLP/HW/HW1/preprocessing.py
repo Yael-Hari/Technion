@@ -22,7 +22,7 @@ class FeatureStatistics:
         if FeatureStatistics.F200:
             feature_dict_list += [f"f20{i}" for i in range(6)]
         if FeatureStatistics.F300:
-            feature_dict_list += [f"f30{i}" for i in range(12)]
+            feature_dict_list += [f"f30{i}" for i in range(10)] + [f"f3{i}" for i in range(10, 12)]
         self.feature_rep_dict = {fd: OrderedDict() for fd in feature_dict_list}
         """
         A dictionary containing the counts of each data regarding a feature class. For example in f100, would contain
@@ -256,7 +256,8 @@ class Feature2id:
             self.feature_to_idx = self.merge_dicts(
                 [
                     self.feature_to_idx,
-                    {f"f30{i}": OrderedDict() for i in range(12)},
+                    {f"f30{i}": OrderedDict() for i in range(10)},
+                    {f"f3{i}": OrderedDict() for i in range(10, 12)}
                 ]
             )
 
