@@ -127,8 +127,9 @@ class TaxiProblem(search.Problem):
             if len(passengers_list) < capacity:
                 for passenger_name, passenger_dict in state["passengers"].items():
                     # check that location of taxi is the same as location of the passenger
-                    if (taxi_dict["location"] == passenger_dict["location"]) &
-                        (passenger_dict["location"] != passenger_dict["destination"]):
+                    if (taxi_dict["location"] == passenger_dict["location"]) & (
+                        passenger_dict["location"] != passenger_dict["destination"]
+                    ):
                         legal_pickups.append(passenger_name)
             legal_pickups_by_taxi[taxi_name] = legal_pickups
         return legal_pickups_by_taxi
@@ -140,7 +141,7 @@ class TaxiProblem(search.Problem):
         for taxi_name, taxi_dict in state["taxis"].items():
             legal_drop_offs = []
             # for passenger_name, passenger_dict in state["passengers"].items():
-            for passenger_name in taxi_dict['passengers_list']:
+            for passenger_name in taxi_dict["passengers_list"]:
                 passenger_dict = state["passengers"][passenger_name]
                 # check that location of taxi is the same as destination of the passenger
                 if taxi_dict["location"] == passenger_dict["destination"]:
@@ -201,7 +202,9 @@ class TaxiProblem(search.Problem):
         # -----------------------------------------------------------------
         # Get Actions - all permutations of atomic actions
         actions = list(itertools.product(*atomic_actions_lists))
-        all_wait_action = tuple([("wait", taxi_name) for taxi_name in state["taxis"].keys()])
+        all_wait_action = tuple(
+            [("wait", taxi_name) for taxi_name in state["taxis"].keys()]
+        )
         assert all_wait_action in actions
         actions.remove(all_wait_action)
 
