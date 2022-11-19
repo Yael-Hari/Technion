@@ -92,13 +92,13 @@ class TaxiProblem(search.Problem):
                     x, y = new_location
                     # 2. check that the taxi doesn't get out of the map
                     # 3. check that the taxi is on a passable tile
-                    if (
-                        (0 <= x < map_size_width)
-                        and (0 <= y < map_size_height)
-                        and (map_matrix[x][y] != "I")
-                    ):
-                        legal_locations.append(new_location)
-            legal_locations_by_taxi[taxi_name] = legal_locations  # TODO curr location?
+                    if (0 <= x < map_size_height) and (0 <= y < map_size_width):
+                        try:
+                            if map_matrix[x][y] != "I":
+                                legal_locations.append(new_location)
+                        except:
+                            print()
+            legal_locations_by_taxi[taxi_name] = legal_locations
         return legal_locations_by_taxi
 
     def get_legal_refuel(self, state: dict) -> dict:
@@ -108,7 +108,10 @@ class TaxiProblem(search.Problem):
             map_matrix = state["map"]
             x, y = taxi_dict["location"]  # current location of taxi
             # check that the location on map is "G"
-            legal_refuel = (map_matrix[x][y] == "G")  # bool
+            try:
+                legal_refuel = (map_matrix[x][y] == "G")  # bool
+            except Exception as e:
+                print()
             legal_refuels_by_taxi[taxi_name] = legal_refuel
         return legal_refuels_by_taxi
 
