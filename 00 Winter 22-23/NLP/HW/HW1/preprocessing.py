@@ -22,7 +22,9 @@ class FeatureStatistics:
         if FeatureStatistics.F200:
             feature_dict_list += [f"f20{i}" for i in range(6)]
         if FeatureStatistics.F300:
-            feature_dict_list += [f"f30{i}" for i in range(12)]
+            feature_dict_list += [f"f30{i}" for i in range(10)] + [
+                f"f3{i}" for i in range(10, 12)
+            ]
         self.feature_rep_dict = {fd: OrderedDict() for fd in feature_dict_list}
         """
         A dictionary containing the counts of each data regarding a feature class. For example in f100, would contain
@@ -203,17 +205,19 @@ class FeatureStatistics:
                         # f309 - (is 2nd word in sentence, tag curr)
                         is_2nd_word = (p_word != "*") and (pp_word == "*")
                         f309_tuple = (is_2nd_word, cur_tag)
-                        self.increment_val_in_feature_dict('f309', f309_tuple)
+                        self.increment_val_in_feature_dict("f309", f309_tuple)
 
                         # f310 - (is last word in sentence, tag curr)
-                        is_last_word = (n_word == "~")
+                        is_last_word = n_word == "~"
                         f310_tuple = (is_last_word, cur_tag)
-                        self.increment_val_in_feature_dict('f310', f310_tuple)
+                        self.increment_val_in_feature_dict("f310", f310_tuple)
 
                         # f311 - (is not 1st\2nd\last word in sentence, tag curr)
-                        is_middle_word = (p_word != "*") and (pp_word != "*") and (n_word != "~")
+                        is_middle_word = (
+                            (p_word != "*") and (pp_word != "*") and (n_word != "~")
+                        )
                         f311_tuple = (is_middle_word, cur_tag)
-                        self.increment_val_in_feature_dict('f311', f311_tuple)
+                        self.increment_val_in_feature_dict("f311", f311_tuple)
 
                     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -256,7 +260,8 @@ class Feature2id:
             self.feature_to_idx = self.merge_dicts(
                 [
                     self.feature_to_idx,
-                    {f"f30{i}": OrderedDict() for i in range(12)},
+                    {f"f30{i}": OrderedDict() for i in range(10)},
+                    {f"f3{i}": OrderedDict() for i in range(10, 12)},
                 ]
             )
 
@@ -485,17 +490,17 @@ def represent_input_with_features(
         # f309 - (is 2nd word in sentence, tag curr)
         is_2nd_word = (p_word != "*") and (pp_word == "*")
         f309_tuple = (is_2nd_word, c_tag)
-        update_features('f309', f309_tuple)
+        update_features("f309", f309_tuple)
 
         # f310 - (is last word in sentence, tag curr)
-        is_last_word = (n_word == "~")
+        is_last_word = n_word == "~"
         f310_tuple = (is_last_word, c_tag)
-        update_features('f310', f310_tuple)
+        update_features("f310", f310_tuple)
 
         # f311 - (is not 1st\2nd\last word in sentence, tag curr)
         is_middle_word = (p_word != "*") and (pp_word != "*") and (n_word != "~")
         f311_tuple = (is_middle_word, c_tag)
-        update_features('f311', f311_tuple)
+        update_features("f311", f311_tuple)
 
     return features
 
