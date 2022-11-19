@@ -403,7 +403,7 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
     # ------------------------- calc evaluations -------------------------
     if tagged:
         # accuracy
-        accuracy = np.round(sum(list(Tp.values())) / n_preds, 2)
+        accuracy = np.round(sum(list(Tp.values())) / n_preds, 3)
 
         # precision, recall, f1 for each tag
         for tag in tags_list:
@@ -427,8 +427,8 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
                 )
 
         # f1
-        mean_f1 = np.mean(list(f1.values()))
-        median_f1 = np.median(list(f1.values()))
+        mean_f1 = np.round(np.mean(list(f1.values())), 3)
+        median_f1 = np.round(np.median(list(f1.values())), 3)
         print(f"{accuracy=}, {mean_f1=}, {median_f1=}")
 
         print("----------------------------------")
