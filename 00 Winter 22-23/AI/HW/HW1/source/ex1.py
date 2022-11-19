@@ -1,7 +1,7 @@
 # import math
 # import random
-import itertools
 import ast
+import itertools
 from typing import Tuple
 
 import search
@@ -127,7 +127,8 @@ class TaxiProblem(search.Problem):
             if len(passengers_list) < capacity:
                 for passenger_name, passenger_dict in state["passengers"].items():
                     # check that location of taxi is the same as location of the passenger
-                    if taxi_dict["location"] == passenger_dict["location"]:
+                    if (taxi_dict["location"] == passenger_dict["location"]) &
+                        (passenger_dict["location"] != passenger_dict["destination"]):
                         legal_pickups.append(passenger_name)
             legal_pickups_by_taxi[taxi_name] = legal_pickups
         return legal_pickups_by_taxi

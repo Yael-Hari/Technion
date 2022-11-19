@@ -56,7 +56,8 @@ def main():
     test_1_output_path = "data/test1_predictions.wtag"
     weights_1_path = "weights_1.pkl"
     weights_1_path_200 = "weights_200.pkl"
-    weights_1_path_200_300 = "weights_200_300.pkl"
+    weights_1_path_200_300 = "weights_200_300.pkl" # threshold 1
+    weights_1_path_200_300_th2 = "weights_200_300_tresh2.pkl" # threshold 2
     comp_1_input_path = "data/comp1.words"
     comp_1_output_path = "data/comp_m1_123456789_987654321.wtag"
 
@@ -77,7 +78,7 @@ def main():
     #     f200=True,
     #     f300=True,
     # )
-    # train_model(train_1_path, weights_1_path_200_300, threshold=1, lam=1, f200=True, f300=True)
+    train_model(train_1_path, weights_1_path_200_300_th2, threshold=2, lam=1, f200=True, f300=True)
     # train_model(train_2_path, weights_2_path, threshold=3, lam=1, f200=True, f300=True)
 
     # -----------------------------
@@ -86,7 +87,7 @@ def main():
 
     # train_1_test_itself_path
     # test_model(weights_1_path_200, train_1_mini_input, train_1_mini_output)
-    test_model(weights_1_path_200_300, test_1_input_path, test_1_output_path)
+    test_model(weights_1_path_200_300_th2, test_1_input_path, test_1_output_path)
 
     # -----------------------------
     # Generate Comp Tagged
