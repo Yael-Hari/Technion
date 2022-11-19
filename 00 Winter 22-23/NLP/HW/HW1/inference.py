@@ -288,11 +288,6 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
     )  # dict histories: features relevant idx
 
     for k in range(n_words):
-
-        # for debug only!!!!
-        true_tag = true_tags[2:-1][k]
-        # !!!!
-
         if k == 0 or k == 1:
             B_best_idx = None
         # check if known word
