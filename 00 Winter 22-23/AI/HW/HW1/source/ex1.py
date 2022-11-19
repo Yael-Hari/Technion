@@ -22,9 +22,7 @@ class TaxiProblem(search.Problem):
             self.initial["taxis"][taxi_name]["passengers_list"] = []
             # each taxi["fuel"] is the amount of fuel that the taxi starts with
             # and it is also the maximal amount of fuel
-            self.initial["taxis"][taxi_name]["max_fuel"] = self.initial["taxis"][
-                taxi_name
-            ]["fuel"]
+            self.initial["taxis"][taxi_name]["max_fuel"] = self.initial["taxis"][taxi_name]["fuel"]
         for pass_name in self.initial["passengers"].keys():
             self.initial["passengers"][pass_name]["in_taxi"] = False
         self.initial["n_taxis"] = len(initial["taxis"])
@@ -32,7 +30,7 @@ class TaxiProblem(search.Problem):
         # TODO: make sure we change these after actions / change these lines
         self.initial["n_unpicked"] = len(initial["passengers"])
         self.initial["n_picked_undelivered"] = 0
-        self.initial["n_delivered"] = 0
+        self.initial["n_delivered"] = 0     # TODO: check extreme case where passenger already in his destination
         self.initial["map_size_height"] = len(self.initial["map"])
         self.initial["map_size_width"] = len(self.initial["map"][0])
 
@@ -95,14 +93,12 @@ class TaxiProblem(search.Problem):
                     # 2. check that the taxi doesn't get out of the map
                     # 3. check that the taxi is on a passable tile
                     if (
-                        (x >= 0)
-                        and (x < map_size_width)
-                        and (y >= 0)
-                        and (y < map_size_height)
-                        and map_matrix[x][y] == "P"
+                        (0 <= x < map_size_width)
+                        and (0 <= y < map_size_height)
+                        and (map_matrix[x][y] != "I")
                     ):
                         legal_locations.append(new_location)
-            legal_locations_by_taxi[taxi_name] = legal_locations
+            legal_locations_by_taxi[taxi_name] = legal_locations  # TODO curr location?
         return legal_locations_by_taxi
 
     def get_legal_refuel(self, state: dict) -> dict:
@@ -112,7 +108,7 @@ class TaxiProblem(search.Problem):
             map_matrix = state["map"]
             x, y = taxi_dict["location"]  # current location of taxi
             # check that the location on map is "G"
-            legal_refuel = map_matrix[x][y] == "G"  # bool
+            legal_refuel = (map_matrix[x][y] == "G")  # bool
             legal_refuels_by_taxi[taxi_name] = legal_refuel
         return legal_refuels_by_taxi
 
@@ -121,10 +117,10 @@ class TaxiProblem(search.Problem):
         legal_pickups_by_taxi = {}
         for taxi_name, taxi_dict in state["taxis"].items():
             capacity = taxi_dict["capacity"]
-            passengers_list = taxi_dict["passengers_list"]
+            passengers_in_taxi_list = taxi_dict["passengers_list"]
             legal_pickups = []
             # The number of passengers in the taxi has to be < taxi’s capacity.
-            if len(passengers_list) < capacity:
+            if len(passengers_in_taxi_list) < capacity:
                 for passenger_name, passenger_dict in state["passengers"].items():
                     # check that location of taxi is the same as location of the passenger
                     if (taxi_dict["location"] == passenger_dict["location"]) & (
@@ -140,7 +136,7 @@ class TaxiProblem(search.Problem):
         legal_drop_offs_by_taxi = {}
         for taxi_name, taxi_dict in state["taxis"].items():
             legal_drop_offs = []
-            # for passenger_name, passenger_dict in state["passengers"].items():
+            # go over the passengers that's on the curr taxi
             for passenger_name in taxi_dict["passengers_list"]:
                 passenger_dict = state["passengers"][passenger_name]
                 # check that location of taxi is the same as destination of the passenger
@@ -210,16 +206,16 @@ class TaxiProblem(search.Problem):
 
         # -----------------------------------------------------------------
         # For each action - Check That Taxis Don't Clash with each other
-        #   == not going to the same location (therefor cannot pickup the same passenger)
+        #   == not going to the same location (therefore cannot pickup the same passenger)
         n_taxis = state["n_taxis"]
         if n_taxis > 1:
             legal_actions = []
             for action in actions:
                 taxis_next_locations = []
-                for atomic_action in atomic_actions_lists:
+                for atomic_action in action:        # TODO: NOTE changed from atomic_actions_lists to action
                     action_type = atomic_action[0]
                     taxi_name = atomic_action[1]
-                    taxi_curr_location = state[taxi_name]["location"]
+                    taxi_curr_location = state["taxis"][taxi_name]["location"]
                     if action_type == "move":
                         taxi_next_location = atomic_action[2]
                     else:
@@ -311,7 +307,7 @@ class TaxiProblem(search.Problem):
             passenger_name = action_tuple[2]
             # Taxi updates:
             #   taxi capacity += 1
-            result_state["taxis"][taxi_name]["capacity"] -= 1
+            result_state["taxis"][taxi_name]["capacity"] += 1
             #   remove passenger name from passengers_list of taxi
             result_state["taxis"][taxi_name]["passengers_list"].remove(passenger_name)
             # Problem updates:
@@ -321,7 +317,7 @@ class TaxiProblem(search.Problem):
             result_state["n_delivered"] += 1
             # Passenger updates:
             #   passenger location = taxi location
-            result_state["passengers"][passenger_name]["location"] = taxi_name
+            result_state["passengers"][passenger_name]["location"] = result_state["passengers"][passenger_name]['destination']
             #   update "in_taxi" of passenger to False
             result_state["passengers"][passenger_name]["in_taxi"] = False
 
@@ -353,6 +349,7 @@ class TaxiProblem(search.Problem):
             dest = params_dict["destination"]
             if location != dest:
                 at_goal = False
+                break
         return at_goal
 
     def h(self, node):
