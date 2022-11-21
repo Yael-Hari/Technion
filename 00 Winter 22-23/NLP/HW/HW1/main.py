@@ -62,7 +62,6 @@ def main():
     # Train Models
     # -----------------------------
 
-
     # train_model(
     #     train_1_path,
     #     weights_1_path,
@@ -77,7 +76,7 @@ def main():
     # Test Model 1
     # -----------------------------
 
-    test_model(weights_1_path, train_1_test_itself_input, train_1_test_itself_output)
+    # test_model(weights_1_path, train_1_test_itself_input, train_1_test_itself_output)
 
     # -----------------------------
     # Generate Comp Tagged
