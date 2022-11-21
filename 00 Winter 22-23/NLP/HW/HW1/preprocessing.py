@@ -23,7 +23,7 @@ class FeatureStatistics:
             feature_dict_list += [f"f20{i}" for i in range(6)]
         if FeatureStatistics.F300:
             feature_dict_list += [f"f30{i}" for i in range(10)] + [
-                f"f3{i}" for i in range(10, 12)
+                f"f3{i}" for i in range(10, 13)
             ]
         self.feature_rep_dict = {fd: OrderedDict() for fd in feature_dict_list}
         """
@@ -219,6 +219,11 @@ class FeatureStatistics:
                         f311_tuple = (is_middle_word, cur_tag)
                         self.increment_val_in_feature_dict("f311", f311_tuple)
 
+                        # f312 - (first_letter_is_capital, suffix)
+                        for i in range(1, cur_word_len):
+                            f312_tuple = (first_letter_is_capital, cur_word[-i:])
+                            self.increment_val_in_feature_dict("f312", f312_tuple)
+
                     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                     # create history
@@ -261,7 +266,7 @@ class Feature2id:
                 [
                     self.feature_to_idx,
                     {f"f30{i}": OrderedDict() for i in range(10)},
-                    {f"f3{i}": OrderedDict() for i in range(10, 12)},
+                    {f"f3{i}": OrderedDict() for i in range(10, 13)},
                 ]
             )
 
@@ -501,6 +506,11 @@ def represent_input_with_features(
         is_middle_word = (p_word != "*") and (pp_word != "*") and (n_word != "~")
         f311_tuple = (is_middle_word, c_tag)
         update_features("f311", f311_tuple)
+
+        # f312 - (first_letter_is_capital, suffix)
+        for i in range(1, cur_word_len):
+            f312_tuple = (first_letter_is_capital, c_word[-i:])
+            update_features("f312", f312_tuple)
 
     return features
 

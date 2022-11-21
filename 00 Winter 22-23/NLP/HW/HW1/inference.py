@@ -44,21 +44,7 @@ def check_if_known_word(word):
         ":": ":",
         ";": ":",
         "--": ":",
-        "the": "DT",
-        "a": "DT",
         "to": "TO",
-        "of": "IN",
-        "in": "IN",
-        "from": "IN",
-        "for": "IN",
-        "because": "IN",
-        "than": "IN",
-        "that": "IN",
-        "at": "IN",
-        "as": "IN",
-        "into": "IN",
-        "by": "IN",
-        "on": "IN",
     }
     if word.lower() in known_tags_dict.keys():
         return known_tags_dict[word.lower()]
@@ -292,6 +278,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
             B_best_idx = None
         # check if known word
         known_tag = check_if_known_word(x[k])
+
         if known_tag:
             Pi, Bp = calc_Pi_Bp_known_tag(
                 k, known_tag, B_best_idx, Pi, Bp, dict_tag_to_idx, n_tags, star_idx
@@ -441,10 +428,24 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
         print("10 tags with the lowest f1")
         print(sorted(f1.items(), key=lambda item: item[1])[:10])
         print("----------------------------------")
+
+        # confusion matrix
+        tag_to_idx_dict = {tag: idx for (idx, tag) in enumerate(tags_list)}
+        true_list_nums = {tag_to_idx_dict[true_tag] for true_tag in true_list}
+        pred_list_nums = {tag_to_idx_dict[pred_tag] for pred_tag in pred_list}
+
+        disp = ConfusionMatrixDisplay.from_predictions(
+            true_list_nums, pred_list_nums, normalize="None", display_labels=tags_list
+        )
+        plt.show()
+        disp = ConfusionMatrixDisplay.from_predictions(
+            true_list_nums, pred_list_nums, normalize="True", display_labels=tags_list
+        )
+        plt.show()
+        disp = ConfusionMatrixDisplay.from_predictions(
+            true_list_nums, pred_list_nums, normalize="Pred", display_labels=tags_list
+        )
+        plt.show()
+
         print("FINISH")
         print("---")
-        # confusion matrix
-        # disp = ConfusionMatrixDisplay.from_predictions(true_list, pred_list, normalize="false")
-        # plt.show()
-        # disp = ConfusionMatrixDisplay.from_predictions(true_list, pred_list, normalize="true")
-        # plt.show()
