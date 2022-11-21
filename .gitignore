@@ -15,3 +15,11 @@
 00 Winter 22-23/NLP/HW/HW1/main.py
 00 Winter 22-23/NLP/HW/HW1/main.py
 00 Winter 22-23/NLP/HW/HW1/weights_200_300_tresh2.pkl
+.DS_Store
+00 Winter 22-23/NLP/HW/HW1/conf_matrix.csv
+00 Winter 22-23/NLP/HW/HW1/conf_matrixxx.csv
+00 Winter 22-23/NLP/HW/HW1/preds_df.csv
+00 Winter 22-23/NLP/HW/HW1/true_df.csv
+00 Winter 22-23/NLP/HW/HW1/weights_200_300_tresh3.pkl
+.gitignore
+00 Winter 22-23/NLP/HW/HW1/data/comp_m2_123456789_987654321.wtag

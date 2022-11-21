@@ -1,8 +1,7 @@
-from typing import List, Tuple
+from typing import List
 
-import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.metrics import ConfusionMatrixDisplay
+# import pandas as pd
 from tqdm import tqdm
 
 from preprocessing import read_test, represent_input_with_features
@@ -319,7 +318,7 @@ def memm_viterbi(sentence, pre_trained_weights, feature2id, true_tags=None):
 
 
 def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
-    tagged = ("test" in test_path) or ("train" in test_path)
+    tagged = "test" in test_path
     test = read_test(test_path, tagged=tagged)
 
     output_file = open(predictions_path, "a+")
@@ -429,23 +428,33 @@ def tag_all_test(test_path, pre_trained_weights, feature2id, predictions_path):
         print(sorted(f1.items(), key=lambda item: item[1])[:10])
         print("----------------------------------")
 
+        # ----------------
         # confusion matrix
-        tag_to_idx_dict = {tag: idx for (idx, tag) in enumerate(tags_list)}
-        true_list_nums = {tag_to_idx_dict[true_tag] for true_tag in true_list}
-        pred_list_nums = {tag_to_idx_dict[pred_tag] for pred_tag in pred_list}
+        # ----------------
 
-        disp = ConfusionMatrixDisplay.from_predictions(
-            true_list_nums, pred_list_nums, normalize="None", display_labels=tags_list
-        )
-        plt.show()
-        disp = ConfusionMatrixDisplay.from_predictions(
-            true_list_nums, pred_list_nums, normalize="True", display_labels=tags_list
-        )
-        plt.show()
-        disp = ConfusionMatrixDisplay.from_predictions(
-            true_list_nums, pred_list_nums, normalize="Pred", display_labels=tags_list
-        )
-        plt.show()
+        # tag_to_idx_dict = {tag: idx for (idx, tag) in enumerate(tags_list)}
+        # true_list_nums = [tag_to_idx_dict[true_tag] for true_tag in true_list]
+        # pred_list_nums = [tag_to_idx_dict[pred_tag] for pred_tag in pred_list]
+        # n_tags = len(tags_list)
+        # n_preds = len(pred_list_nums)
+
+        # conf_matrix = np.zeros([n_tags, n_tags])
+        # for i in range(n_preds):
+        #     true = true_list_nums[i]
+        #     pred = pred_list_nums[i]
+        #     conf_matrix[true][pred] += 1
+
+        # preds_df = pd.DataFrame(pred_list)
+        # true_df = pd.DataFrame(true_list)
+        # preds_df.to_csv("preds_df.csv")
+        # true_df.to_csv("true_df.csv")
+
+        # matrix_df = pd.DataFrame(conf_matrix)
+        # matrix_df["tag"] = tags_list
+        # a = tags_list
+        # a.append(0)
+        # matrix_df.loc[len(matrix_df)] = a
+        # matrix_df.to_csv("conf_matrix.csv")
 
         print("FINISH")
         print("---")
