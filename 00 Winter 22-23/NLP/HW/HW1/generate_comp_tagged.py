@@ -11,11 +11,11 @@ def main():
     # ---- Files Paths  -----------
     weights_1_path = "weights_1.pkl"
     comp_1_input_path = "data/comp1.words"
-    comp_1_output_path = "data/comp_m1_123456789_987654321.wtag"
+    comp_1_output_path = "data/comp_m1_206014482_316375872.wtag"
 
     weights_2_path = "weights_2.pkl"
     comp_2_input_path = "data/comp2.words"
-    comp_2_output_path = "data/comp_m2_123456789_987654321.wtag"
+    comp_2_output_path = "data/comp_m2_206014482_316375872.wtag"
 
     # -----------------------------
     # Generate Comp Tagged

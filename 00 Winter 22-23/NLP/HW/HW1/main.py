@@ -49,6 +49,8 @@ def generate_comp(weights_path, test_path, predictions_path):
 def main():
     # ---- Files Paths  -----------
     train_1_path = "data/train1.wtag"
+    train_1_test_itself_input = "data/train1 test itself.wtag"
+    train_1_test_itself_output = "data/train1 test.wtag"
     test_1_input_path = "data/test1.wtag"
     test_1_output_path = "data/test1_predictions.wtag"
     weights_1_path = "weights_1.pkl"
@@ -75,8 +77,7 @@ def main():
     # Test Model 1
     # -----------------------------
 
-    # train_1_test_itself_path
-    # test_model(weights_1_path, test_1_input_path, test_1_output_path)
+    test_model(weights_1_path, train_1_test_itself_input, train_1_test_itself_output)
 
     # -----------------------------
     # Generate Comp Tagged
