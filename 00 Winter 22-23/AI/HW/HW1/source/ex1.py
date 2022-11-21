@@ -356,12 +356,42 @@ class TaxiProblem(search.Problem):
         return at_goal
 
     def h(self, node):
-        state = str_to_dict(node.state)
         # TODO
         """This is the heuristic. It gets a node (not a state,
         state can be accessed via node.state)
         and returns a goal distance estimate"""
-        return 0
+        # return 0
+        state = str_to_dict(node.state)
+        # D[i] = Manhattan distance between the initial location of an unpicked passenger i,
+        # and her destination
+        D = []
+        # T[i] = Manhattan distance between the taxi where a picked but undelivered passenger is,
+        # and her destination
+        T = []
+
+        for passenger, dict_params in state["passengers"].items():
+            if not dict_params["in_taxi"]:  # then passenger is unpicked
+                D.append(
+                    manhattan_dist(dict_params["location"], dict_params["destination"])
+                )
+            else:  # then the passenger is picked
+                taxi = state["taxis"][dict_params["in_taxi"]]
+                T.append(manhattan_dist(taxi["location"], dict_params["destination"]))
+        for passenger, dict_params in state["passengers"].items():
+            if not dict_params["in_taxi"]:  # then passenger is unpicked
+                D.append(
+                    manhattan_dist(dict_params["location"], dict_params["destination"])
+                )
+            else:  # then the passenger is picked
+                taxi = state["taxis"][dict_params["in_taxi"]]
+                T.append(manhattan_dist(taxi["location"], dict_params["destination"]))
+
+        taxis = state["taxis"].keys()
+        list_capacity_taxis = [state['taxis'][taxi_n]['capacity'] for taxi_n in taxis]
+        sum_capacity_in_all_taxis = sum(list_capacity_taxis)
+
+        value = (sum(D) + sum(T)) / sum_capacity_in_all_taxis
+        return value
 
     def h_1(self, node):
         """
@@ -388,13 +418,13 @@ class TaxiProblem(search.Problem):
         # and her destination
         T = []
 
-        for passenger, dict_params in node.state["passengers"].items():
+        for passenger, dict_params in state["passengers"].items():
             if not dict_params["in_taxi"]:  # then passenger is unpicked
                 D.append(
                     manhattan_dist(dict_params["location"], dict_params["destination"])
                 )
             else:  # then the passenger is picked
-                taxi = node.state["taxis"][dict_params["in_taxi"]]
+                taxi = state["taxis"][dict_params["in_taxi"]]
                 T.append(manhattan_dist(taxi["location"], dict_params["destination"]))
         for passenger, dict_params in state["passengers"].items():
             if not dict_params["in_taxi"]:  # then passenger is unpicked
