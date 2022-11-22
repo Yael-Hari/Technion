@@ -37,7 +37,11 @@ class TaxiProblem(search.Problem):
         taxis = self.initial["taxis"].keys()
         self.initial["sum_capacity_all_taxis"] = sum([self.initial["taxis"][taxi_n]["capacity"] for taxi_n in taxis])
 
+        self.initial["gas_station_list"] = self.get_gas_station_list(self.initial["map"], self.initial["map_size_height"], self.initial["map_size_width"])
+        
+
         self.initial = dict_to_str(self.initial)
+        
 
         """
         State example
@@ -65,6 +69,14 @@ class TaxiProblem(search.Problem):
         "map_size_width": 4,
         }
         """
+
+    def get_gas_station_list(self, map, h, w):
+        l =[]
+        for i in range(h):
+            for j in range(w):
+                if map[i][j] == "G":
+                    l.apend((i, j))
+        return l
 
     def generate_locations(self, state: dict) -> dict:
         # get new locations by:
@@ -360,7 +372,7 @@ class TaxiProblem(search.Problem):
         """This is the heuristic. It gets a node (not a state,
         state can be accessed via node.state)
         and returns a goal distance estimate"""
-        return self.h_1(node)
+        # return self.h_1(node)
         state = str_to_dict(node.state)
         # D[i] = Manhattan distance between the initial location of an unpicked passenger i,
         # and her destination
@@ -383,7 +395,7 @@ class TaxiProblem(search.Problem):
 
         sum_capacity_in_all_taxis = state['sum_capacity_all_taxis']
 
-        value = (sum(D) + sum(T)) / sum_capacity_in_all_taxis
+        value = (sum(D) + sum(T) +  * 3) / sum_capacity_in_all_taxis
         return value
 
     # def h(self, node):
