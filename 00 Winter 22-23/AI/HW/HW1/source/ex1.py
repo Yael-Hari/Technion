@@ -34,6 +34,9 @@ class TaxiProblem(search.Problem):
         self.initial["map_size_height"] = len(self.initial["map"])
         self.initial["map_size_width"] = len(self.initial["map"][0])
 
+        taxis = self.initial["taxis"].keys()
+        self.initial["sum_capacity_all_taxis"] = sum([self.initial["taxis"][taxi_n]["capacity"] for taxi_n in taxis])
+
         self.initial = dict_to_str(self.initial)
 
         """
@@ -93,11 +96,8 @@ class TaxiProblem(search.Problem):
                     # 2. check that the taxi doesn't get out of the map
                     # 3. check that the taxi is on a passable tile
                     if (0 <= x < map_size_height) and (0 <= y < map_size_width):
-                        try:
-                            if map_matrix[x][y] != "I":
-                                legal_locations.append(new_location)
-                        except:
-                            print()
+                        if map_matrix[x][y] != "I":
+                            legal_locations.append(new_location)
             legal_locations_by_taxi[taxi_name] = legal_locations
         return legal_locations_by_taxi
 
@@ -120,10 +120,11 @@ class TaxiProblem(search.Problem):
         legal_pickups_by_taxi = {}
         for taxi_name, taxi_dict in state["taxis"].items():
             capacity = taxi_dict["capacity"]
+            taxi_loc = taxi_dict['location']
             passengers_in_taxi_list = taxi_dict["passengers_list"]
             legal_pickups = []
             # The number of passengers in the taxi has to be < taxi’s capacity.
-            if len(passengers_in_taxi_list) < capacity:
+            if capacity > 0:
                 for passenger_name, passenger_dict in state["passengers"].items():
                     # check that location of taxi is the same as location of the passenger
                     if (taxi_dict["location"] == passenger_dict["location"]) & (
@@ -356,11 +357,10 @@ class TaxiProblem(search.Problem):
         return at_goal
 
     def h(self, node):
-        # TODO
         """This is the heuristic. It gets a node (not a state,
         state can be accessed via node.state)
         and returns a goal distance estimate"""
-        # return 0
+        return self.h_1(node)
         state = str_to_dict(node.state)
         # D[i] = Manhattan distance between the initial location of an unpicked passenger i,
         # and her destination
@@ -371,27 +371,56 @@ class TaxiProblem(search.Problem):
 
         for passenger, dict_params in state["passengers"].items():
             if not dict_params["in_taxi"]:  # then passenger is unpicked
-                D.append(
-                    manhattan_dist(dict_params["location"], dict_params["destination"])
-                )
-            else:  # then the passenger is picked
-                taxi = state["taxis"][dict_params["in_taxi"]]
-                T.append(manhattan_dist(taxi["location"], dict_params["destination"]))
-        for passenger, dict_params in state["passengers"].items():
-            if not dict_params["in_taxi"]:  # then passenger is unpicked
-                D.append(
-                    manhattan_dist(dict_params["location"], dict_params["destination"])
-                )
+                if dict_params["location"] == dict_params["destination"]:
+                    continue
+                else:
+                    D.append(
+                        manhattan_dist(dict_params["location"], dict_params["destination"])
+                    )
             else:  # then the passenger is picked
                 taxi = state["taxis"][dict_params["in_taxi"]]
                 T.append(manhattan_dist(taxi["location"], dict_params["destination"]))
 
-        taxis = state["taxis"].keys()
-        list_capacity_taxis = [state['taxis'][taxi_n]['capacity'] for taxi_n in taxis]
-        sum_capacity_in_all_taxis = sum(list_capacity_taxis)
+        sum_capacity_in_all_taxis = state['sum_capacity_all_taxis']
 
         value = (sum(D) + sum(T)) / sum_capacity_in_all_taxis
         return value
+
+    # def h(self, node):
+    #     state = str_to_dict(node.state)
+    #     # D[i] = Manhattan distance between the initial location of an unpicked passenger i,
+    #     # and her destination
+    #     D = []
+    #     # T[i] = Manhattan distance between the taxi where a picked but undelivered passenger is,
+    #     # and her destination
+    #     T = []
+    #
+    #     for passenger, dict_params in state["passengers"].items():
+    #         if not dict_params["in_taxi"]:  # then passenger is unpicked
+    #             if dict_params["location"] == dict_params["destination"]:
+    #                 continue
+    #             else:
+    #                 prob_h = ProblemH(initial={"curr_location": dict_params["location"], "map": state['map']},
+    #                                   goal=dict_params["destination"])
+    #                 D.append(self.solve_prob_h(prob_h))
+    #         else:  # then the passenger is picked
+    #             taxi = state["taxis"][dict_params["in_taxi"]]
+    #             prob_h = ProblemH(initial={"curr_location": taxi["location"], "map": state['map']},
+    #                               goal=dict_params["destination"])
+    #             T.append(self.solve_prob_h(prob_h))
+    #
+    #     sum_capacity_in_all_taxis = state['sum_capacity_all_taxis']
+    #
+    #     value = (sum(D) + sum(T)) / sum_capacity_in_all_taxis
+    #     return value
+    #
+    # def solve_prob_h(self, prob_h):
+    #     res = search.astar_search(prob_h, lambda x: 0)
+    #     if isinstance(res, search.Node):
+    #         solution = list(map(lambda n: n.action, res.path()))[1:]
+    #         return len(solution)
+    #     else:
+    #         return 0
 
     def h_1(self, node):
         """
@@ -426,14 +455,6 @@ class TaxiProblem(search.Problem):
             else:  # then the passenger is picked
                 taxi = state["taxis"][dict_params["in_taxi"]]
                 T.append(manhattan_dist(taxi["location"], dict_params["destination"]))
-        for passenger, dict_params in state["passengers"].items():
-            if not dict_params["in_taxi"]:  # then passenger is unpicked
-                D.append(
-                    manhattan_dist(dict_params["location"], dict_params["destination"])
-                )
-            else:  # then the passenger is picked
-                taxi = state["taxis"][dict_params["in_taxi"]]
-                T.append(manhattan_dist(taxi["location"], dict_params["destination"]))
 
         value = (sum(D) + sum(T)) / state["n_taxis"]
         return value
@@ -457,3 +478,96 @@ def dict_to_str(d: dict) -> str:
 def str_to_dict(s: str) -> dict:
     j_dict = ast.literal_eval(s)
     return j_dict
+
+
+# class ProblemH(search.Problem):
+#     def __init__(self, initial, goal):
+#         search.Problem.__init__(self, initial, goal)
+#         self.initial["map_size_height"] = len(self.initial["map"])
+#         self.initial["map_size_width"] = len(self.initial["map"][0])
+#         self.initial = dict_to_str(self.initial)
+#
+#     def actions(self, state):
+#         state = str_to_dict(state)
+#         return tuple(self.get_legal_moves_on_map(state))
+#
+#     def generate_locations(self, state: dict) -> list:
+#         # get new locations by:
+#         # current location + one step in legal orientation (EAST, NORTH, WEST, SOUTH)
+#         curr_location = state["curr_location"]
+#         possible_locations = [
+#             vector_add(curr_location, orient) for orient in orientations
+#         ]
+#         return possible_locations
+#
+#     def get_legal_moves_on_map(self, state: dict) -> list:
+#         # legal_locations_by_taxi = {}
+#         possible_locations = self.generate_locations(state)
+#         legal_locations = []
+#         map_size_height = state["map_size_height"]
+#         map_size_width = state["map_size_width"]
+#         map_matrix = state["map"]
+#
+#         for new_location in possible_locations:
+#             x, y = new_location
+#             # 2. check that the taxi doesn't get out of the map
+#             # 3. check that the taxi is on a passable tile
+#             if (0 <= x < map_size_height) and (0 <= y < map_size_width):
+#                 if map_matrix[x][y] != "I":
+#                     legal_locations.append(new_location)
+#         return legal_locations
+#
+#     def result(self, state, action):
+#         result_state = str_to_dict(state)
+#         result_state["curr_location"] = action
+#         result_state = dict_to_str(result_state)
+#         return result_state
+#
+#     def goal_test(self, state):
+#         s = str_to_dict(state)
+#         return s['curr_location'] == self.goal
+
+
+#
+# problem = {
+#     "curr_location": (),
+#     "map": {},
+#     "map_size_height": 1,
+#     "map_size_width": 2
+# }
+
+
+# def h(self, node):
+#     state = str_to_dict(node.state)
+#     # D[i] = Manhattan distance between the initial location of an unpicked passenger i,
+#     # and her destination
+#     D = []
+#     # T[i] = Manhattan distance between the taxi where a picked but undelivered passenger is,
+#     # and her destination
+#     T = []
+#
+#     for passenger, dict_params in state["passengers"].items():
+#         if not dict_params["in_taxi"]:  # then passenger is unpicked
+#             if dict_params["location"] == dict_params["destination"]:
+#                 continue
+#             else:
+#                 prob_h = ProblemH(initial={"curr_location": dict_params["location"], "map": state['map']},
+#                                   goal=dict_params["destination"])
+#                 D.append(solve_prob_h(prob_h))
+#         else:  # then the passenger is picked
+#             taxi = state["taxis"][dict_params["in_taxi"]]
+#             prob_h = ProblemH(initial={"curr_location": taxi["location"], "map": state['map']},
+#                               goal=dict_params["destination"])
+#             T.append(solve_prob_h(prob_h))
+#
+#     sum_capacity_in_all_taxis = state['sum_capacity_all_taxis']
+#
+#     value = (sum(D) + sum(T)) / sum_capacity_in_all_taxis
+#     return value
+#
+#
+# def solve_prob_h(prob_h):
+#     res = search.astar_search(prob_h, lambda x: 0)
+#     return res
+
+
