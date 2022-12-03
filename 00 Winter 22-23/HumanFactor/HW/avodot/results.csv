@@ -1,0 +1,304 @@
+StartDate,EndDate,Status,IPAddress,Progress,Duration (in seconds),Finished,RecordedDate,ResponseId,RecipientLastName,RecipientFirstName,RecipientEmail,ExternalReference,LocationLatitude,LocationLongitude,DistributionChannel,UserLanguage,Consent,Prolific Id,Physical Fitness_1,Physical Fitness_2,Physical Fitness_3,Physical Fitness_4,Physical Fitness_5,Physical Fitness_6,Physical Fitness_7,Physical Fitness_8,Physical Fitness_9,Physical Fitness_10,Physical Fitness_11,Physical Fitness_12,Physical Fitness_13,Emotions_1,Emotions_2,Emotions_3,Emotions_4,Emotions_5,Emotions_6,Emotions_7,Emotions_8,Emotions_9,Emotions_10,Emotions_11,Emotions_12,Emotions_13,Emotions_14,Emotions_15,Emotions_16,Emotions_17,Emotions_18,Emotions_19,Emotions_20,Emotions_21,Emotions_22,Emotions_23,Emotions_24,Emotions_25,Emotions_26,Emotions_27,Emotions_28,Emotions_29,Emotions_30,Activity,doing_sport,Activity,Activity_4_TEXT,Gender,Age,End of survey
+Start Date,End Date,Response Type,IP Address,Progress,Duration (in seconds),Finished,Recorded Date,Response ID,Recipient Last Name,Recipient First Name,Recipient Email,External Data Reference,Location Latitude,Location Longitude,Distribution Channel,User Language,"Dear participant,
+
+Thank you for choosing to participate in this study.
+
+
+Participation will take about 4 minutes. 
+The study focuses on the relationship between physical fitness and emotional state, and it includes answering some questions. 
+The questions have no right or wrong answers.
+
+
+Your responses are confidential. We do not ask for your name or other identifying information. Whatever information you convey in this survey cannot be traced back to you. All information is collected for research purposes only and anonymity will be maintained.
+
+
+Taking part in this study is completely voluntary. If you decide not to take part, you are free to withdraw at any time.
+
+
+Please read all the instructions and information very carefully.
+This survey is very important for us.
+
+
+If you have any questions, you may contact:
+
+Keren Gruteke: gkeren@campus.technion.ac.il 
+Yael Hari: yael.hari@campus.technion.ac.il 
+
+We appreciate your cooperation!
+
+
+In order to participate in this study, please read the following and confirm the informed consent:
+
+I declare that I agree to participate in this study and that I have read and understood the above information. I know that I am free to choose not to participate in the study and I am free to stop participating at any time. 
+Also, confidentiality of my personal identity is assured.",Please enter your prolific ID,"INSTRUCTIONS: 
+Below are a number of statements about your perception of your physical fitness. 
+Read the statements carefully, and choose the alternative that apply to you the most. - I am in good physical condition","INSTRUCTIONS: 
+Below are a number of statements about your perception of your physical fitness. 
+Read the statements carefully, and choose the alternative that apply to you the most. - I need to alter (lose or gain) my weight in order to improve my physical health","INSTRUCTIONS: 
+Below are a number of statements about your perception of your physical fitness. 
+Read the statements carefully, and choose the alternative that apply to you the most. - I am better able to walk briskly for twenty minutes than most individuals my age","INSTRUCTIONS: 
+Below are a number of statements about your perception of your physical fitness. 
+Read the statements carefully, and choose the alternative that apply to you the most. - I am as physically strong as I need to be","INSTRUCTIONS: 
+Below are a number of statements about your perception of your physical fitness. 
+Read the statements carefully, and choose the alternative that apply to you the most. - An object that I can lift once with slight difficulty soon becomes exhausting when I attempt to lift it repeatedly","INSTRUCTIONS: 
+Below are a number of statements about your perception of your physical fitness. 
+Read the statements carefully, and choose the alternative that apply to you the most. - I possess greater muscular flexibility than most individuals my age","INSTRUCTIONS: 
+Below are a number of statements about your perception of your physical fitness. 
+Read the statements carefully, and choose the alternative that apply to you the most. - I am more overweight than most individuals my age","INSTRUCTIONS: 
+Below are a number of statements about your perception of your physical fitness. 
+Read the statements carefully, and choose the alternative that apply to you the most. - When I exercise I tire easily","INSTRUCTIONS: 
+Below are a number of statements about your perception of your physical fitness. 
+Read the statements carefully, and choose the alternative that apply to you the most. - I am more physically fit than most individuals my age","INSTRUCTIONS: 
+Below are a number of statements about your perception of your physical fitness. 
+Read the statements carefully, and choose the alternative that apply to you the most. - I am a very flexible individual","INSTRUCTIONS: 
+Below are a number of statements about your perception of your physical fitness. 
+Read the statements carefully, and choose the alternative that apply to you the most. - I read carefully this sentence. Select 7","INSTRUCTIONS: 
+Below are a number of statements about your perception of your physical fitness. 
+Read the statements carefully, and choose the alternative that apply to you the most. - I possess less muscular strength than most individuals my age","INSTRUCTIONS: 
+Below are a number of statements about your perception of your physical fitness. 
+Read the statements carefully, and choose the alternative that apply to you the most. - I need to improve my present over-all physical condition","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I don’t feel particularly pleased with the way I am","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I am intensely interested in other people","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I feel that life is very rewarding","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I have very warm feelings towards almost everyone","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I rarely wake up feeling rested","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I am not particularly optimistic about the future","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I find most things amusing","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I am always committed and involved","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - Life is good","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I do not think that the world is a good place","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I laugh a lot","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I am well satisfied about everything in my life","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I don’t think I look attractive","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - There is a gap between what I would like to do and what I have done","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I am very happy","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I find beauty in some things","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I always have a cheerful effect on others","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I can fit in everything I want to","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I feel that I am not especially in control of my life","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - Select answer 2","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I feel able to take anything on","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I feel fully mentally alert","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I often experience joy and elation","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I do not find it easy to make decisions","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I do not have a particular sense of meaning and purpose in my life","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I feel I have a great deal of energy","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I usually have a good influence on events","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I do not have fun with other people","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I don’t feel particularly healthy","INSTRUCTIONS:
+
+Below are a number of statements about happiness. 
+Please indicate how much you agree or disagree with each by choosing one of the options.
+
+Read the statements carefully, and don’t take too long over individual questions. - I do not have particularly happy memories of the past",How often are you performing sports activity?,doing sport,Please select the option that apply to you the most: - Selected Choice,Please select the option that apply to you the most: - other: you may write here below - Text,Gender,What is your age?,"Thank you for participating!
+You are welcome to write any comment here"
+"{""ImportId"":""startDate"",""timeZone"":""America/Denver""}","{""ImportId"":""endDate"",""timeZone"":""America/Denver""}","{""ImportId"":""status""}","{""ImportId"":""ipAddress""}","{""ImportId"":""progress""}","{""ImportId"":""duration""}","{""ImportId"":""finished""}","{""ImportId"":""recordedDate"",""timeZone"":""America/Denver""}","{""ImportId"":""_recordId""}","{""ImportId"":""recipientLastName""}","{""ImportId"":""recipientFirstName""}","{""ImportId"":""recipientEmail""}","{""ImportId"":""externalDataReference""}","{""ImportId"":""locationLatitude""}","{""ImportId"":""locationLongitude""}","{""ImportId"":""distributionChannel""}","{""ImportId"":""userLanguage""}","{""ImportId"":""QID5""}","{""ImportId"":""QID8_TEXT""}","{""ImportId"":""QID7_1""}","{""ImportId"":""QID7_2""}","{""ImportId"":""QID7_3""}","{""ImportId"":""QID7_4""}","{""ImportId"":""QID7_5""}","{""ImportId"":""QID7_6""}","{""ImportId"":""QID7_7""}","{""ImportId"":""QID7_8""}","{""ImportId"":""QID7_9""}","{""ImportId"":""QID7_10""}","{""ImportId"":""QID7_13""}","{""ImportId"":""QID7_11""}","{""ImportId"":""QID7_12""}","{""ImportId"":""QID4_1""}","{""ImportId"":""QID4_2""}","{""ImportId"":""QID4_3""}","{""ImportId"":""QID4_4""}","{""ImportId"":""QID4_5""}","{""ImportId"":""QID4_6""}","{""ImportId"":""QID4_7""}","{""ImportId"":""QID4_8""}","{""ImportId"":""QID4_9""}","{""ImportId"":""QID4_10""}","{""ImportId"":""QID4_11""}","{""ImportId"":""QID4_12""}","{""ImportId"":""QID4_13""}","{""ImportId"":""QID4_14""}","{""ImportId"":""QID4_15""}","{""ImportId"":""QID4_16""}","{""ImportId"":""QID4_17""}","{""ImportId"":""QID4_18""}","{""ImportId"":""QID4_19""}","{""ImportId"":""QID4_30""}","{""ImportId"":""QID4_20""}","{""ImportId"":""QID4_21""}","{""ImportId"":""QID4_22""}","{""ImportId"":""QID4_23""}","{""ImportId"":""QID4_24""}","{""ImportId"":""QID4_25""}","{""ImportId"":""QID4_26""}","{""ImportId"":""QID4_27""}","{""ImportId"":""QID4_28""}","{""ImportId"":""QID4_29""}","{""ImportId"":""QID17_TEXT""}",,"{""ImportId"":""QID14""}","{""ImportId"":""QID14_7_TEXT""}","{""ImportId"":""QID9""}","{""ImportId"":""QID12_TEXT""}","{""ImportId"":""QID11_TEXT""}"
+2022-11-19 04:04:13,2022-11-19 04:05:29,0,77.137.75.63,100,76,1,2022-11-19 04:05:29,R_3qgQQnZdoKOBE2l,,,,,32.0803,34.7805,anonymous,EN,1,478,1,3,2,2,2,2,2,4,4,4,,4,4,6,6,6,7,7,7,7,7,6,6,7,7,6,7,7,7,7,6,7,,7,6,6,6,6,6,7,6,6,6,,,,,2,,Test
+2022-11-21 05:19:39,2022-11-21 05:26:44,0,132.69.185.161,100,425,1,2022-11-21 05:26:44,R_1ojygj1TkiAmEjx,,,,,32.816,34.9821,anonymous,EN,1,123,4,2,4,4,3,2,1,2,3,3,,2,4,4,5,6,5,5,5,6,6,6,6,5,5,4,6,6,6,5,5,4,,5,6,6,6,4,4,5,4,4,4,,,,,2,,כדאי להוסיף סקאלה שביעית ניטרלית בטבלה השנייה
+2022-11-21 07:01:21,2022-11-21 07:03:33,0,213.57.108.192,100,132,1,2022-11-21 07:03:35,R_24vgDja9R7OclCA,,,,,32.816,34.9821,anonymous,EN,1,69,2,4,4,4,3,4,4,4,2,2,,4,4,4,7,6,6,6,6,6,6,6,6,4,6,6,6,6,,,,,,,,,,,,,,,,,,,,2,,
+2022-11-21 07:01:18,2022-11-21 07:04:43,0,213.57.108.192,100,204,1,2022-11-21 07:04:43,R_1QhCmiGFUt3Uixx,,,,,32.816,34.9821,anonymous,EN,1,69,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,2,,"היי עבודה מעולה, רק ששמנו לב שאפשר לדלג על כל השאלות,( קבוצה 11)"
+2022-11-21 08:00:01,2022-11-21 08:06:01,0,213.57.172.90,100,360,1,2022-11-21 08:06:02,R_1g5Q8S8aQssVOcj,,,,,32.816,34.9821,anonymous,EN,1,no,4,1,3,2,2,4,1,2,3,3,,3,4,4,5,6,6,1,5,7,1,6,6,4,4,6,6,4,6,5,1,1,,6,5,5,1,4,4,6,5,4,1,,,,,1,,why slider for age?
+2022-11-21 04:47:08,2022-11-23 07:25:21,0,79.176.179.37,100,182292,1,2022-11-23 07:25:21,R_3kGrW17sZkZTg1n,,,,,32.0803,34.7805,anonymous,EN,1,36,2,1,2,1,5,2,1,5,4,4,,5,5,7,6,6,7,4,7,6,1,6,1,6,4,5,6,6,7,4,4,6,,1,1,6,6,5,5,6,1,6,5,,,,,2,,"היי, קודם כל אחלה שאלון, לא לקח יותר מדי זמן, אבל כן הייתי משנה את הסקאלה כי העובדה שאין אמצע נורא בלבלה אותי. כל הזמן הייתי צריכה לעלות למעלה בשאלון להיזכר מה זה קצת לא מסכים ומה זה קצת מסכים.  "
+2022-11-23 07:56:38,2022-11-23 08:08:41,0,192.114.105.254,100,722,1,2022-11-23 08:08:41,R_R8kSNk1qR8S44Rr,,,,,32.816,34.9821,anonymous,EN,1,checker,6,5,6,5,2,7,1,2,6,6,7,1,5,1,2,6,6,2,1,7,6,7,1,7,7,2,4,7,7,7,6,1,2,7,6,6,2,1,7,6,1,1,1,,,,,2,19, בשאלון הראשון בשאלה השניה לפני הסוף המשפט לא נכון דיקדוקית ובשאלון השני יש סעיף שפשוט אומר תסמנו 2 (אני מניחה שזה מכוון אבל אני רושמת ליתר ביטחון).  חוץ מזה הכל נראה לי בסדר. לקח לי למלא  5 דקות ו37 שניות( לא כולל הזמן לכתיבת הערות) ואני מצוות 21   
+2022-11-23 09:27:31,2022-11-23 09:36:01,0,213.57.245.57,100,509,1,2022-11-23 09:36:01,R_1isQP56HWjm6LIN,,,,,32.816,34.9821,anonymous,EN,1,No,5,7,6,4,3,3,4,2,4,1,7,2,5,4,3,5,4,1,1,5,5,6,5,7,5,3,5,6,6,3,4,1,2,5,6,6,2,1,6,4,2,3,7,,,,,1,21, קבוצה 27: באופן כללי השאלון טוב היו כמה שאלות בחלק השני כמו האם יש לי השפעה על דברים אחרים שאין לי באמת יכולת להעריך בצורה טובה מנקודת המבט שלי 
+2022-11-20 10:28:25,2022-11-20 10:29:24,0,192.114.105.254,43,59,0,2022-11-27 10:29:26,R_25LoONxqeEZBoEZ,,,,,,,anonymous,EN,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2022-11-19 04:00:54,2022-11-21 07:50:44,0,77.137.65.48,29,186590,0,2022-11-28 07:50:45,R_1pXnorAyoVQTrDT,,,,,,,anonymous,EN,1,,1,1,2,2,3,5,4,3,2,4,,4,4,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2022-11-21 08:06:10,2022-11-21 08:07:05,0,213.57.172.90,43,55,0,2022-11-28 08:07:06,R_AhDwIlO4hW329hv,,,,,,,anonymous,EN,1,,1,1,1,1,1,1,1,1,1,1,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,,1,1,1,1,1,1,1,1,1,1,,,,,,,
+2022-11-28 09:52:15,2022-11-28 10:00:18,0,176.12.234.121,100,483,1,2022-11-28 10:00:18,R_BD592lmaxvhbXTH,,,,,32.0803,34.7805,anonymous,EN,1,313289555,6,2,5,3,2,4,3,5,5,2,7,3,2,2,5,4,6,5,5,6,6,6,5,7,6,2,4,7,6,5,6,2,2,6,4,4,5,4,7,7,2,1,2,4 times a week,1,1,,1,27,7 minutes
+2022-11-28 10:20:56,2022-11-28 10:25:08,0,77.137.78.4,100,252,1,2022-11-28 10:25:09,R_pAzclZwW6DOb505,,,,,32.0803,34.7805,anonymous,EN,1,318431244,1,7,1,1,4,1,7,7,1,1,7,3,7,7,5,5,6,7,4,5,5,3,2,5,1,6,7,2,5,5,2,5,2,5,7,6,2,3,2,3,1,7,2,Once a week,1,3,,1,25,Gl with the project
+2022-11-28 10:41:24,2022-11-28 10:46:55,0,176.12.141.250,100,331,1,2022-11-28 10:46:55,R_1gcKWgg80vmJ0oO,,,,,32.0803,34.7805,anonymous,EN,1,206133514,4,3,3,2,3,2,1,6,2,2,7,3,6,5,2,6,6,6,2,6,6,6,5,6,6,3,3,5,6,6,3,3,2,5,6,4,2,5,2,6,2,5,2,Once a week,1,2,,1,25,Idan
+2022-11-28 10:45:07,2022-11-28 10:49:59,0,109.253.208.182,100,291,1,2022-11-28 10:49:59,R_77f1IfvKM5lVN3r,,,,,31.8047,35.1628,anonymous,EN,1,318400140,6,1,4,6,2,1,1,4,4,1,7,2,4,2,4,5,6,4,2,5,5,7,1,7,7,3,3,7,7,5,5,3,2,6,2,7,6,1,7,6,1,2,1,Once a week,1,1,,2,25,
+2022-11-28 10:46:29,2022-11-28 10:52:43,0,2.52.131.71,100,373,1,2022-11-28 10:52:43,R_1JUsIwJFmmJVqL8,,,,,32.1033,34.8879,anonymous,EN,1,302363049,6,3,5,5,3,3,3,3,5,3,7,3,3,3,5,6,5,3,3,5,5,6,3,5,5,2,3,6,5,5,5,3,2,5,5,5,3,3,5,5,3,2,3,6,1,1,,1,28,
+2022-11-28 10:46:30,2022-11-28 10:53:15,0,77.137.77.67,100,405,1,2022-11-28 10:53:16,R_3iBULHv5zHxHdvU,,,,,31.5,34.75,anonymous,EN,1,313362816,6,2,5,7,6,4,1,4,5,3,7,1,2,6,6,5,6,2,1,5,5,7,2,5,5,3,3,5,6,4,6,5,2,5,6,5,2,5,5,6,1,1,3,4 days a week,1,3,,1,27,
+2022-11-28 10:46:20,2022-11-28 10:54:03,0,46.19.86.133,100,463,1,2022-11-28 10:54:03,R_2cuvF7reicvozHu,,,,,31.9642,34.7876,anonymous,EN,1,318436626,7,2,6,6,5,2,2,2,4,3,7,4,4,2,3,4,4,5,2,3,3,6,4,5,5,2,2,5,3,6,3,2,2,5,3,3,6,5,3,4,4,4,4,3 4 timws a week,1,1,,1,25,
+2022-11-28 10:52:40,2022-11-28 11:03:55,0,79.176.184.97,100,674,1,2022-11-28 11:03:55,R_23GiRsnxeoeP2Kd,,,,,32.5222,34.9405,anonymous,EN,1,1,5,4,3,2,2,2,2,4,1,1,7,2,6,5,6,4,3,5,5,3,4,4,3,6,4,3,5,4,5,3,6,5,2,3,3,5,7,3,3,4,3,4,1,Once in a month,1,2,,2,24,
+2022-11-28 10:56:50,2022-11-28 11:08:02,0,147.161.9.21,100,672,1,2022-11-28 11:08:03,R_2tsyqvImDAsPxyQ,,,,,32.0803,34.7805,anonymous,EN,1,0,4,5,3,6,4,5,1,3,2,3,7,3,6,4,3,2,3,4,5,4,3,4,3,4,5,3,2,4,7,3,2,4,2,2,5,5,6,5,3,5,1,3,1,Once a month,1,2,,1,25,Hope you'll do some sport after analysing this data
+2022-11-28 11:32:33,2022-11-28 11:44:20,0,147.235.197.245,100,706,1,2022-11-28 11:44:20,R_1GIVKdVOEKFMzQ9,,,,,31.7674,35.2186,anonymous,EN,1,207129420,6,2,4,5,3,4,1,3,2,6,7,4,2,3,2,3,5,6,5,5,6,5,4,6,6,5,2,5,6,6,5,5,2,5,4,6,4,2,6,7,1,1,1,20 minutes 5 times a week,1,2,,1,26,
+2022-11-28 11:54:57,2022-11-28 12:00:25,0,86.22.1.92,100,327,1,2022-11-28 12:00:25,R_1o6DK6Rk5POzGlh,,,,,50.3989,-4.1727,anonymous,EN,1,610da72ef92ac402bdc7b8fd,4,7,4,5,5,3,6,6,2,4,7,4,7,6,5,7,7,5,4,7,7,5,5,7,4,5,6,5,5,6,4,5,2,5,3,5,6,5,3,3,4,5,4,Almost never,0,1,,1,28,
+2022-11-28 11:57:05,2022-11-28 12:00:28,0,77.100.137.218,100,203,1,2022-11-28 12:00:28,R_3nqIjBdRqmkjl9A,,,,,55.806,-3.9417,anonymous,EN,1,5cd3c6d9440dcc000110f934,5,7,7,7,5,5,6,5,4,4,7,1,6,4,1,4,5,4,6,5,3,4,6,4,3,7,7,3,4,2,5,5,2,4,4,5,6,7,3,2,6,3,6,Two or three times a week.,1,2,,1,45,
+2022-11-28 11:54:51,2022-11-28 12:00:38,0,86.25.109.133,100,347,1,2022-11-28 12:00:39,R_1OK0b3p8RigqI8p,,,,,51.5263,-0.3559,anonymous,EN,1,59ae75642d73c00001e5cc94,6,6,4,4,3,2,2,3,4,5,7,4,5,3,4,6,5,2,1,5,6,6,1,5,4,1,4,5,5,5,6,2,2,6,2,5,1,1,5,6,1,2,1,3 times a week,1,2,,2,37,
+2022-11-28 11:59:04,2022-11-28 12:02:00,0,5.68.71.97,100,176,1,2022-11-28 12:02:00,R_27HZyo5kEdO8qty,,,,,50.8069,-0.5834,anonymous,EN,1,612d3e13048ec2b299126be6,6,2,6,6,3,6,1,3,6,4,7,2,5,5,5,5,5,6,4,4,5,6,5,3,5,4,6,5,5,5,3,3,2,5,6,5,3,3,6,5,3,3,2,5 days a week,1,1,,1,33,
+2022-11-28 11:59:41,2022-11-28 12:03:08,0,90.252.141.102,100,206,1,2022-11-28 12:03:08,R_3paKp5c64nON0Lx,,,,,51.713,-1.8659,anonymous,EN,1,5b74960f218c0f000107d480,7,3,6,6,2,5,1,1,6,4,7,1,2,1,5,6,6,3,1,3,5,7,3,6,6,2,2,6,6,5,4,2,2,6,6,6,1,1,6,6,2,1,2,few times a week,1,1,,2,30,
+2022-11-28 11:59:24,2022-11-28 12:03:11,0,90.195.50.67,100,226,1,2022-11-28 12:03:11,R_5AaUNPquaFI3fSF,,,,,51.445,-0.4103,anonymous,EN,1,59d3ab844e58e40001953a51,3,6,5,3,7,3,5,5,2,4,7,4,7,6,3,5,5,4,3,4,5,5,2,5,2,3,6,4,5,5,3,5,2,4,5,3,4,6,4,4,3,4,3,2-3 times per week,1,2,,2,36,
+2022-11-28 12:00:40,2022-11-28 12:03:28,0,86.140.222.234,100,167,1,2022-11-28 12:03:28,R_1lu9FRT4xPlkMec,,,,,52.6755,-2.7616,anonymous,EN,1,59fa52008a2d3d00012c1b0e,4,7,5,2,6,2,3,5,2,2,7,6,7,5,3,6,6,2,4,5,6,6,2,6,6,5,4,6,6,5,6,3,2,6,5,5,3,3,4,6,2,5,2,weekly,1,2,,1,55,
+2022-11-28 12:00:26,2022-11-28 12:04:11,0,51.183.121.55,100,225,1,2022-11-28 12:04:11,R_1GUDvoYBIeMoIJ0,,,,,52.5189,-1.9189,anonymous,EN,1,59690296afd8a4000160d467,4,5,6,3,4,4,3,4,5,3,7,3,5,6,3,3,3,5,5,3,4,3,4,2,3,4,4,3,5,4,3,6,2,3,3,3,4,5,3,4,3,3,4,Not very often,0,2,,2,24,
+2022-11-28 12:01:44,2022-11-28 12:04:31,0,86.131.103.0,100,166,1,2022-11-28 12:04:31,R_2Et8qRaCtxBMgBu,,,,,57.1453,-2.0945,anonymous,EN,1,580aaa7047d0b600011663d8,4,3,4,3,5,2,2,6,3,2,7,5,5,6,3,4,3,5,4,3,5,3,5,4,3,5,6,3,5,4,3,4,2,2,4,4,6,5,3,4,3,5,3,Once a week,1,1,,2,31,
+2022-11-28 11:56:59,2022-11-28 12:05:32,0,86.129.52.141,100,513,1,2022-11-28 12:05:33,R_bJd771TVgvXsbwB,,,,,51.5064,-0.02,anonymous,EN,1,5ed934c19e6b4a496cd6da06,5,4,5,3,3,7,3,6,4,7,7,4,6,3,2,4,5,2,4,4,4,5,7,4,3,2,4,4,6,5,6,3,2,5,3,4,3,3,2,7,2,7,7,5 days per week (gentle) but I used to be super fit & competitive sporty before the pandemic,1,4,I am trying to gently rebuild my stamina & strength,2,53,"I feel I have become weak physically since doing little exercise over the pandemic. I am probably about normal for my age now - but would like to be fitter! My feelings of wellbeing are heavily impacted by the seasons (happier, more energetic in summer)."
+2022-11-28 12:02:29,2022-11-28 12:05:57,0,82.39.236.140,100,208,1,2022-11-28 12:05:58,R_Xw6fQbTFQgKVQNX,,,,,51.536,-0.0925,anonymous,EN,1,61015a7fc1db48c6d85f7625,5,5,6,4,3,4,3,5,4,3,7,4,5,5,5,6,5,4,4,5,5,6,3,6,4,5,5,5,5,6,4,3,2,4,4,6,7,4,5,5,1,4,1,3 times a week,1,2,,2,34,
+2022-11-28 12:02:53,2022-11-28 12:06:01,0,92.24.28.64,100,188,1,2022-11-28 12:06:01,R_3GkzXmep3OfhFLV,,,,,52.5876,-1.9828,anonymous,EN,1,615347f02a4276988f6b2dfe,5,3,5,4,3,2,2,3,4,2,7,3,5,3,4,5,5,3,3,5,5,5,5,5,5,4,5,5,6,5,5,3,2,5,5,5,3,2,5,5,2,3,2,Twice a week ,1,1,,2,25,
+2022-11-28 12:02:55,2022-11-28 12:06:12,0,78.86.2.140,100,196,1,2022-11-28 12:06:12,R_2wdauh5tSNTtFbX,,,,,51.4964,-0.1224,anonymous,EN,1,5c8419c4d0a93a0016755140,4,6,5,2,5,3,5,5,3,4,7,3,5,5,7,3,6,7,5,3,3,4,5,4,1,7,5,3,6,6,4,5,2,5,3,5,5,5,2,5,2,5,1,3 times a week,1,2,,2,33,
+2022-11-28 12:04:09,2022-11-28 12:06:37,0,80.193.49.8,100,148,1,2022-11-28 12:06:38,R_1LdPU5WotZljon2,,,,,53.4367,-2.9652,anonymous,EN,1,59f77c1705d1d60001f14563,2,4,4,2,5,2,1,4,2,2,7,6,7,7,5,2,5,7,7,5,2,1,6,5,1,6,7,1,5,3,3,6,2,3,5,3,3,7,3,2,6,7,4,never,0,2,,1,24,
+2022-11-28 12:03:23,2022-11-28 12:06:45,0,151.228.104.12,100,201,1,2022-11-28 12:06:45,R_2xY8KjHQ2DFS5JR,,,,,52.9648,-1.2132,anonymous,EN,1,5eaddd85d44bbb0d23bb716b,1,7,1,1,7,3,7,7,1,2,7,4,7,7,5,3,3,7,5,3,7,3,5,4,4,7,7,4,5,6,4,4,2,4,3,3,4,4,2,4,1,7,3,0,0,2,,2,39,
+2022-11-28 12:02:10,2022-11-28 12:07:07,0,86.9.41.140,100,297,1,2022-11-28 12:07:08,R_3OjOPCxQmfTqCDz,,,,,54.5504,-1.2532,anonymous,EN,1,5f511cdb275a742f89f0b9bf,3,6,2,3,7,2,7,5,2,1,7,6,6,5,3,7,5,2,2,1,6,6,3,6,2,7,6,5,6,6,2,4,2,2,6,6,5,2,3,3,2,6,2,Not very often ,0,2,,2,32,
+2022-11-28 12:02:16,2022-11-28 12:07:36,0,31.50.239.226,100,320,1,2022-11-28 12:07:36,R_31zUDI3Anu6oLoo,,,,,51.6663,-3.2506,anonymous,EN,1,5eafe6dbe612c102dd01c038,4,4,4,3,4,2,4,4,3,2,7,4,5,1,5,7,6,2,2,6,6,6,3,7,7,1,2,7,7,5,2,1,2,6,7,7,4,1,6,6,1,2,1,Once every few months,0,1,,1,22,
+2022-11-28 12:02:33,2022-11-28 12:07:41,0,86.169.158.34,100,307,1,2022-11-28 12:07:41,R_2uPQ96gEk5CvRpd,,,,,50.9991,-1.0292,anonymous,EN,1,5d07689bad18d40001bb73c1,3,6,2,2,6,1,4,6,1,1,7,6,6,5,4,3,3,6,5,4,3,3,5,4,2,5,6,3,5,4,2,6,2,2,2,4,6,5,1,2,5,6,3,"Once a week, have Ill health ",1,3,,2,48,
+2022-11-28 12:04:26,2022-11-28 12:07:49,0,81.109.197.50,100,203,1,2022-11-28 12:07:50,R_8HQ23VDkmw6IxDb,,,,,53.7573,-2.7236,anonymous,EN,1,5d00e087e464070001525047,4,6,4,3,5,2,3,5,3,1,7,2,6,3,4,5,5,3,3,4,5,5,4,5,5,4,6,5,6,6,3,4,2,4,5,5,5,4,3,5,2,3,2,twice a week,1,2,,2,37,
+2022-11-28 12:05:04,2022-11-28 12:08:15,0,185.164.181.84,100,190,1,2022-11-28 12:08:15,R_2RP5TqHAL5syUOB,,,,,51.9015,0.7545,anonymous,EN,1,62b0576692285098026bde17,2,7,2,3,3,1,3,5,3,1,7,5,6,7,2,2,3,7,7,2,6,3,6,2,3,7,7,2,5,2,2,6,2,2,2,3,6,6,1,4,5,6,5,Not very ,0,3,,2,23,
+2022-11-28 12:04:44,2022-11-28 12:08:21,0,77.99.157.147,100,216,1,2022-11-28 12:08:21,R_2R1vNaBXto6PPdZ,,,,,52.588,-2.0638,anonymous,EN,1,5a0b06c9746ac2000157fb4f,3,7,3,3,5,6,4,5,2,6,7,5,7,7,2,7,5,6,3,6,6,7,5,7,6,6,4,7,7,6,2,2,2,5,5,6,7,3,4,5,2,5,6,Twice a Week,1,2,,2,30,
+2022-11-28 12:05:33,2022-11-28 12:08:21,0,89.242.36.247,100,168,1,2022-11-28 12:08:21,R_265Ymlnb9ZdweVc,,,,,52.6281,1.2862,anonymous,EN,1,5ce297b13f806000190a0ab8,6,4,7,7,3,4,2,2,5,3,7,3,3,5,5,2,3,4,6,4,3,2,5,5,2,6,6,2,4,4,6,5,2,2,4,4,1,7,4,3,4,2,3,Once a day,1,2,,2,31,
+2022-11-28 12:04:57,2022-11-28 12:08:33,0,94.6.143.164,100,215,1,2022-11-28 12:08:33,R_3pgSixBWfMtM8Pc,,,,,53.5221,-1.3882,anonymous,EN,1,5a94779df05361000171b4fe,4,6,5,4,6,4,3,5,4,3,7,3,5,5,5,5,5,5,5,5,5,6,3,6,5,6,5,5,6,6,6,4,2,4,5,5,5,3,5,5,2,3,1,Not very often,0,2,,2,62,
+2022-11-28 12:03:17,2022-11-28 12:09:12,0,128.40.87.148,100,354,1,2022-11-28 12:09:12,R_3DqK0LjK5Nro6QV,,,,,51.6144,-0.3368,anonymous,EN,1,62cd9b574168d35f624d1ed7,6,2,4,4,6,3,1,5,5,5,7,5,5,2,2,6,5,4,2,5,5,6,2,5,5,2,3,5,5,5,6,1,2,6,4,5,2,2,6,6,1,4,3,3,1,2,,2,42,
+2022-11-28 12:05:50,2022-11-28 12:09:19,0,90.217.83.132,100,208,1,2022-11-28 12:09:19,R_ZlsTmYfJ5LR6265,,,,,57.6533,-3.3219,anonymous,EN,1,5f81bdb0b927a20852c139ba,4,5,6,4,6,3,3,5,2,7,7,5,5,6,3,4,3,6,5,4,2,4,7,6,3,4,4,3,5,4,2,6,2,3,3,4,5,5,2,3,2,5,4,None,0,2,,2,21,
+2022-11-28 12:05:34,2022-11-28 12:09:33,0,86.10.33.43,100,238,1,2022-11-28 12:09:33,R_BMxc7W8RxbF5nCF,,,,,51.6552,-0.3879,anonymous,EN,1,60b8063c157b65be3eb7c88e,3,6,4,6,3,2,2,6,2,3,7,4,6,4,2,6,7,2,1,5,3,7,1,6,6,4,5,7,5,2,5,4,2,5,5,6,2,2,4,4,2,4,2,hardly at all,0,1,,2,37,
+2022-11-28 12:07:53,2022-11-28 12:09:43,0,81.111.102.230,100,109,1,2022-11-28 12:09:43,R_s7kAdFhHM9WVU9X,,,,,55.9335,-3.254,anonymous,EN,1,5ccf3006f131fb001706edbb,5,7,5,3,4,3,5,5,4,5,4,7,6,7,6,5,4,5,4,5,6,6,5,4,5,5,6,4,5,5,4,5,2,5,6,5,5,4,5,3,4,5,4,2 a week,1,1,,2,30,thx
+2022-11-28 12:07:58,2022-11-28 12:10:01,0,5.151.135.37,100,122,1,2022-11-28 12:10:01,R_UusUNh25jNn37kl,,,,,50.9142,-1.388,anonymous,EN,1,60a5498dc9d79d6c7e6cae62,5,2,6,6,3,3,2,2,5,2,7,5,4,2,7,7,7,7,1,7,7,6,4,7,5,2,4,7,7,7,6,1,2,7,6,7,2,2,6,6,1,2,1,2-3 times per week,1,1,,1,19,
+2022-11-28 12:07:57,2022-11-28 12:10:25,0,51.146.14.114,100,148,1,2022-11-28 12:10:26,R_1pA15D7xHImeg2h,,,,,51.3926,-0.1977,anonymous,EN,1,5de83e5748241d7af1b6c348,6,5,5,6,5,5,2,2,5,5,7,5,5,2,5,5,5,5,4,5,5,5,5,4,6,2,5,5,6,6,4,5,2,5,5,5,2,3,5,5,2,2,2,Weekly ,1,1,,1,29,
+2022-11-28 12:04:16,2022-11-28 12:10:28,0,51.7.151.73,100,371,1,2022-11-28 12:10:28,R_1N4vcxbwu13EOf6,,,,,54.5504,-1.2532,anonymous,EN,1,5c6063290040350001faf92a,2,7,3,4,7,2,3,4,3,2,7,3,5,4,3,4,6,5,3,5,6,5,6,4,4,4,3,4,5,6,3,2,2,2,3,3,2,2,2,3,2,3,4,Not at all,0,3,,2,69,
+2022-11-28 12:07:08,2022-11-28 12:10:29,0,86.13.73.57,100,201,1,2022-11-28 12:10:30,R_1giMfyD3l5jYXqo,,,,,53.3934,-3.0081,anonymous,EN,1,6159b15e03387d2cca9b73fc,3,5,4,2,5,2,4,3,3,2,7,5,5,5,5,3,3,5,5,4,5,4,5,4,4,6,5,3,4,2,2,4,2,4,4,4,5,5,3,4,4,4,3,Once-twice a weej,1,2,,2,25,
+2022-11-28 12:08:16,2022-11-28 12:11:05,0,86.177.135.128,100,169,1,2022-11-28 12:11:06,R_qJh2pd2rArW78fT,,,,,54.9007,-5.8582,anonymous,EN,1,5cd043b25b04850017e5d028,4,6,5,5,4,2,4,4,4,2,7,4,6,3,4,5,5,5,2,3,5,5,2,3,4,4,3,5,5,3,2,2,2,4,5,5,4,2,3,4,2,4,4,1,1,2,,2,56,
+2022-11-28 12:06:53,2022-11-28 12:11:21,0,87.80.116.171,100,267,1,2022-11-28 12:11:21,R_1OYR4Mw2ZM8l1Lw,,,,,51.4479,-0.1377,anonymous,EN,1,5ad78141b24ddb0001744a34,3,6,3,2,5,3,4,5,3,2,7,4,6,4,6,4,3,3,3,4,2,4,5,6,3,5,5,3,4,5,1,4,2,2,3,4,7,3,3,5,3,5,2,Never,0,4,Currently lazy and out of shape,2,37,
+2022-11-28 12:07:47,2022-11-28 12:11:26,0,2.27.228.217,100,219,1,2022-11-28 12:11:27,R_10T3GN5SEjO2ysz,,,,,51.1449,1.3019,anonymous,EN,1,62742f92f35856fa9619ff2d,5,3,5,4,5,3,2,5,3,6,7,5,5,4,3,6,5,3,5,5,6,6,2,6,5,4,5,7,5,5,5,3,2,5,4,5,4,3,4,5,2,3,2,3 times a week,1,2,,2,29,
+2022-11-28 12:07:45,2022-11-28 12:11:33,0,86.28.138.38,100,227,1,2022-11-28 12:11:33,R_33gzyRBJ0nVcXhM,,,,,53.7591,-1.5897,anonymous,EN,1,612a7980b928fb698777726f,5,5,4,6,3,4,2,4,4,4,7,4,5,3,3,4,3,3,4,5,6,6,5,5,5,4,4,5,4,6,6,2,2,5,5,6,3,4,5,5,2,2,2,2-3 TIMES A WEEK,1,2,,1,54,
+2022-11-28 12:08:21,2022-11-28 12:11:38,0,51.6.139.45,100,196,1,2022-11-28 12:11:38,R_1rcYqWikx5WsUgb,,,,,50.6806,-3.8744,anonymous,EN,1,5ad20ccab438910001ac9b03,4,1,3,3,4,1,1,3,3,1,7,4,4,4,2,4,3,5,4,4,4,4,4,3,4,4,4,3,5,4,5,4,2,4,4,3,4,3,2,3,3,3,4,0,0,2,,2,33,
+2022-11-28 11:56:04,2022-11-28 12:11:40,0,2.28.40.204,100,936,1,2022-11-28 12:11:40,R_1PRdgtRNO8Xeh0z,,,,,51.4236,-0.0668,anonymous,EN,1,5a5120f6f6c51700019478a7,6,4,5,5,5,6,2,3,6,6,7,6,4,6,6,6,6,3,5,6,6,6,4,4,4,3,4,5,5,5,5,5,2,5,5,5,2,5,5,5,5,5,5,4 times a week,1,1,,2,29,
+2022-11-28 12:07:28,2022-11-28 12:11:47,0,147.197.250.34,100,259,1,2022-11-28 12:11:48,R_PTKetJ1C0B23u6J,,,,,51.7639,-0.2236,anonymous,EN,1,60fa9c3a9c00703b82cf2974,5,4,6,2,3,3,2,5,4,2,7,6,5,5,4,4,3,6,5,6,2,5,4,4,5,3,7,4,7,4,3,4,2,2,3,3,5,3,3,4,3,4,1,Rarely,0,2,,1,19,
+2022-11-28 12:09:13,2022-11-28 12:12:02,0,84.71.93.178,100,169,1,2022-11-28 12:12:02,R_2pLZQxRN6zHOkgX,,,,,51.5026,-0.066,anonymous,EN,1,60e4e4d0d710a68effb5a1de,5,3,2,4,3,2,3,2,3,2,7,5,5,6,4,5,4,5,3,6,4,5,3,7,3,6,7,4,6,5,2,5,2,2,5,6,6,5,3,3,2,5,2,Once a week,1,2,,1,22,
+2022-11-28 12:06:17,2022-11-28 12:12:13,0,94.6.46.205,100,356,1,2022-11-28 12:12:14,R_ewCUmP9NcFiZ4Vb,,,,,51.6532,-3.289,anonymous,EN,1,6159dfbdd9d4b9b1e8957fc0,3,7,2,2,6,4,5,7,1,3,7,4,7,6,4,6,6,7,5,5,5,6,4,4,4,3,6,5,5,5,1,5,2,3,4,5,4,2,2,4,2,6,4,Rarely,0,3,,2,28,
+2022-11-28 12:09:29,2022-11-28 12:12:30,0,86.179.242.162,100,181,1,2022-11-28 12:12:31,R_1mlurc3EZtMunIR,,,,,50.4646,-4.4686,anonymous,EN,1,59b19a277f6c84000151c001,5,6,5,5,3,3,4,3,4,3,7,3,6,5,4,6,5,4,2,2,5,6,3,4,4,4,5,5,5,4,4,4,2,3,6,5,2,2,4,4,4,4,4,weekly,1,2,,2,61,
+2022-11-28 12:06:58,2022-11-28 12:12:33,0,217.43.74.139,100,335,1,2022-11-28 12:12:34,R_pJGb2BT6RxghOJX,,,,,53.4474,-2.3808,anonymous,EN,1,63701996991a7caadf0d5659,3,6,4,3,5,2,4,3,3,3,7,4,6,5,4,5,4,6,4,4,6,5,4,4,3,3,6,4,5,3,3,6,2,3,5,5,5,4,3,5,2,5,3,0,0,2,,2,49,
+2022-11-28 12:09:07,2022-11-28 12:12:36,0,51.186.157.218,100,209,1,2022-11-28 12:12:36,R_0Iq2KsozJdpL9h7,,,,,51.477,-0.1959,anonymous,EN,1,60ddb84386eb83559f02534c,5,1,7,5,2,3,1,2,3,3,7,4,4,2,2,5,5,4,2,5,5,5,1,6,5,2,3,5,5,5,5,2,2,5,5,5,3,3,5,5,2,2,2,0,0,2,,2,24,
+2022-11-28 12:11:09,2022-11-28 12:13:03,0,86.131.208.81,100,114,1,2022-11-28 12:13:03,R_3EiMyNfie9YNUDV,,,,,53.8826,-2.0494,anonymous,EN,1,5cea26087afd86001a34a5db,5,4,7,5,4,4,2,4,4,2,7,3,3,5,3,4,4,7,4,3,5,5,4,4,4,6,6,5,5,3,2,4,2,3,3,4,6,5,4,4,3,5,3,ONCE A WEEK,1,2,,2,37,
+2022-11-28 12:11:07,2022-11-28 12:13:34,0,188.28.237.73,100,146,1,2022-11-28 12:13:35,R_2afY4kEa0l3X2AL,,,,,51.5074,-0.1196,anonymous,EN,1,6096dee4df7f250e5ba9d78d,3,7,4,2,6,1,5,7,1,1,7,6,7,7,5,5,5,7,4,4,3,4,5,4,4,7,6,4,5,2,3,4,2,3,3,2,4,4,1,3,3,5,2,Never,0,4,my kneecap is loose,2,27,
+2022-11-28 12:08:25,2022-11-28 12:13:37,0,86.9.30.123,100,312,1,2022-11-28 12:13:38,R_2bV2VniEH2Ed99M,,,,,51.5571,-0.2972,anonymous,EN,1,5e9035cae502b1328adcf15a,4,2,5,4,3,3,1,2,5,5,7,4,2,3,2,5,5,3,3,5,5,5,4,6,5,5,3,5,5,4,5,3,2,5,5,6,5,2,5,5,2,3,2,once or twice a week,1,1,,1,27,
+2022-11-28 12:11:04,2022-11-28 12:13:45,0,176.254.212.60,100,161,1,2022-11-28 12:13:45,R_UMAZh312mFwz293,,,,,55.9649,-2.9456,anonymous,EN,1,5bd18be2718e24000181ada8,5,3,7,4,3,3,2,3,5,3,7,5,5,5,5,6,4,2,2,5,5,6,2,5,6,5,4,5,6,5,6,3,2,7,5,7,3,1,5,6,2,3,1,3x per week,1,2,,2,31,
+2022-11-28 12:09:46,2022-11-28 12:13:50,0,86.146.9.109,100,243,1,2022-11-28 12:13:50,R_R9vy6HumaFaSiZz,,,,,54.6673,-1.6551,anonymous,EN,1,5d9452e023002d001c67bab1,6,1,7,6,3,6,1,4,7,7,7,1,5,1,3,7,5,3,1,6,6,6,1,6,5,1,3,5,7,3,7,1,2,7,4,7,2,1,6,6,4,1,1,a few times a week,1,1,,2,36,
+2022-11-28 12:11:40,2022-11-28 12:13:57,0,80.1.139.174,100,136,1,2022-11-28 12:13:58,R_27EBmJ2NcZwSlwN,,,,,52.9987,-1.1953,anonymous,EN,1,5ae4c7bfc67d830001ce7fab,5,5,4,2,4,2,4,2,2,2,7,5,6,5,6,5,5,6,3,4,4,5,3,4,2,3,5,5,5,5,2,4,2,5,4,4,2,3,4,4,2,4,4,4 times a week ,1,2,,2,24,
+2022-11-28 12:08:01,2022-11-28 12:14:11,0,81.152.254.13,100,369,1,2022-11-28 12:14:12,R_2qEpRvAdFomrqtH,,,,,51.4492,-0.8798,anonymous,EN,1,5c7b01b892edb30017dc1202,5,1,6,6,6,6,1,2,5,6,7,2,5,1,2,5,4,2,2,6,4,7,2,7,7,1,3,7,7,6,6,1,2,6,6,6,2,1,6,6,1,1,1,twice a week,1,1,,2,41,
+2022-11-28 12:09:13,2022-11-28 12:14:40,0,146.90.108.215,100,327,1,2022-11-28 12:14:40,R_PtAwyfzt5dz9SaR,,,,,53.6202,-0.4837,anonymous,EN,1,5eef2045e4dd3e3e7a332e6a,4,7,2,3,6,2,7,6,1,3,7,5,7,7,5,2,2,5,7,2,3,2,7,3,2,7,5,3,5,5,2,4,2,5,5,3,7,5,1,4,3,6,2,Not often,0,3,,2,24,
+2022-11-28 12:07:48,2022-11-28 12:14:47,0,92.5.105.116,100,419,1,2022-11-28 12:14:48,R_aftV1NnqDPMqPcZ,,,,,55.867,-4.3056,anonymous,EN,1,5c980d0ecff9b20016cae76f,5,4,5,4,2,4,1,2,3,4,7,2,6,4,6,5,3,3,4,5,6,4,6,5,2,5,6,3,7,5,3,5,2,4,5,4,3,4,5,5,2,3,3,`I do this around three times a week,1,2,,1,41,An interesting and engaging study topic to help delve into
+2022-11-28 12:11:32,2022-11-28 12:14:50,0,51.194.177.45,100,197,1,2022-11-28 12:14:51,R_2TXFKQn17AVtffv,,,,,53.7644,-1.7336,anonymous,EN,1,6126b41565b2600c71bb995c,4,5,3,5,3,4,3,4,3,4,7,4,5,3,5,5,5,5,4,5,5,5,4,5,5,4,5,5,6,6,5,4,2,4,4,4,3,5,3,5,3,5,2,Rarely,0,2,,1,32,
+2022-11-28 12:11:30,2022-11-28 12:15:10,0,2.216.43.236,100,220,1,2022-11-28 12:15:10,R_25tF6aSKm13d6KO,,,,,53.4174,-2.9112,anonymous,EN,1,598e082dcceb0f0001b397b9,4,2,4,4,1,1,1,3,1,2,7,1,1,6,1,1,1,7,1,1,5,3,1,3,1,6,1,3,4,2,1,6,2,1,1,3,1,5,1,1,3,1,4,Rarely ,0,2,,2,39,
+2022-11-28 12:09:28,2022-11-28 12:15:17,0,146.198.11.103,100,348,1,2022-11-28 12:15:17,R_33DQmgsNIElTvbD,,,,,51.5003,0.1256,anonymous,EN,1,5d1b7ca2ebfae6001a9e4401,5,7,4,5,3,3,2,4,2,4,7,3,7,6,5,4,5,3,5,4,3,4,3,4,4,7,7,5,6,4,4,6,2,3,5,6,7,4,3,2,3,5,5,Not at all.,0,2,,2,60,
+2022-11-28 12:12:02,2022-11-28 12:15:17,0,90.199.194.52,100,194,1,2022-11-28 12:15:17,R_BJxiWlurNxZUyCl,,,,,52.4691,-1.7429,anonymous,EN,1,5974d1487dd1460001ec4826,5,3,7,5,2,4,2,2,6,4,7,4,4,6,2,4,5,5,4,4,5,5,3,5,4,5,5,4,3,5,2,4,2,3,4,4,3,2,4,4,3,3,1,4,1,2,,2,44,
+2022-11-28 12:11:42,2022-11-28 12:15:27,0,86.136.242.255,100,224,1,2022-11-28 12:15:27,R_3lRExj6hpcnHEBZ,,,,,52.382,-1.5874,anonymous,EN,1,5fccf2381ec527b7a7a7e652,5,6,4,4,5,5,4,5,3,5,7,5,6,5,3,4,3,5,2,3,5,4,6,4,4,3,7,4,6,4,3,3,2,5,4,4,3,2,3,5,3,6,3,Once per week,1,2,,1,40,
+2022-11-28 12:11:03,2022-11-28 12:15:34,0,151.226.173.53,100,271,1,2022-11-28 12:15:35,R_2uJ63frmLEpvc9y,,,,,53.0965,-2.3093,anonymous,EN,1,5c4fe78f8ac59200014cf239,6,2,5,5,4,4,2,2,5,3,7,4,5,4,3,2,2,2,4,4,4,4,4,4,4,4,6,5,5,4,4,5,2,2,4,3,3,4,3,4,2,3,2,0,0,4,I just don't want to do a sport activity but I could if I tried.,2,21,
+2022-11-28 12:11:17,2022-11-28 12:15:41,0,82.6.50.224,100,264,1,2022-11-28 12:15:41,R_3esttBNnmz542B2,,,,,51.7128,-1.2347,anonymous,EN,1,6229eb7cb5fc483051d3be41,2,7,1,2,6,1,7,7,1,2,7,6,7,6,2,3,2,6,6,3,2,4,5,4,3,6,7,2,7,3,2,6,2,1,3,4,6,6,1,4,3,7,4,Never,0,4,Very unfit but starting to do some exercise at home.,2,52,
+2022-11-28 12:12:16,2022-11-28 12:15:57,0,90.217.110.133,100,220,1,2022-11-28 12:15:58,R_32L9cQ79fFa3XkO,,,,,51.5565,0.134,anonymous,EN,1,6018575bd164e30baa860133,2,7,2,3,5,1,6,6,2,1,7,4,6,6,6,4,4,3,3,5,4,6,2,6,2,5,4,4,6,6,2,6,2,2,2,5,5,3,1,6,2,6,3,rarely,0,4,i have long covid which causes fatigue,2,40,
+2022-11-28 12:07:46,2022-11-28 12:16:13,0,86.153.37.73,100,507,1,2022-11-28 12:16:13,R_2R1VRuexO0pMsIQ,,,,,52.519,-1.9094,anonymous,EN,1,5d8b7890c7a3d2001371508f,4,5,4,5,1,1,5,4,1,1,7,1,5,7,4,7,7,4,1,2,7,7,4,6,6,5,6,6,6,6,5,1,2,5,6,6,6,5,5,6,1,3,2,walk most days,1,2,,2,27,
+2022-11-28 12:12:10,2022-11-28 12:16:16,0,86.184.142.99,100,245,1,2022-11-28 12:16:17,R_2mGAJEFASQYCwTv,,,,,52.503,-2.0839,anonymous,EN,1,628183fb40140ebea0f1385c,5,4,3,3,5,1,3,2,2,4,7,4,5,5,1,4,4,5,3,2,4,5,3,4,3,3,5,5,6,5,4,3,2,4,4,5,5,2,3,4,3,4,4,Once a month or less,0,2,,2,25,
+2022-11-28 12:12:16,2022-11-28 12:16:55,0,81.79.255.40,100,278,1,2022-11-28 12:16:55,R_1KjR4iKWr5Etill,,,,,51.4964,-0.1224,anonymous,EN,1,5ced20370b72600001fd8d91,5,2,6,6,2,5,1,2,5,5,7,2,2,1,2,5,5,4,3,5,5,6,3,5,5,2,3,5,5,5,6,3,2,6,6,4,3,2,4,6,2,2,2,None,0,1,,1,30,
+2022-11-28 12:08:11,2022-11-28 12:17:13,0,77.102.209.244,100,541,1,2022-11-28 12:17:13,R_3nuEsbb14e3SwJG,,,,,51.8659,-2.2059,anonymous,EN,1,601ee379d2fd7d3a14157f96,3,4,4,1,5,1,1,4,3,1,7,5,6,6,1,5,2,5,4,3,4,4,4,4,3,5,6,4,4,3,1,4,2,3,5,5,4,3,5,4,1,3,1,0,0,4,I have psoriatic arthritis which can sometimes limit what I can do I try not to let it hold me back ,2,40,
+2022-11-28 12:05:05,2022-11-28 12:17:25,0,82.132.214.224,100,739,1,2022-11-28 12:17:25,R_1g8hqSAcuoNlUoM,,,,,51.5268,-0.187,anonymous,EN,1,5e89d10d70750d6667a2c27a,5,2,5,3,2,3,1,2,5,2,7,2,3,2,4,5,4,2,2,4,5,6,2,5,5,2,5,5,5,4,2,2,2,2,5,5,2,3,4,5,2,2,2,5 times a week ,1,2,,2,27,
+2022-11-28 12:11:35,2022-11-28 12:18:19,0,78.151.193.211,100,404,1,2022-11-28 12:18:20,R_bjT88BvYuzSN2Lv,,,,,50.8487,-0.5827,anonymous,EN,1,5b5a54726b25590001774752,5,4,7,7,1,1,1,3,1,1,7,1,3,1,1,5,4,3,1,5,6,6,1,4,5,1,5,6,5,4,5,1,2,6,5,6,6,1,5,3,3,3,1,At least twice a week,1,2,,2,35,
+2022-11-28 12:09:26,2022-11-28 12:18:51,0,85.255.234.110,100,565,1,2022-11-28 12:18:52,R_3CJBl03REkzlTG6,,,,,51.4964,-0.1224,anonymous,EN,1,5e23554c114df8614f53cb3e,4,3,3,3,5,2,2,5,3,1,7,5,5,6,3,2,1,5,6,1,1,3,6,1,2,6,7,2,7,2,1,6,2,2,2,2,5,3,2,1,6,5,4,Never,0,2,,1,38,
+2022-11-28 12:10:31,2022-11-28 12:19:42,0,90.252.142.63,100,551,1,2022-11-28 12:19:43,R_2tM8zKnblxnJPnk,,,,,50.9464,-2.9694,anonymous,EN,1,56163e6e7ffc8a0005812df2,2,6,2,2,5,2,4,6,2,2,7,6,6,6,3,3,4,2,3,4,3,4,3,5,3,6,5,3,4,3,3,3,2,2,1,3,5,4,1,3,3,6,3,hardly ever,0,3,,2,44,
+2022-11-28 12:11:31,2022-11-28 12:19:44,0,92.1.55.94,100,493,1,2022-11-28 12:19:45,R_p9qZ87LrAvyr4Dn,,,,,51.5026,-0.066,anonymous,EN,1,6384d2fbe2f69e8fad4e4bdd,2,7,2,3,2,2,7,7,1,1,7,3,7,6,7,7,5,2,5,5,6,5,4,6,2,4,1,5,6,6,7,5,2,7,6,5,5,1,4,6,1,7,2,Rarely,0,3,,1,22,
+2022-11-28 12:10:34,2022-11-28 12:26:02,0,77.137.75.108,100,928,1,2022-11-28 12:26:02,R_uqRMuFNza0ngK3v,,,,,32.0803,34.7805,anonymous,EN,1,314884727,4,1,5,3,4,2,1,3,5,1,7,5,4,2,2,5,4,2,2,3,3,6,2,4,5,2,4,5,6,4,4,1,2,5,4,5,3,2,5,5,2,2,2,2-3 times per week,1,1,,1,26,
+2022-11-28 12:06:22,2022-11-28 12:30:29,0,194.207.149.106,100,1446,1,2022-11-28 12:30:29,R_OPyi8LFoWUn2DkJ,,,,,53.7606,-0.3734,anonymous,EN,1,5a90460d1eda41000135f918,3,7,5,3,5,4,4,5,2,3,7,4,5,5,3,3,4,4,5,4,6,5,5,5,3,5,4,5,5,5,2,3,2,5,5,6,5,3,4,4,2,4,6,Never,0,2,,2,37,
+2022-11-29 12:59:26,2022-11-29 13:09:14,0,85.64.165.205,100,587,1,2022-11-29 13:09:15,R_2v0P6PPPHLcm86e,,,,,32.3075,34.9055,anonymous,EN,1,Kabab,4,1,4,4,2,4,1,3,4,2,7,3,6,3,1,6,7,6,6,5,4,5,2,5,5,4,6,4,7,7,6,4,2,5,3,4,4,3,3,6,2,2,1,2-3 times a week,1,1,,1,26,Thanks

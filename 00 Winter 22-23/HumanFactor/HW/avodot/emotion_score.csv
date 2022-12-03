@@ -1,0 +1,31 @@
+﻿emotion_q_num,question,reversed,remove
+1,I don’t feel particularly pleased with the way I am,TRUE,FALSE
+2,I am intensely interested in other people,FALSE,FALSE
+3,I feel that life is very rewarding,FALSE,FALSE
+4,I have very warm feelings towards almost everyone,FALSE,FALSE
+5,I rarely wake up feeling rested,TRUE,FALSE
+6,I am not particularly optimistic about the future,TRUE,FALSE
+7,I find most things amusing,FALSE,FALSE
+8,I am always committed and involved,FALSE,FALSE
+9,Life is good,FALSE,FALSE
+10,I do not think that the world is a good place,TRUE,FALSE
+11,I laugh a lot,FALSE,FALSE
+12,I am well satisfied about everything in my life,FALSE,FALSE
+13,I don’t think I look attractive,TRUE,FALSE
+14,There is a gap between what I would like to do and what I have done,TRUE,FALSE
+15,I am very happy,FALSE,FALSE
+16,I find beauty in some things,FALSE,FALSE
+17,I always have a cheerful effect on others,FALSE,FALSE
+18,I can fit in everything I want to,FALSE,FALSE
+19,I feel that I am not especially in control of my life,TRUE,FALSE
+20,Select answer 2,FALSE,TRUE
+21,I feel able to take anything on,FALSE,FALSE
+22,I feel fully mentally alert,FALSE,FALSE
+23,I often experience joy and elation,FALSE,FALSE
+24,I do not find it easy to make decisions,TRUE,FALSE
+25,I do not have a particular sense of meaning and purpose in my life,TRUE,FALSE
+26,I feel I have a great deal of energy,FALSE,FALSE
+27,I usually have a good influence on events,FALSE,FALSE
+28,I do not have fun with other people,TRUE,FALSE
+29,I don’t feel particularly healthy,TRUE,FALSE
+30,I do not have particularly happy memories of the past,TRUE,FALSE
